@@ -2,11 +2,12 @@
 
 `factory` is a local plugin for Codex and Claude Code. The current source provides
 `factory-setup`, `factory-status`, `factory-run`, `factory-watch`,
-`factory-route` and `factory-investigate`, backed by shared typed helpers. The
-orchestrator collects bounded read-only Slack intake, saves and routes source
+`factory-route`, `factory-investigate` and `factory-plan`, backed by shared typed
+helpers. The orchestrator collects bounded read-only Slack intake, saves and routes source
 threads, and resumes legacy work.
 It investigates scoped bug/feature reports with durable local evidence and no
-product changes. Planning and later roles are not implemented.
+product changes. Product planning saves actionable behavior/checks or a decisive
+human question. Design and later roles are not implemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -77,9 +78,11 @@ remains incomplete. It returns findings; the orchestrator saves explicit updates
 and can run the shared investigator within the invocation bound. Investigation
 records actual code revision, reproduction commands/output, facts, hypotheses and
 unknowns in versioned runtime artifacts. Feature briefs preserve unresolved
-product choices for planning. Completed investigations stop at the missing planner;
-unavailable evidence stops with a concrete unblock. No product fixes or external
-writes occur.
+product choices for planning. The planner turns findings into expected behavior,
+bounded scope and acceptance checks. A clear bug proceeds directly; consequential
+product ambiguity saves a question and waits for a direct user answer. Completed
+plans stop at the absent designer; unavailable evidence stops with a concrete
+unblock. No product fixes or external writes occur.
 
 For offline demonstrations select `--source <path>` under `fixtures/sources/`,
 legacy `--fixture <path>`, or `--collection <synthetic-json>` under `fixtures/watch/`.
@@ -100,15 +103,22 @@ They now wait honestly for that missing evidence, preserving fix counts/scopes/
 actions/cursors. Single-step saves one decision; bounded invocation defaults to
 at most three (`--max-steps 1..10`). New explicit sources are routed even when a
 previous item is blocked. Older missing-investigator blocks resume when this
-role is available. Completed investigation artifacts are reused across fresh chats;
-the absent planner does not trigger another investigation. Explicit offline resume
-must remain offline.
+role is available, as do old missing-planner blocks. Completed investigation
+artifacts are reused across fresh chats. Actual human waits persist until a
+relevant answer/evidence arrives. Resume with the same config and a direct
+natural-language answer naming the saved item/question (or clearly answering the
+selected item's sole pending question); no helper answer flag or new fixture is
+needed. The new plan artifact saves the exact answer/provenance and retains the
+earlier question. Product answers grant no implementation or external-action
+permission. Explicit offline resume must remain offline.
 
 For investigation evaluation, copy the tiny deliberately broken local sample
 outside plugin source into a disposable Git checkout. Use the raw reports under
 `fixtures/investigate/` and follow the separate
 [investigator evaluation](docs/investigator-evaluation.md) for exact setup commands,
 review criteria and fresh-chat handoff. Never run probes against installed fixtures.
+For planner acceptance, reuse those saved investigations and the reviewer-only
+[planner evaluation](docs/planner-evaluation.md); do not give its oracle to workers.
 
 One durable run token covers the whole CLI invocation across helper calls. The
 [shared persistence contract](plugins/factory/skills/factory-run/references/persistence.md)

@@ -1033,3 +1033,87 @@ explicit offline mode, and ask it to explain saved findings without replaying
 investigation. Actual outputs and work records are in the evidence above.
 
 Investigator acceptance is complete. Product planning is the next tranche.
+
+
+## Phase 7 candidate — product planner (2026-11-05)
+
+Source tranche adds shared `factory-plan`: saved investigation to bounded expected
+behavior/scope and acceptance checks, with a durable wait for consequential
+product ambiguity. Exact direct user answers and observed provenance resolve the
+saved question in a new artifact, without changing approval/action ledgers.
+Clear bugs need no extra ceremony. Actionable plans hand off honestly to
+`design` / `blocked` / `factory-design`; design remains absent.
+
+`factory-run` now resumes old missing-planner blocks, retains real human waits,
+passes direct natural-language answers with item/question association, verifies
+and appends plan artifacts, and uses existing owner-gated save/finish. No schema,
+YAML, dependency or helper workflow logic change. Status capability text and
+operation/persistence docs now match planning availability. Existing sample/raw
+sources are reused; `docs/planner-evaluation.md` is a reviewer-only oracle for
+initial bug plan, feature wait, unanswered resume, direct-answer resume and
+cross-host preservation checks. It must not be model input.
+
+Source-tranche checks passed (2026-11-05):
+
+- `UV_CACHE_DIR=/private/tmp/ai-eng-checks/uv-cache uv run --isolated --frozen
+  --project plugins/factory ruff check --no-cache --config
+  plugins/factory/pyproject.toml plugins/factory/scripts tests`: all checks passed.
+- Same isolated frozen project/cache, `ruff format --check --no-cache
+  plugins/factory/scripts tests`: 8 files already formatted.
+- Same project/cache, `mypy --cache-dir /private/tmp/ai-eng-checks/mypy-phase7
+  --config-file plugins/factory/pyproject.toml plugins/factory/scripts`: success,
+  no issues in 4 source files (strict configuration).
+- `PYTHONDONTWRITEBYTECODE=1` with the same project/cache, `python -m unittest
+  discover -s tests -v`: 66 tests passed, including actual process/lock checks
+  through narrow escalation; no skips. No new helper behavior was introduced,
+  so no prose-mirroring regression tests were added.
+- `skill-creator/scripts/quick_validate.py` via the isolated frozen no-dev project
+  for changed `factory-plan`, `factory-run` and `factory-status`: all valid.
+- Python JSON parsing of package/fixture JSON files and `git diff --check`: passed.
+
+Parent fresh installed Codex/Claude behavior tests, package refresh and review are
+pending; this source tranche does not claim semantic acceptance or completion of
+Phase 7. No product/sample code, dependencies, schema, real config, integrations,
+schedules, commits, pushes or package versions changed in this tranche.
+
+
+### Phase 7 parent acceptance — 0.7.0 (2026-11-05)
+
+Accepted after reviewing the actual shared instructions, saved plans, questions,
+answer provenance, decisions and fresh installed Codex/Claude execution. Both
+hosts planned the existing bug without a human ceremony (one step), saved the
+feature's unresolved export default (one step), and retained that unanswered
+wait on a separate invocation (zero steps). A direct synthetic user answer then
+selected all tasks by default with explicit status filtering. Both new plans
+recorded the exact answer and its current-invocation provenance, distinguished
+that default from open-only, retained the original question, and handed off to
+design/blocked without implementing code or granting approval (one step).
+
+Fresh cross-host completed-plan resumes passed in both directions: each read the
+other host's plan/answer, retained the missing-design block, used zero steps and
+released ownership at revision 14. Parent assertions verified immutable prior
+artifact bytes/paths, sources/cursors, event/invocation prefixes, code references,
+fix counts and approval/action ledgers. All sample Git HEADs and clean trees were
+unchanged. No interruption was injected in this phase; prior recovery evidence
+is not presented as a new planner interruption test.
+
+Two initial Codex answer/resume probes stopped safely before begin because they
+interpreted the test prompt's sandbox restriction as excluding ordinary narrow
+process-inspection approval. Their unchanged snapshots and outputs are retained.
+Fresh retries explicitly allowed normal require_escalated review for the exact
+owner/helper command, without disabling the sandbox; both passed. No package or
+permission setting changed to make the retry pass. This is an acceptance-prompt
+clarification, not evidence that the initial probes completed successfully.
+
+Parent checks: all 66 unit tests, Ruff lint/format, strict mypy and changed skill/
+JSON validation passed. Both manifests and locked helper project are 0.7.0;
+normal Codex plugin add and Claude plugin update succeeded, and fresh sessions
+observed that installed version. All CLI tests exited before further edits.
+
+Private evidence: /private/tmp/ai-eng-phase7/{codex,claude}/initial contains
+before states/hashes and three checkpoints; claude/answer and codex/answer-retry
+contain accepted answer runs. Initial codex/answer remains the stopped probe.
+resume/{codex-retry,claude} contains successful cross-host runs; resume/codex
+retains the stopped probe. Parent verification.json and resume/verification.json
+record passing preservation assertions. No real Honor runtime or external service
+was mutated. Phase 7 is complete; technical design is next.

@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code and hands findings to planning; stops truthfully at unavailable later roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior and resumes product questions; stops truthfully at unavailable later roles.
 ---
 
 # Factory run
@@ -107,9 +107,9 @@ code references and collection cursors unchanged unless an evidenced addition is
 needed. Investigation does not consume a fix round.
 
 For completed bug/feature/verification findings, save `stage: plan`,
-`status: blocked`, `required_role: factory-plan` and a concrete next action pointing to the
-findings and any unresolved product choices. Phase 7 is absent: do not invent a
-plan or ask the investigator to choose product policy. For unavailable reproduction
+`status: ready`, `required_role: factory-plan` and a concrete next action pointing
+to the findings and any unresolved product choices. The shared planner is available;
+do not ask the investigator to choose product policy. For unavailable reproduction
 or a necessary missing input, save the report but retain `stage: investigate`
 with `waiting_for_human` and the precise unblock question, or `blocked` and the
 actual capability blocker; keep `required_role: factory-investigate`. Failed
@@ -124,9 +124,35 @@ exist but the transition was not saved, validate them and reconcile/save the
 handoff under the current revision/owner; only reuse identical operation content
 for an exact retry. If a newer state changes the decision, reconsider it rather
 than overwriting it. If the completed investigation transition is already saved,
-explain its findings from the artifacts and stop at the actual planner block;
-do not investigate again. Artifact existence alone is not a state transition.
+reuse its artifacts for planning within the remaining bound; do not investigate
+again. Artifact existence alone is not a state transition.
 Only report completion after the artifact is readable and the save succeeded.
+
+When the selected item is at plan and a semantic step remains, invoke shared
+`factory-plan` with the full preserved item, source captures, investigation and
+prior plan artifact paths, config/runtime and offline/live mode. An old
+`factory-plan` missing-role block is resumable now. An actual
+`waiting_for_human` stays waiting without a relevant direct answer or evidence;
+role availability alone does not resolve it. Read its saved question before
+interpreting the current user prompt. Pass a direct response verbatim to the
+planner with observed provenance and its association to the selected item/question.
+Natural-language skill input carries the answer; do not invent a helper CLI flag.
+If association or meaning is unclear, retain the wait and ask for the missing
+choice. No new source fixture is required for an explicit offline resume.
+
+Read the returned plan and verify its saved inputs and any answer provenance.
+Append readable absolute report paths under unique `plan-<attempt-id>` keys,
+retaining earlier artifact paths/bytes and source captures/cursors, code refs,
+fix counts, approvals/actions and event history. The planner returns findings;
+you save the complete item using ordinary owner-gated `save`. Keep a product
+question at `plan` / `waiting_for_human` / `factory-plan` with a concrete question
+and artifact reference. When actionable, save `design` / `blocked` /
+`factory-design` and point to the plan; design is absent. Do not implement code
+or treat a planning answer as external-action approval. Store decision JSON and
+operation ID beside the attempt; reconcile interrupted saves as above. Missing
+or partial artifacts do not establish completion. An unchanged human wait or
+missing-design block requires no new semantic decision. Finish/release ownership
+at the actual wait/block.
 
 Legacy Phase 3 fixtures contain no original message body or duplicate/ownership
 observations. Router availability does not create that evidence. Preserve the
@@ -148,9 +174,10 @@ retry; no external action is implemented here.
 Stop on the first unavailable role, wait, block, completed single step, or step
 limit. Otherwise reread saved state and choose another available step within the
 remaining bound. A completed route can proceed to investigation within that
-bound; a completed investigation stops at the absent planner. Respect genuine
-waits, no-action and invocation bounds. An old investigator missing-role block
-alone must not stop a now-available role. Explicit offline/synthetic resume stays
+bound; completed investigation can proceed to planning, which stops at the
+absent designer when actionable. Respect genuine waits, no-action and invocation
+bounds. An old investigator or planner missing-role block alone must not stop a
+now-available role. Explicit offline/synthetic resume stays
 offline; never invoke live watch merely because no new fixture is supplied. Call `finish` with the observed stop reason;
 on an error, preserve
 the saved transition and attempt a truthful `stopped` finish if ownership remains

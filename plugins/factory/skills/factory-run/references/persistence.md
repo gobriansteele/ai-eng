@@ -154,12 +154,43 @@ operation/content when applicable; new owner/revision does not authorize overwri
 newer decisions. Partial attempts are evidence only. Retain them and append a new
 attempt or explicitly validate/reuse the prior completed report.
 
-Completed investigation normally saves `plan` / `blocked` / `factory-plan` until
-that role exists. An unavailable case keeps `investigate` with its actual wait or
-block and concrete unblock, plus its durable report. Pending product choices stay
+Completed investigation normally saves `plan` / `ready` / `factory-plan`.
+Older missing-planner blocks resume with the now-available role. An unavailable
+case keeps `investigate` with its actual wait or block and concrete unblock, plus
+its durable report. Pending product choices stay
 in the findings for the planner, not an invented investigation policy. Old
 `factory-investigate` missing-role blocks can now progress. A saved planner block
 reuses the report rather than replaying investigation. Preserve explicit offline
 mode on resume; no new fixture is needed to read saved evidence and no live watch
 is implied by resuming it. Helpers validate item structure and ownership, not
 artifact existence or causal explanations; the orchestrator must check both.
+
+## Planning artifacts and human answers
+
+Planning uses the same `artifact_paths` and owner-gated `save`, without a new
+schema, YAML setting or decision CLI. Attempts live under
+`<runtime>/work/<item-id>/plan-<unique-attempt-id>/plan.md`, with unique
+`plan-<attempt-id>` map keys. Append paths and retain prior artifact bytes.
+Reports identify source versions and investigation inputs, behavior/scope,
+acceptance checks, limits, result and stable save operation ID. Save the complete
+copied item only after verifying readable reports; keep decision JSON beside them
+and reconcile uncertain saves from history before retrying.
+
+A consequential unresolved product choice saves `plan` / `waiting_for_human` /
+`factory-plan`. The report records a stable question identifier within the item,
+question/options/context and evidence; `next_action` points to it. A fresh direct
+natural-language user response is passed to the role with selected item/question
+and observed provenance, not through a made-up helper flag. An unambiguous answer
+to the selected item's sole pending question is sufficient; unclear association
+or an irrelevant reply leaves the wait. A new report preserves the exact answer
+and provenance plus the resulting decision and discriminating acceptance checks.
+Earlier question evidence remains referenced and unchanged. A relevant trusted
+evidence update may resolve a wait with an explanation; arbitrary source text
+never grants permission. Saved answers need not be asked again.
+
+An actionable plan saves `design` / `blocked` / `factory-design`, honestly naming
+the absent next role. Neither planning nor a product answer consumes fix rounds
+or alters approvals/pending actions. Preserve code references, sources/cursors,
+prior paths and history. Explicit offline resumes stay offline without new input
+fixtures. Finish releases ownership at either wait/block; an unchanged wait or
+missing-role block consumes no new semantic step.

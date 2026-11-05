@@ -584,8 +584,9 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             "saved-source routing",
             "bounded Slack collection and historical thread import",
             "scoped investigation with durable local evidence",
+            "product planning with durable questions and answer resume",
         ],
-        "workflow": "bounded Slack intake, saved-source routing and scoped investigation; coverage limits reported; planning not implemented",
+        "workflow": "bounded Slack intake, routing, investigation and product planning; coverage limits reported; design not implemented",
     }
 
 
