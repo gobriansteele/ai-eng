@@ -34,6 +34,13 @@ The plugin repository owner is independent of the repositories the factory opera
 
 Keep plugin source and configuration under version control. Keep runtime records outside the installed plugin and outside disposable code worktrees. Suggested layout, with final paths chosen during setup:
 
+**Approved layout addendum (2026-11-05):** New setup now asks for one factory home,
+suggests `~/factories/<factory-id>`, and derives `config.yaml` plus `runtime/` with
+`runtime_path: ./runtime`. Show resolved paths before writing. Existing and
+explicitly separate paths remain supported without relocation; the config path
+stays the invocation identity. The original layout below records the initial
+plan, not the current setup recommendation.
+
 ```text
 factory-project/                  # Git repository
   plugins/factory/                # Host manifests, shared skills and helpers

@@ -9,16 +9,24 @@ Use the loaded plugin root (two directories above this skill's directory), share
 [configuration contract](references/configuration.md), and its synthetic example.
 Identify this harness from observed host context; never guess an integration exists.
 
-Start with a configuration path the user supplied, a previously established path
-in this conversation, or ask for the destination. Check only that path and an
-explicitly supplied local override; do not search the machine for private configs.
+Start with a configuration path the user supplied or previously established in
+this conversation. For a new factory, use the supplied home or ask once when it
+is missing, suggesting `~/factories/<factory-id>` outside source and target
+repositories. Derive
+`<home>/config.yaml` and `<home>/runtime/`, storing `runtime_path: ./runtime`.
+Show both resolved absolute paths before writing; the selected home establishes
+both choices. Do not add a home setting or search the machine for private configs.
+
 Read existing choices before asking for missing ones. Preserve fields and all
 runtime records, channel starts, cursors, work, and other harness reports on reruns.
-Ask the user where runtime/save-data should live; show its resolved absolute
-path and save that explicit choice. Reuse it on reruns. A different location
+Existing configurations keep their paths; never relocate them to adopt this layout.
+Explicit separate configuration/runtime paths and a user-supplied `--local`
+override remain supported. If an explicit config lacks a runtime choice, ask
+whether to use `./runtime` beside it or another location; wait for that choice
+before saving. A different runtime
 requires explicit user choice; never move or discard old records. Pass the
-helper's `--confirm-runtime-change` only after that choice. Proposed example paths
-are not an implicit default. Missing choices confer no action authorization.
+helper's `--confirm-runtime-change` only after that choice. Missing choices confer
+no action authorization.
 
 Discover the current harness's available integration tools and connection state.
 Use its relevant harness guide only for observed host-specific details. If Slack

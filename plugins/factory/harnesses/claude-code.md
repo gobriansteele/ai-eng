@@ -13,13 +13,13 @@ The marketplace declaration remains in this project's ignored local settings.
 In a fresh session:
 
 ```text
-/factory:factory-setup Set up a factory using my Slack MCP connection. Let me choose the channels and runtime/save-data location. Save the configuration at <private-config-path>.
+/factory:factory-setup Set up a factory using my Slack MCP connection. Let me choose a factory home and the channels. Show the resolved config.yaml and runtime/ paths before writing.
 ```
 
 To inspect it later:
 
 ```text
-/factory:factory-status Use configuration <private-config-path>. Show the loaded version and setup readiness.
+/factory:factory-status Use configuration <factory-home>/config.yaml. Show the loaded version and setup readiness.
 ```
 
 For this local marketplace, the installed plugin reports `readFromFolder` pointing
@@ -38,7 +38,7 @@ claude
 ```
 
 Verify the version and loaded root in a fresh session. Updates were exercised
-through `0.2.2`; do not edit installed caches manually. For separate source-only
+through `0.2.3`; do not edit installed caches manually. For separate source-only
 development, `claude --plugin-dir ./plugins/factory` and `/reload-plugins` are
 supported, but should not mask an installed-plugin test.
 

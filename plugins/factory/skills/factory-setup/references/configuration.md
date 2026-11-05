@@ -22,7 +22,11 @@ records an adjacent
 `.<config-name>.factory-setup.json` association to remember the selected runtime.
 A changed runtime requires explicit user choice and `--confirm-runtime-change`;
 this never migrates records. Keep the association with the private configuration.
-The initial runtime path is a required user choice, not an automatic default.
+For a new factory, ask for one home (suggest `~/factories/<factory-id>`) and derive
+`<home>/config.yaml` with `runtime_path: ./runtime`. Show both resolved paths before
+writing. A selected home establishes both paths; existing or explicitly separate
+paths remain valid and are never silently relocated. The config path remains the
+explicit invocation identity; there is no home flag, schema field, or registry.
 Errors return exit 2 with JSON; partial setup returns exit 0 with explicit blocks.
 
 Schema version 1 requires exactly these fields (no unknown or missing keys):
@@ -30,7 +34,7 @@ Schema version 1 requires exactly these fields (no unknown or missing keys):
 ```yaml
 schema_version: 1
 factory_id: example
-runtime_path: ~/factories/example
+runtime_path: ./runtime
 slack:
   workspace_id: null
   channels: [] # once resolved: [{id: CHANNEL_ID, name: selected-channel}]
@@ -53,6 +57,11 @@ actions:
   deployment: disabled
   cleanup: preview_only
 ```
+
+Create this YAML at the selected home's `config.yaml` before invoking the helper;
+`./runtime` resolves beside that file. If using the authoring checkout's
+`config/example.yaml`, copy it into the selected home first. Validating that source
+file in place correctly rejects its runtime inside the authoring tree.
 
 Keep real YAML and runtime outside plugin source and disposable worktrees. No
 credentials belong in YAML. Factory ID uses lowercase letters, digits and hyphens.

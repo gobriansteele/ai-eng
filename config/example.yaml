@@ -1,6 +1,6 @@
 schema_version: 1
 factory_id: example
-runtime_path: ~/factories/example
+runtime_path: ./runtime
 slack:
   workspace_id: null
   channels: []

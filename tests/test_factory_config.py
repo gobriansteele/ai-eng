@@ -108,6 +108,50 @@ class ConfigTests(unittest.TestCase):
         with self.assertRaises(fc.ConfigError):
             fc.load_config(self.config, local)
 
+    def test_factory_home_setup_and_status_from_another_directory(self) -> None:
+        self.data["runtime_path"] = "./runtime"
+        self.save()
+        elsewhere = self.root / "elsewhere"
+        elsewhere.mkdir()
+        args = self.args()
+        args.config = Path("../config.yaml")
+        cwd = Path.cwd()
+        try:
+            os.chdir(elsewhere)
+            setup = fc.run(args)
+            args.command = "status"
+            status = fc.run(args)
+        finally:
+            os.chdir(cwd)
+        self.assertEqual(setup["setup_status"], "ready")
+        self.assertEqual(status["runtime_path"], str(self.root / "runtime"))
+        self.assertEqual(status["capability_report"], setup["capability_report"])
+        self.assertTrue((self.root / ".config.yaml.factory-setup.json").is_file())
+        self.assertTrue((self.root / "runtime/setup/example").is_dir())
+        self.assertFalse((elsewhere / "runtime").exists())
+        self.assertEqual(
+            yaml.safe_load(self.config.read_text())["runtime_path"], "./runtime"
+        )
+
+    def test_separate_config_and_local_runtime_setup(self) -> None:
+        overrides = self.root / "overrides"
+        overrides.mkdir()
+        local = overrides / "paths.yaml"
+        local.write_text("runtime_path: ../separate-runtime\n")
+        args = self.args()
+        args.local = local
+        setup = fc.run(args)
+        args.command = "status"
+        status = fc.run(args)
+        self.assertEqual(status["setup_status"], "ready")
+        self.assertEqual(setup["runtime_path"], str(self.root / "separate-runtime"))
+        self.assertEqual(status["capability_report"], setup["capability_report"])
+        self.assertTrue((self.root / "separate-runtime/setup/example").is_dir())
+        self.assertFalse((self.root / "runtime").exists())
+        self.assertEqual(
+            yaml.safe_load(self.config.read_text())["runtime_path"], "runtime"
+        )
+
     def test_escape_rejected_and_discovery_skips_symlinks(self) -> None:
         outside = self.root / "outside"
         (outside / ".git").mkdir(parents=True)

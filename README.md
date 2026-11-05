@@ -1,13 +1,15 @@
 # Local software factory
 
-`factory` is a local plugin for Codex and Claude Code. Version `0.2.2` provides
+`factory` is a local plugin for Codex and Claude Code. Version `0.2.3` provides
 `factory-setup` and `factory-status`, backed by one shared configuration helper.
 The orchestrator and work-processing roles are not implemented yet.
 
-Setup asks for a private configuration destination, runtime/save-data location,
-Slack workspace and channels, and repository discovery roots. It preserves those
-choices on reruns. Changing the runtime location requires an explicit choice and
-does not move existing records. Real configuration and runtime data stay outside
+Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
+`<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
+both resolved paths before writing, then asks for Slack workspace/channels and
+repository discovery roots. Existing configurations and explicit separate paths
+remain supported. Reruns preserve choices; changing runtime requires an explicit
+choice and does not move records. Real configuration and runtime stay outside
 this repository.
 
 Each harness checks its own integrations and writes a separate capability report.
@@ -26,7 +28,18 @@ host; installation does not transfer connections or credentials.
 
 The [synthetic configuration](config/example.yaml) and
 [configuration contract](plugins/factory/skills/factory-setup/references/configuration.md)
-describe supported fields. The helper uses Python 3.11+ and `uv`; its pinned
+describe supported fields. Copy the example into your selected home as
+`config.yaml` before setup or validation; validating the source example in place
+correctly rejects its `./runtime` inside this checkout. For example, after copying
+and editing it, validate with:
+
+```sh
+uv run --isolated --frozen --no-dev --project plugins/factory python plugins/factory/scripts/factory_config.py validate --config "<factory-home>/config.yaml"
+```
+
+Pass that same explicit config path to setup/status in either host. Advanced
+layouts may use a separate `runtime_path` or `--local <yaml>` filesystem override.
+The helper uses Python 3.11+ and `uv`; its pinned
 PyYAML dependency runs in an isolated environment outside the plugin package.
 
 ## Verify

@@ -311,3 +311,46 @@ its evidence as saved rather than freshly rechecked. A preceding read-only sandb
 attempt blocked uv's temporary cache writes and reported that limitation; the
 successful retry allowed temporary dependency-cache writes while leaving factory
 configuration/runtime outside the writable workspace. No factory records changed.
+
+
+## Factory-home refinement — accepted, version 0.2.3
+
+New setup uses one selected factory home, deriving `config.yaml` and `runtime/`
+with `runtime_path: ./runtime`. It shows the resolved paths before writing and
+preserves existing explicit layouts. There is no new schema field or helper
+command. The source example now requires copying outside the source tree before
+validation; validating it in place correctly fails the existing durable-path check.
+
+Parent review accepted the shared instructions, documentation and two regression
+tests. Ruff lint and formatting, strict helper mypy, and all 13 unit tests passed.
+The new tests execute setup/status from another working directory and retain
+support for a separately configured runtime through a local override. The setup
+skill frontmatter validator passed; production helper code did not change.
+
+Fresh installed sessions in Codex CLI 0.166.0-alpha.6 and Claude Code 2.1.310 used
+independent synthetic homes. Each received a selected home, factory ID, repository
+root and Jira label, with integrations deliberately unavailable. Both created
+`<home>/config.yaml`, preserved the literal `runtime_path: ./runtime`, resolved it
+to `<home>/runtime`, and returned partial setup rather than invented readiness.
+Neither requested separate configuration and runtime choices. Codex verified both
+loaded manifests at 0.2.3; Claude reported the version from its own manifest only.
+Parent metadata validation confirmed both manifests agree.
+
+The existing private factory was migrated separately using a fixture-tested,
+local-only operation. Original configuration, association, input evidence and
+runtime files were archived under the new runtime with a migration receipt.
+All 13 original runtime files were verified byte-for-byte. Both capability reports
+were carried forward for the changed runtime path with their observations and
+original check timestamps unchanged; historical report files were retained. This
+was not a new integration check. Intake and channel starts were preserved.
+
+Both fresh host sessions then ran read-only status against the migrated factory
+and returned ready from the preserved evidence. Codex compared contents and
+modification timestamps of all 38 existing factory files before and after its
+status check; none changed. Parent verification independently rechecked the
+original file hashes and both carried report timestamps after the host tests.
+
+Exact prompts/results and the migration receipt remain in the private runtime.
+The Claude synthetic run also left a disposable evidence scratch file in its
+isolated temporary test directory after its cleanup command was denied. No plugin
+source or real factory state was affected by that scratch file.
