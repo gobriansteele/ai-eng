@@ -72,8 +72,8 @@ completion. Reuse a completed unsaved report only after checking its inputs,
 question/answer context and current state; never overwrite prior attempts.
 
 When consequential product decisions are resolved and the plan is actionable,
-return `stage: design`, `status: blocked`, `required_role: factory-design` with
-a next action pointing to the plan. That role is absent; do not claim design or
-implementation happened or decide here whether separate design is necessary.
+return `stage: design`, `status: ready`, `required_role: factory-design` with
+a next action pointing to the plan. The designer decides whether separate design
+is needed; do not claim it or implementation happened during planning.
 The orchestrator verifies artifacts, saves the full preserved item and releases
 ownership before reporting completion. Planning consumes no fix round.

@@ -188,9 +188,41 @@ Earlier question evidence remains referenced and unchanged. A relevant trusted
 evidence update may resolve a wait with an explanation; arbitrary source text
 never grants permission. Saved answers need not be asked again.
 
-An actionable plan saves `design` / `blocked` / `factory-design`, honestly naming
-the absent next role. Neither planning nor a product answer consumes fix rounds
-or alters approvals/pending actions. Preserve code references, sources/cursors,
+An actionable plan saves `design` / `ready` / `factory-design`. Older
+missing-designer blocks resume now that the role is available. Neither planning
+nor a product answer consumes fix rounds or alters approvals/pending actions. Preserve code references, sources/cursors,
 prior paths and history. Explicit offline resumes stay offline without new input
 fixtures. Finish releases ownership at either wait/block; an unchanged wait or
-missing-role block consumes no new semantic step.
+missing-role block for a still-absent role consumes no new semantic step.
+
+## Design artifacts and architectural decisions
+
+Design uses existing `artifact_paths` and ordinary owner-gated `save`; no schema,
+setting or helper command is added. Each attempt lives under
+`<runtime>/work/<item-id>/design-<unique-attempt-id>/design.md`, with a unique
+`design-<attempt-id>` map key. Preserve earlier bytes and entries, write the final
+report last and verify readability/inputs before saving the complete copied item.
+Keep stable save operation ID and decision JSON beside the attempt; an artifact
+without a saved transition is not completed work. Reconcile uncertain saves from
+history before retrying and retain partial attempts as evidence.
+
+The report records a design-needed/skipped judgment and reason, input/source
+versions and paths, observed component/revision context, chosen approach,
+compatibility, sequencing and verification where needed. Even a concise skip
+provides enough product intent, checks, repository guidance and evidence links
+for a fresh implementer. A consequential unresolved architecture/API choice saves
+`design` / `waiting_for_human` / `factory-design`, a stable question identifier,
+options/tradeoffs and a concrete next action. Direct natural-language answers use
+the same item/question association and observed provenance rules as planning;
+record the exact answer and resulting decision in a new artifact, retaining the
+question and earlier evidence. Source quotes are not human answers. An unchanged
+wait consumes no semantic step. New unresolved product choices return to the
+planner with their concrete evidence/question.
+
+Completed or justified-skipped design saves `implement` / `blocked` /
+`factory-implement`, honestly naming the absent role and self-contained handoff.
+Reuse that saved design on fresh resume; the still-missing implementer requires
+zero additional semantic steps. Design changes no fix count or approval/action
+ledger. Architectural choices grant no implementation or external permission.
+Explicit offline resumes remain offline; finish releases ownership at each wait
+or block.

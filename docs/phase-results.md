@@ -1117,3 +1117,121 @@ resume/{codex-retry,claude} contains successful cross-host runs; resume/codex
 retains the stopped probe. Parent verification.json and resume/verification.json
 record passing preservation assertions. No real Honor runtime or external service
 was mutated. Phase 7 is complete; technical design is next.
+
+
+## Phase 8 candidate — technical design (2026-11-05)
+
+Source tranche adds shared `factory-design`. It records why a small clear bug
+can skip separate design, while preserving an actionable implementation handoff.
+Changes spanning systems/interfaces/storage or consequential tradeoffs receive
+technical decisions beyond the product plan: component contracts, chosen approach,
+sequencing, compatibility and verification. A consequential unresolved architecture
+or API choice saves a durable human question; only an actual associated direct
+answer with observed provenance resolves the choice. Quoted source instructions
+and model recommendations are not human permission. Completed/skipped design
+hands off honestly to `implement` / `blocked` / `factory-implement`, still absent.
+
+The planner now hands off to design/ready; `factory-run` resumes old missing-design
+blocks, preserves real human waits without another step, validates additive
+artifacts and uses existing owner-gated save/finish. Completed design is reused
+on fresh resume. No state/config schema, workflow engine, dependency or new helper
+operation is needed. Helper/status capability text, README and persistence docs
+reflect design availability. `docs/designer-evaluation.md` is reviewer-only: it
+reuses accepted bug plans and provides fresh raw-source cross-system setup,
+wait/answer and cross-host preservation checks without feeding its oracle to
+workers.
+
+The minimal synthetic owner-report sample has separate task exporter/report
+importer components, local task data, a saved legacy feed and architecture context.
+The existing strict importer rejects added row fields; owner data is present but
+not exported. Product intent is settled in the raw request, while contract
+evolution remains an actual human decision. These are contextual source inputs,
+not prewritten role results. Full acceptance can run route/investigate/plan in
+three steps, then design/wait and direct-answer resume without changing fixture
+semantics or fabricating prior completions.
+
+Source checks passed (2026-11-05), using `UV_CACHE_DIR=/private/tmp/ai-eng-checks/uv-cache`
+and the frozen isolated `plugins/factory` project:
+
+- `uv run --isolated --frozen --project plugins/factory ruff check --no-cache
+  --config plugins/factory/pyproject.toml plugins/factory/scripts tests
+  plugins/factory/fixtures/design/sample`: all checks passed.
+- Same project, `ruff format --check --no-cache plugins/factory/scripts tests
+  plugins/factory/fixtures/design/sample`: 12 files already formatted. Initial
+  check requested one line-wrap correction in the new importer fixture; formatter
+  applied it and the repeated check passed.
+- Same project, `mypy --cache-dir /private/tmp/ai-eng-checks/mypy-phase8
+  --config-file plugins/factory/pyproject.toml plugins/factory/scripts`: success,
+  no issues in four source files (strict configuration).
+- `PYTHONDONTWRITEBYTECODE=1` with the same project/cache, `python -m unittest
+  discover -s tests -v`: all 66 tests passed, including actual process/lock
+  checks through narrow escalation; no skips. All checks were repeated after the
+  helper capability text update. No helper workflow logic changed, and no
+  prose-mirroring tests were added.
+- `skill-creator/scripts/quick_validate.py` via the frozen isolated no-dev project
+  for changed `factory-design`, `factory-plan`, `factory-run`, `factory-status`:
+  all valid. All 26 package/fixture JSON files parsed and the new raw source
+  passed the existing `factory_source.source` validator.
+- An isolated temporary copy of the sample ran under observed Python 3.12.8
+  from the frozen helper environment: producer to importer and saved legacy
+  import both rendered `1 / Prepare handoff / open` and `2 / Archive report /
+  done`; a row with an extra owner field failed with `Unsupported task feed row
+  fields`. This establishes fixture baseline behavior, not designer acceptance.
+- `git diff --check`: passed.
+
+Parent review, packaging/refresh and actual fresh installed Codex/Claude behavior
+runs remain required. This candidate makes no semantic acceptance claim. No
+package versions, installs, real factory configuration, product implementation,
+integrations, schedules, commits or pushes changed in this source tranche.
+
+
+### Phase 8 parent acceptance — 0.8.0 (2026-11-05)
+
+Accepted after parent review of the shared role/integration, actual generated
+handoffs, raw execution evidence and owner-gated saved decisions. Both installed
+hosts resumed their accepted small bug, recorded a justified separate-design
+skip with an actionable handoff, and saved implement/blocked at the absent
+factory-implement role (one step). Neither repeated the investigation or changed
+the sample baseline.
+
+Both hosts then processed the new cross-component raw source through real routing,
+investigation and planning (three steps), using separate copied samples. Actual
+Python 3.12.8 probes showed existing and saved legacy imports succeed and an added
+owner field is rejected by the old strict importer. Planning preserved the settled
+product intent and handed the unresolved shared feed-contract choice to design.
+The designer saved a concrete question and design/waiting_for_human (one step).
+A subsequent unanswered invocation retained that wait with zero steps.
+
+After reading each actual question, the parent supplied a direct synthetic answer:
+separate v2, legacy default, explicit opt-in, dual-reader support released first,
+legacy retirement outside scope. Both fresh answer runs saved that exact answer
+with observed provenance, preserved the prior question, and produced meaningful
+technical handoffs (one step). Parent read the actual designs: producer selection,
+identified envelope and row contracts, importer dispatch/validation/rendering,
+compatibility matrix, verification and release sequencing. Codex additionally
+spelled out adoption rollback and the need to retain a reader for saved v2 files.
+Local evidence is not deployed compatibility; neither design claims a release.
+
+Fresh cross-host completed-design resumes passed in both directions, reading the
+other host's artifacts without the original chat. Both retained implement/blocked,
+used zero steps and released ownership at revision 15. Parent assertions verified
+preserved sources/cursors, prior artifact bytes/paths, history prefixes, code refs,
+fix counts and approval/action ledgers; sample heads/trees remained unchanged.
+No implementation or external action occurred. An adversarial quoted-approval
+case and an artifact-before-save interruption were not separately injected; those
+behaviors are specified but not claimed as newly tested here.
+
+Parent repeated all 66 unit tests, Ruff lint/format and strict mypy successfully.
+Agent changed-skill frontmatter, JSON/source validation and copied-fixture smoke
+also passed. Manifests and locked project are 0.8.0, with no dependency change;
+normal Codex add and Claude update succeeded and fresh sessions observed 0.8.0.
+All test CLIs exited before later edits or refreshes.
+
+Private evidence is /private/tmp/ai-eng-phase8/{codex,claude}/initial (exact prompts,
+tool events, baseline hashes and four checkpoints), each host's answer directory
+(exact direct answer, before/after snapshots and preservation evidence), and
+resume/{codex,claude} (cross-host runs). Parent verification.json and
+resume/verification.json record passing structural and preservation assertions.
+Actual role artifacts remain in the mapped homes in homes.json; existing bug
+homes are the original accepted Phase 6/7 homes. Real Honor runtime is unchanged.
+Phase 8 is complete; implementation is next.

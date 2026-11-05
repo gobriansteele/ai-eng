@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "title": "Prepare handoff",
+    "status": "open"
+  },
+  {
+    "id": 2,
+    "title": "Archive report",
+    "status": "done"
+  }
+]

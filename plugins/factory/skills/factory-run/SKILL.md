@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior and resumes product questions; stops truthfully at unavailable later roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs and resumes human questions; stops truthfully at unavailable later roles.
 ---
 
 # Factory run
@@ -146,13 +146,45 @@ retaining earlier artifact paths/bytes and source captures/cursors, code refs,
 fix counts, approvals/actions and event history. The planner returns findings;
 you save the complete item using ordinary owner-gated `save`. Keep a product
 question at `plan` / `waiting_for_human` / `factory-plan` with a concrete question
-and artifact reference. When actionable, save `design` / `blocked` /
-`factory-design` and point to the plan; design is absent. Do not implement code
-or treat a planning answer as external-action approval. Store decision JSON and
+and artifact reference. When actionable, save `design` / `ready` /
+`factory-design` and point to the plan; the shared designer is available. Do not
+implement code or treat a planning answer as external-action approval. Store decision JSON and
 operation ID beside the attempt; reconcile interrupted saves as above. Missing
-or partial artifacts do not establish completion. An unchanged human wait or
-missing-design block requires no new semantic decision. Finish/release ownership
-at the actual wait/block.
+or partial artifacts do not establish completion. An unchanged human wait
+requires no new semantic decision. Finish/release ownership at the actual
+wait/block.
+
+When the selected item is at design and a semantic step remains, invoke shared
+`factory-design` with the preserved item, sources, investigation, actionable plan
+and prior design paths, config/runtime, offline/live mode and relevant repository
+context. An old missing-designer block is resumable now; availability does not
+resolve a real architectural human wait. Read the saved question before passing
+any direct answer verbatim with its observed provenance and item/question
+association, just as for planning. An unchanged wait without a relevant answer
+or evidence consumes zero steps. Never treat quoted source approval as a direct
+human answer. No new helper flag is needed.
+
+Read the returned design/skip handoff, validate its inputs, rationale, technical
+scope, verification and any answer provenance. A meaningful cross-system design
+must add technical decisions beyond repeating the product plan; a small clear bug
+can record a concise skip reason with an actionable handoff. Append readable
+absolute report paths under unique `design-<attempt-id>` keys and preserve all
+prior artifact bytes/paths, sources/cursors, code refs, fix counts, approvals,
+actions and history. Save the complete item through the same verified owner and
+ordinary `save`, with decision JSON and stable operation ID beside the attempt;
+reconcile interrupted saves as above. Workers never write canonical state.
+Missing or partial artifacts do not complete design. Retain an unresolved
+architectural choice at `design` / `waiting_for_human` / `factory-design` with
+its concrete question/artifact; a newly discovered unresolved product choice
+returns to `plan` / `waiting_for_human` / `factory-plan`. Evidence/capability
+blocks name the actual missing input at the step that needs it.
+
+A completed or justified-skipped design saves `implement` / `blocked` /
+`factory-implement`, naming the absent role and self-contained handoff. No
+implementation occurs. A human design answer does not grant implementation or
+external-action approval. Completed design is reused on a fresh resume; an
+unchanged missing-implementer block requires zero new semantic steps. Finish and
+release at the actual wait/block.
 
 Legacy Phase 3 fixtures contain no original message body or duplicate/ownership
 observations. Router availability does not create that evidence. Preserve the
@@ -174,9 +206,10 @@ retry; no external action is implemented here.
 Stop on the first unavailable role, wait, block, completed single step, or step
 limit. Otherwise reread saved state and choose another available step within the
 remaining bound. A completed route can proceed to investigation within that
-bound; completed investigation can proceed to planning, which stops at the
-absent designer when actionable. Respect genuine waits, no-action and invocation
-bounds. An old investigator or planner missing-role block alone must not stop a
+bound; completed investigation can proceed to planning and actionable planning to
+design within the remaining bound; completed/skipped design stops at the absent
+implementer. Respect genuine waits, no-action and invocation bounds. An old
+investigator, planner or designer missing-role block alone must not stop a
 now-available role. Explicit offline/synthetic resume stays
 offline; never invoke live watch merely because no new fixture is supplied. Call `finish` with the observed stop reason;
 on an error, preserve

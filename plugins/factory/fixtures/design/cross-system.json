@@ -1,0 +1,20 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:design:owner-report",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/design/owner-report",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Rowan",
+      "text": "For the weekly handoff, please include each task’s owner display name in the task export and in report-import’s rendered report. Include all tasks as today. Unassigned tasks should display “Unassigned” in the report; their exported owner value should be null. No owner editing or new filtering is requested."
+    },
+    {
+      "id": "m2",
+      "author": "Casey",
+      "text": "Previously saved export files must remain importable by report-import with their existing ID, title and status intact. Task-export and report-import are maintained and released separately. We have not selected how their feed contract should evolve for this change; use the checked-in architecture notes to identify the compatibility decision before implementation."
+    }
+  ],
+  "availability": "Complete supplied synthetic request. Only the authorized copied owner-report sample and its architecture notes are available; no live integrations, deployed services or real customer data.",
+  "evidence": []
+}
