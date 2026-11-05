@@ -219,10 +219,82 @@ question and earlier evidence. Source quotes are not human answers. An unchanged
 wait consumes no semantic step. New unresolved product choices return to the
 planner with their concrete evidence/question.
 
-Completed or justified-skipped design saves `implement` / `blocked` /
-`factory-implement`, honestly naming the absent role and self-contained handoff.
-Reuse that saved design on fresh resume; the still-missing implementer requires
-zero additional semantic steps. Design changes no fix count or approval/action
-ledger. Architectural choices grant no implementation or external permission.
+Completed or justified-skipped design saves `implement` / `ready` /
+`factory-implement` with a self-contained handoff. Reuse saved designs and resume
+old missing-implementer blocks now that this role is available. Design changes no
+fix count or approval/action ledger. Architectural choices grant no implementation or external permission.
 Explicit offline resumes remain offline; finish releases ownership at each wait
 or block.
+
+## Implementation authorization, resources and evidence
+
+Implementation uses existing `artifact_paths`, observed `code` references and
+ordinary owner-gated `save`. No schema, helper command or external action enum
+is added. Attempts live under
+`<runtime>/work/<item-id>/implementation-<unique-attempt-id>/`; append distinct
+absolute report paths for preparation and final evidence under unique
+`implementation-<attempt-id>` keys. Preserve all prior bytes. Final reports are
+written after their evidence, with stable save operation IDs and decision JSON
+beside attempts. Partial artifacts are not a completed canonical transition.
+
+The trial needs explicit selected-item local implementation authorization. Save
+its exact direct instruction, observed provenance, repository/item scope and
+limits in immutable report context. Planning/design answers and source quotes
+are not authorization. Reuse applicable saved direct-user evidence, respecting
+newer restrictions. The existing approvals ledger supports external actions,
+so it remains unchanged for local edits or separately explicitly authorized
+local commit. Read the loaded `factory-implement` contract before deciding even
+an implement-stage authorization wait or capability block. Without authorization,
+write a real `implementation-<unique-attempt-id>/preparation.md` under this item's
+runtime work directory. It records exact current direct instruction/provenance,
+absence of applicable authorization, item/source/repository, bounded proposed
+local change/checks and limits, readable inputs, concrete question with a stable
+identifier within the item, and stable save operation ID. Resources may remain
+unallocated. The orchestrator verifies that readable report, appends its absolute
+path under a unique `implementation-<attempt-id>` artifact key, and saves
+`implement` / `waiting_for_human` / `factory-implement` in the same owner-gated
+transition; `next_action` points to its question/report. Inline next-action text
+and decision JSON alone are insufficient. An identical unanswered wait consumes
+zero steps only when its saved report/reference is readable; an older malformed
+wait gets one additive evidence-repair save preserving original history/artifacts
+and never inventing past provenance. Capability/environment blocks retain
+implement/blocked and name the missing prerequisite; no successful-check claim
+without execution.
+
+Resolve worktree creation/adoption through the current harness guide. Before
+code mutation, save an implement/ready preparation checkpoint with observed
+`code.worktree`, `code.branch`, `code.worker_reference` and the report. It records
+source root/common Git directory, exact base ref/commit, source and worktree
+HEAD/status, actual creation/supplied provenance, authorization, worker identity
+and exclusivity. Runtime/evidence remain outside the code worktree. This save
+consumes a step; no code edit occurs if the invocation ends there. A valid saved
+same-owner preparation needs no new save. If creation/save was interrupted,
+reconcile artifacts, history and Git worktree/branch state before retrying;
+never create a second resource just because a save response was lost.
+
+A deliberate host/worker handoff first stops the prior invocation/worker, then
+verifies current Git bytes, ownership and destination permissions. Save the
+new observed worker reference plus an additive handoff report before further
+code edits, reusing the same branch/worktree. Live/unknown ownership, conflicting
+dirty work, unavailable worktree or unverifiable provenance blocks mutation;
+never force takeover or silently replace resources. Merely explaining a completed
+review-stage implementation does not need branch write takeover.
+
+The final report carries readable source/investigation/plan/design paths,
+authorization/preparation, intended and actual behavior, exact commands/cwd/exit
+statuses/raw output paths, runtime/tool versions, full base and HEAD IDs, changed
+path status, full diff including staged/unstaged and added content, exact changed
+file copies/hashes, limits and next action. A dirty HEAD alone is not a revision
+of implemented code. Validate actual result bytes against evidence before save;
+keep that evidence outside disposable code checkouts for fresh review. Local
+commit is optional and requires explicit authorization; never push/open a PR.
+
+Successful code and prescribed checks save `review` / `blocked` / `factory-review`
+with the report and exact result evidence. Review is absent, so an unchanged
+resume consumes zero steps, reuses resources/evidence and performs no code work.
+`reviewed_commit` stays unset; initial implementation consumes no fix round.
+Preserve sources/cursors, ledgers, counters and history. Required missing/failed
+checks keep the item at implement/blocked, retaining any code and partial evidence.
+Reconcile unsaved completed reports from current history and exact result bytes
+rather than repeating implementation. Finish releases the canonical owner at the
+actual wait/block; no cleanup or later external action is implied.

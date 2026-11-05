@@ -125,3 +125,56 @@ or bot coverage. Verify selected workspace/channel access and present tool
 permissions now. Report unavailable discovery as a precise limitation and retain
 manual import; do not replace authenticated host tools with a client/service.
 Shared contracts and normalized pages remain host-independent.
+
+## Implementation worktrees
+
+Discover actual tools/help in the current host before creating resources. In
+Codex desktop, use the app's `create_worktree` capability for a new managed
+worktree: supply the observed source repository as `sourceRoot` and full chosen
+base commit as `ref`; inspect existing attached artifacts first. It starts
+detached and returns a workspace directory (or pending operation to reconcile).
+Use the returned path explicitly; create an unoccupied `codex/<description>`
+branch there following applicable repository instructions. Record returned
+provenance and actual Git common directory, HEAD, branch and worktree list.
+A tool being exposed is not evidence that creation succeeded. If a request
+hangs or its result is uncertain, reconcile operation status, attachments and
+actual Git worktrees before retrying; never create duplicates.
+
+The installed `codex-cli 0.166.0-alpha.6` advertises `--worktree` in both
+`codex --help` and `codex exec --help` as starting a managed worktree session.
+The [official CLI reference](https://learn.chatgpt.com/docs/developer-commands?surface=cli)
+also supports new local `codex exec --worktree` runs, incompatible with `resume`,
+`review`, `--ephemeral` and `--ignore-user-config`. Help alone does not establish
+the observed path, branch, base selection, exit persistence or cross-host
+usability. Native creation must be verified in the actual environment before
+relying on it. On 2026-11-05 parent read-only
+`codex exec --worktree --approve-for-me -C <clean-sample-source> ...` probes
+created detached clean checkouts for both accepted bug sources at their observed
+HEADs; Git worktree inspection confirmed persistence immediately after CLI exit. This verifies
+that native preparation path, not indefinite retention or arbitrary-base
+selection. The desktop app-tool attempt returned no successful creation result;
+Claude native creation remains untested. Do not launch a second factory owner
+inside an existing invocation just to obtain a checkout. A desktop/orchestrator
+may prepare a worktree before launching the foreground factory CLI, then supply
+its actual path and observed provenance for adoption. A CLI that has no working
+creation capability and no verifiable prepared checkout saves a precise
+implement/blocked capability request; do not silently use `git worktree add`.
+
+The [official worktree documentation](https://learn.chatgpt.com/docs/environments/git-worktrees)
+describes detached starts, one branch per worktree and managed cleanup/restoration.
+Managed paths can be removed by app lifecycle or retention behavior, so they are
+not archival evidence. Preserve preparation, exact diff/content and check outputs
+in factory runtime outside that checkout. Do not archive or remove an active
+implementation's worktree. If it disappears, stop and request restoration through
+the host rather than inventing a new equivalent checkout or claiming tests passed.
+These lifecycle details are documentation, not a newly exercised cleanup test.
+
+For a supplied existing dedicated worktree, use its observed path; creation need
+not be repeated. Verify common Git directory/base/source, exclusive branch and
+prior dirty bytes against saved evidence. The CLI may remain launched from the
+factory home and execute code/checks with explicit working directories in that
+worktree, retaining runtime access. Request only the normal narrow command/path
+permission if needed. Before editing, the orchestrator saves authorization,
+preparation and observed code references. Cross-host handoff uses those durable
+paths after the old CLI stops, not a Codex chat identifier. Recheck permissions in
+the destination; no new branch or worktree is needed to read completed evidence.

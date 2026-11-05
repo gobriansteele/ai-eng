@@ -22,8 +22,11 @@ through factory-investigate, with durable evidence and no product changes.
 Product planning through factory-plan is available, including durable product
 questions and direct-answer resume. Technical design through factory-design is
 available, including justified small-change skips, durable architectural questions
-and self-contained implementation handoffs. Implementation and later work roles,
-and scheduling are not implemented. With an established config, optionally use
+and self-contained implementation handoffs. Local implementation through
+factory-implement is available with explicit selected-item authorization, one
+dedicated code worktree, saved ownership and durable diff/check evidence. Review,
+PR follow-up and later work roles, and scheduling are not implemented. With an
+established config, optionally use
 `factory_work.py inspect` read-only to report the selected active item stage/status/next
 action and pending item IDs and snapshot path; never acquire an invocation or change work for status.
 

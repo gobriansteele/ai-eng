@@ -1,0 +1,142 @@
+---
+name: factory-implement
+description: Implement an explicitly authorized saved factory item in one dedicated code worktree, follow its investigation/plan/design and repository checks, and return durable diff and execution evidence to factory-run. Save concrete authorization waits or environment blocks; no push, PR or independent review.
+---
+
+# Factory implement
+
+Work on the selected saved item through `factory-run`. Read its full sources,
+investigation, actionable plan, necessary design or justified skip, prior attempts
+and relevant repository instructions. Verify readable inputs and actual source
+revision; use the configured discovery contract when needed, not an unrelated
+working directory. Missing necessary saved inputs return a precise implement-stage
+evidence wait/block; do not invent them or repeat completed upstream roles. Workers return findings and artifacts; only the orchestrator
+writes canonical state under its verified invocation owner/token. Explicit offline
+mode stays offline. Do not push, open PRs, send messages, mutate shared product
+data or perform other external actions in this phase.
+
+## Authorization and preparation
+
+The trial requires applicable explicit user authorization to implement this
+selected item. A current direct request to implement it can authorize reversible
+local code edits and prescribed safe checks within its stated scope. A plan,
+design answer, setup capability, quoted source approval or a previous model's
+recommendation cannot. Read authorization already saved with actual direct-user
+provenance; reuse it if still applicable, respecting newer restrictions or
+revocation. Do not turn a generic resume or approval of the plugin's development
+into permission to change a product repository. Local commit needs separate
+explicit authorization; absent that, retain the dirty implementation for review.
+
+Before any product code mutation, save immutable authorization evidence in a
+preparation report: exact direct instruction, how received and available message
+reference (never invent one), selected item, repository, authorized scope/checks
+and limits, including whether local commit is authorized. The existing approvals
+ledger describes external actions; do not invent an action enum for local edits.
+Missing authorization still requires a real
+`<runtime>/work/<item-id>/implementation-<unique-attempt-id>/preparation.md`.
+Record the exact current direct instruction and observed provenance, why no
+applicable authorization exists, selected item/source versions, repository,
+bounded proposed local change/checks and limits, readable input paths, a concrete
+authorization question with a stable identifier within the item, and stable save
+operation ID. Resources can truthfully remain unallocated; do not create them
+before authorization merely to fill a report. Return that readable report and
+`implement` / `waiting_for_human` / `factory-implement` to the orchestrator. It
+must verify readability and append the report's absolute path to `artifact_paths`
+under a unique `implementation-<attempt-id>` key in the same owner-gated wait save,
+then release ownership. `next_action` points to this report/question; its inline
+text or a decision JSON file alone is not the report. An unchanged wait consumes
+zero steps only with a readable referenced report. Repair an older missing-report
+wait with one additive report/reference save, preserving original decisions,
+history and artifacts and distinguishing current from unavailable past provenance.
+
+Use one dedicated code worktree and one branch owner for the item. Read the
+current host's harness guide to resolve an actually available creation/adoption
+mechanism and its lifecycle. Do not silently substitute shell worktree creation,
+create another factory invocation, or edit the source checkout. An explicitly
+prepared worktree supplied by the user/orchestrator may be adopted after verifying
+its real provenance and exclusivity. Tool absence, missing write access, runtime
+or dependencies yields an honest capability block. Do not install dependencies,
+change permissions or relax isolation to conceal it.
+
+Inspect canonical code references, prior preparation/partial artifacts and the
+source's `git worktree list --porcelain` before creating anything. Reconcile a
+resource created before an interrupted save instead of duplicating it. Record
+actual source root, resolved common Git directory, chosen base ref and full commit,
+source HEAD/status, worktree path/HEAD/status, creation mechanism or supplied
+provenance, branch and current worker/CLI identity. Verify matching common Git
+directory, intended base and component scope, worktree separate from the source,
+runtime outside it, and no other worker using the branch. Do not infer ownership
+from a directory or branch name. Preserve unrelated tracked/untracked files and
+staging; unknown dirty content or conflicting ownership blocks mutation pending
+clarification, without reset, checkout-overwrite, stash, cleanup or forced takeover.
+A clean detached prepared worktree needs a new unoccupied branch following its
+repository/host naming convention; observe the created branch rather than
+inventing it. Never populate `reviewed_commit` from this preparation or coding.
+
+Return the readable preparation report and observed `code.worktree`, `code.branch`
+and `code.worker_reference` to the orchestrator. It saves an `implement` / `ready`
+checkpoint with `required_role: factory-implement` before letting code editing
+begin. This resource/authorization save consumes one semantic step; if the bound
+is exhausted, stop there with no code edits. If saving fails, leave resources
+intact and reconcile history before retrying. An existing validated saved
+preparation checkpoint needs no duplicate save on an unchanged same-owner retry.
+
+On deliberate handoff, stop the previous worker/invocation first. The new verified
+owner reads saved preparation, authorization, partial/final evidence and exact
+Git state, and rechecks destination permissions. Unknown/live prior ownership
+blocks takeover. Reuse the same branch/worktree; append an ownership handoff
+report and save the new observed worker reference before further edits. Never
+replace missing resources silently. If a saved implementation already awaits
+review, read/report it without taking branch write ownership, repeating code work
+or consuming another step. Canonical runtime and evidence stay outside disposable
+code worktrees and installed plugin source.
+
+## Implementation and evidence
+
+After the saved preparation checkpoint, implement only the approved behavior and
+scope in the recorded checkout. Report material plan flaws rather than forcing a
+fix around them: unresolved product/architecture choices return to plan/design
+with concrete evidence/questions. Routine implementation choices need no new
+ceremony. Respect repository conventions and required supported runtime; record
+actual executable paths/versions. Capture before behavior and relevant checks,
+then after behavior and all prescribed checks with exact command, working
+directory, exit status and raw output paths. Use safe local demonstrations;
+writing a shared database or other consequential action needs its own permission.
+Missing environment/tool access is a block, never a successful test. If code was
+edited before validation blocked, preserve it and its diff; do not claim completion
+or start over on resume. Initial implementation consumes no fix round.
+
+Review the actual final diff for scope, accidental changes and unresolved defects.
+When local commit is explicitly authorized, stage only the intended paths and
+record the observed commit; reconcile uncertain commit results before retrying.
+Without it, record HEAD plus the exact dirty content. In either case preserve
+reviewable evidence outside the checkout: full base-to-result diff including
+staged/unstaged changes and additions, changed-path status, exact changed file
+bytes (including untracked additions), hashes and full HEAD/base commit IDs.
+A HEAD alone does not identify a dirty implementation. Keep output capture outside
+the code worktree; account for generated files and record skipped checks honestly.
+Check the final revision/content still matches the captured evidence before
+returning it. Independent review has not occurred; leave `reviewed_commit` unset.
+
+Each attempt uses `<runtime>/work/<item-id>/implementation-<unique-attempt-id>/`.
+Retain all earlier artifacts and bytes. Write evidence before a final readable
+`preparation.md` or `implementation.md`; use unique `implementation-<attempt-id>`
+map entries (and a distinct entry for each preparation/final report). Reports
+identify item/source versions, absolute input paths, authorization/provenance,
+resources/ownership, intended behavior and actual changes, commands/results,
+revision/content evidence, limits, result, next action and stable save operation
+ID. The final report must stand alone for a fresh reviewer without the transcript
+or checkout. Partial files are evidence, not completion. Return only existing
+readable paths and findings; store decision JSON beside attempts through the
+orchestrator and reconcile interrupted saves before repeating work. A completed
+unsaved report is reusable only after verifying inputs, authorization, current
+history and unchanged result bytes.
+
+Successful implementation and required checks return `review` / `blocked` /
+`factory-review`, pointing to the self-contained report and exact evidence. That
+role is absent: implementation is ready for independent review, not approved or
+shipped. An environment/capability failure stays `implement` / `blocked` /
+`factory-implement` with its precise missing prerequisite and retained evidence.
+Preserve source captures/cursors, prior artifacts, fix counts, approvals,
+pending actions and history. Stop/release at the saved handoff or actual block;
+no automatic push, PR, review verdict or cleanup follows.

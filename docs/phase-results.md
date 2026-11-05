@@ -1235,3 +1235,163 @@ resume/verification.json record passing structural and preservation assertions.
 Actual role artifacts remain in the mapped homes in homes.json; existing bug
 homes are the original accepted Phase 6/7 homes. Real Honor runtime is unchanged.
 Phase 8 is complete; implementation is next.
+
+
+## Phase 9 source candidate — local implementation (2026-11-05)
+
+Added shared `factory-implement` with orchestration, design handoff, status and
+helper capability text. It requires explicit selected-item local authorization,
+retains exact direct-user scope/provenance in immutable report context and leaves
+the external-action ledger unchanged. A dedicated worktree/branch/observed owner
+preparation checkpoint is saved before code mutation; that checkpoint consumes
+a step. Initial implementation consumes no fix round. Interrupted preparation,
+same-checkout handoff and missing-resource reconciliation preserve prior evidence
+and prohibit silent duplicate resources or unsafe ownership takeover.
+
+The implementation report requires actual supported-runtime commands/results,
+before/after behavior, full base/HEAD and dirty diff/content/hash evidence outside
+the disposable checkout. Missing required checks remain an implement-stage block.
+Successful implementation hands off to absent `factory-review`, without populating
+`reviewed_commit` or performing push/PR/external actions. Unchanged authorization
+waits and review blocks consume zero steps. Added reviewer-only
+`docs/implementer-evaluation.md`; no expected patch or prepared role outputs are
+fed to workers. No persistence schema, helper workflow logic, dependency or fixture
+change was needed.
+
+Harness guides distinguish observed capabilities, preparation/adoption and
+lifecycle documentation. Installed CLI help exposes native worktree options in
+Codex 0.166.0-alpha.6 (including exec) and Claude Code 2.1.310. Official docs were
+opened for actual lifecycle/CLI constraints. The parent exercised read-only
+Codex native preparation probes for both accepted bug source repositories and
+confirmed clean detached checkouts at their observed source HEADs, still present
+immediately after CLI exit. This is native
+Codex creation/persistence evidence; it does not establish native Claude creation,
+indefinite preservation or desktop app-tool creation. The desktop create-worktree
+attempt yielded no success result and reconciliation observed no created checkout
+at that point. Failed/uncertain creation must reconcile before retrying. Evidence:
+`/private/tmp/ai-eng-phase9/worktree-probe/{codex,claude-target}` (exact
+commands/prompts, events, observed paths/common Git directories/bases/status and
+returned results). The Claude-target checkout was also created by Codex; it is
+prepared for later Claude adoption, not evidence of native Claude creation.
+
+Source checks passed using `UV_CACHE_DIR=/private/tmp/ai-eng-checks/uv-cache`
+and the frozen isolated `plugins/factory` project:
+
+- `uv run --isolated --frozen --project plugins/factory ruff check --no-cache
+  --config plugins/factory/pyproject.toml plugins/factory/scripts tests`:
+  all checks passed.
+- Same project, `ruff format --check --no-cache plugins/factory/scripts tests`:
+  eight files already formatted.
+- Same project, `mypy --cache-dir /private/tmp/ai-eng-checks/mypy-phase9
+  --config-file plugins/factory/pyproject.toml plugins/factory/scripts`:
+  success, no issues in four source files under strict configuration.
+- `PYTHONDONTWRITEBYTECODE=1` with the same project/cache, `python -m unittest
+  discover -s tests -v`: all 66 tests passed, no skips. The first sandboxed run
+  had two errors because `ps` was denied; rerunning the exact command through
+  narrow escalation passed actual process identity/death/lock checks.
+- `skill-creator/scripts/quick_validate.py` via the frozen isolated no-dev
+  project for changed `factory-implement`, `factory-run`, `factory-design` and
+  `factory-status`: all valid. All 26 package/fixture JSON files parsed; no JSON
+  source changed.
+- `git diff --check`: passed. Actual source diff and new skill/reviewer docs
+  were read before freezing this candidate.
+
+Parent review, packaging/refresh and fresh installed semantic acceptance in both
+hosts remain required. No source-side semantic implementation success is claimed.
+Authorization wait, actual authorized bug implementation, missing-environment
+case and cross-host evidence resume are acceptance tasks for those fresh runs.
+No package versions, installs, real factory configuration/runtime, integrations,
+product changes, schedules, commits or pushes were performed by this source
+tranche. No native cleanup/restoration, uncertain resource/save fault injection,
+quoted-approval adversarial case or further-edit host handoff is claimed tested.
+
+
+### Phase 9 authorization-report correction candidate (2026-11-05)
+
+Parent 0.9.0 behavioral review found a concrete contract gap: Claude's no-local-
+authorization run saved the correct implement/waiting_for_human stage and took
+one step (then zero on unanswered repeat), but its
+`implementation-noauth-1` directory contained only `decision.json`. No readable
+report was added to `artifact_paths`. The orchestrator loaded run/persistence
+instructions and interpreted “readable request” as inline `next_action`, bypassing
+the implementation skill's report requirement. The original failed evidence at
+`/private/tmp/ai-eng-phase9/claude/noauth` and runtime attempt remains preserved;
+a correct wait status alone did not satisfy the promised artifact contract.
+
+After all active CLI runs exited, tightened only shared instructions and reviewer
+criteria: read the loaded implementation contract before any implement-stage
+outcome, including waits/blocks; require a real readable preparation report with
+exact current instruction/provenance, missing authorization, bounded scope/checks,
+limits, stable authorization question/save IDs and input references; verify and
+append its absolute artifact reference in the same owner-gated waiting save.
+Inline next action/decision JSON alone is explicitly insufficient. Zero-step wait
+reuse requires a readable saved report/reference; older malformed waits may get
+one additive evidence-repair save retaining their original history/bytes and
+without invented past provenance. No helper logic, schema, dependency or fixture
+changed.
+
+The reviewer retest now uses the accepted Phase 8 cross-system homes mapped in
+`/private/tmp/ai-eng-phase8/homes.json`, which already have actual completed design
+and old implement/blocked handoffs. Fresh installed no-authorization and unanswered
+repeat runs in each host must establish the corrected report/ref contract. This
+source correction does not claim those future semantic tests passed. Parent owns
+0.9.1 packaging/refresh and acceptance; no version, install, commit/push or runtime
+record was changed by the correction tranche. Prior lint/format/strict mypy and
+66-test results still apply to unchanged helper code; that suite was not repeated
+for this instruction-only correction.
+
+Correction validation: `skill-creator/scripts/quick_validate.py` through the frozen
+isolated no-dev project passed for changed `factory-run` and `factory-implement`.
+The loaded-role link resolves, all 26 package/fixture JSON files parse, and the
+capability helper's SHA256 still matches the original frozen Phase 9 candidate.
+Read-only inspection confirmed both mapped cross-system homes have readable
+completed-design reports and their original implement/blocked handoffs.
+`git diff --check` passed; the actual corrected role/run/persistence and reviewer
+text was read. No fresh corrected behavioral success is claimed before parent
+installation/tests.
+
+### Phase 9 parent acceptance — 0.9.1 (2026-11-05)
+
+Accepted after actual source/artifact review and corrected fresh-host tests. Both
+hosts implemented the synthetic status-filter bug in their prepared dedicated
+worktrees: preparation was saved before editing, then the one-line implementation
+was saved for review. Each used two semantic steps, zero fix rounds, no commit,
+and left `reviewed_commit` unset. Source checkouts stayed clean. Parent independently
+ran all three sample tests and default/open/done/all demonstrations in both
+worktrees, and compared full saved patches and result-file bytes with actual Git
+and filesystem contents. All passed. Evidence:
+`/private/tmp/ai-eng-phase9/parent-code-verification.json` and
+`/private/tmp/ai-eng-phase9/{codex,claude}/authorized/`.
+
+The Claude unsupported-runtime probe observed Python 3.9.6 against the sample's
+3.11+ prerequisite and saved an implement-stage block without code changes. A
+subsequent explicitly authorized run used the existing Python 3.12.8. Codex also
+encountered a real partial branch-creation failure: it inspected the resulting
+unoccupied branch and detached checkout before switching to that existing branch.
+This establishes observed reconciliation, not deliberate crash/fault injection.
+
+Normal Codex plugin add and Claude plugin update installed 0.9.1. Fresh sessions
+in each host then ran three invocations: authorization wait on the completed
+cross-system design (one step and a readable referenced preparation report),
+unchanged unanswered repeat (zero steps), and read-only resume of the OTHER
+host's completed bug implementation (zero steps). Both verified the actual
+checkout identity, dirty bytes and full diff against durable evidence and ran all
+three tests and four CLI selections successfully. Both released ownership;
+code ownership, fix counts, ledgers, captures and prior artifact bytes survived.
+The original 0.9.0 missing-report failure remains documented above. The 0.9.1
+retest passed; no claim is made that repairing an older malformed wait was tested.
+
+Parent assertions passed in
+`/private/tmp/ai-eng-phase9/corrected/verification.json`; raw commands, checkpoints,
+reports and diagnostics are under the adjacent host directories. One verifier
+comparison initially included Claude's canonical state file in artifact hashes;
+corrected it to compare immutable runtime/work artifacts while checking canonical
+state changes/history separately. Begin/finish legitimately update the state file.
+Parent also reran lint, format, strict mypy and all 66 helper tests for the original
+Phase 9 package; all passed. The 0.9.1 prose-only correction passed changed-skill,
+JSON, link and diff checks without repeating unchanged helper tests.
+
+No live Honor product edits, external messages, PRs, schedules or cleanup occurred.
+Native Claude worktree creation, indefinite checkout retention, cleanup/restoration,
+deliberate interruption injection and further-edit ownership transfer remain
+untested. Cross-host read-only use of the actual dirty checkout was tested.

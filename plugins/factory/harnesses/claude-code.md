@@ -139,3 +139,46 @@ or bot coverage. Verify selected workspace/channel access and present tool
 permissions now. Report unavailable discovery as a precise limitation and retain
 manual import; do not replace authenticated host tools with a client/service.
 Shared contracts and normalized pages remain host-independent.
+
+## Implementation worktrees
+
+Check the current host's actual tools and `claude --help`. Claude Code `2.1.310`
+advertises `--worktree [name]`; current
+[official worktree documentation](https://code.claude.com/docs/en/worktrees)
+also describes `EnterWorktree` where available. The native CLI starts a worktree
+session on its own branch. Observe actual source/base, common Git directory,
+returned path and branch; defaults or a plausible name are not ownership proof.
+Creation and usable exit persistence must be exercised before relying on them;
+help/documentation alone is not a successful native-creation test.
+
+The documentation distinguishes interactive cleanup prompts from `-p` runs,
+which retain their worktrees and may retain locks. Do not call `ExitWorktree`,
+remove/unlock, discard or clean up resources as a side effect of this phase.
+Interactive runs must retain a checkout needed for handoff. Existing session
+locks are not permission to take over: verify that the previous worker stopped
+and the checkout has the expected ownership/content. Factory runtime and exact
+result evidence stay outside the worktree even when a host retains it. A missing
+checkout or unverifiable lifecycle yields a concrete block, not an inferred
+successful handoff. Native lifecycle/cleanup claims must be labeled documented
+until actually tested.
+
+Avoid launching a second factory invocation merely to create a worktree. A host
+orchestrator can prepare a dedicated checkout before the foreground factory CLI
+starts, then supply its actual path/provenance. A verifiable prepared worktree
+from either host can be adopted; it need not have a Claude branch name. Inspect
+canonical code refs, prior preparation artifacts and Git worktree list first.
+Verify matching common Git directory, intended base, exclusive branch, observed
+HEAD/status and retained content. Do not use the source checkout, duplicate
+resources or silently fall back to shell `git worktree add`. Missing actual
+native tools/permissions with no prepared checkout saves implement/blocked with
+the precise capability request; do not change host settings or bypass permissions.
+
+Launch the owning CLI from the factory home when useful, pass the explicit
+config and prepared worktree as context, and run scoped edits/checks with explicit
+working directories. If entering a native worktree changes access to runtime,
+verify both paths remain usable with normal permissions before editing. Keep
+canonical saves with the orchestrator; save authorization/resources before code
+mutation. After the old CLI finishes, a fresh Codex or Claude session can read
+those durable paths and exact diff/content/check evidence. Further edits require
+a verified deliberate owner handoff saved before mutation; explaining a completed
+review-stage result does not require new branch ownership or new resources.

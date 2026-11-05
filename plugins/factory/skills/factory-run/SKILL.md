@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs and resumes human questions; stops truthfully at unavailable later roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements explicitly authorized local changes in dedicated worktrees and resumes human questions; stops truthfully at unavailable later roles.
 ---
 
 # Factory run
@@ -179,12 +179,73 @@ its concrete question/artifact; a newly discovered unresolved product choice
 returns to `plan` / `waiting_for_human` / `factory-plan`. Evidence/capability
 blocks name the actual missing input at the step that needs it.
 
-A completed or justified-skipped design saves `implement` / `blocked` /
-`factory-implement`, naming the absent role and self-contained handoff. No
-implementation occurs. A human design answer does not grant implementation or
-external-action approval. Completed design is reused on a fresh resume; an
-unchanged missing-implementer block requires zero new semantic steps. Finish and
-release at the actual wait/block.
+A completed or justified-skipped design saves `implement` / `ready` /
+`factory-implement`, naming its self-contained handoff. The shared implementer is
+available. A human design answer grants no implementation or external permission.
+Reuse completed design and resume old missing-implementer blocks; do not repeat
+investigation/planning/design merely because implementation is now available.
+
+At implement, first read the loaded [implementation contract](../factory-implement/SKILL.md)
+before deciding any outcome, including an authorization wait or capability block.
+Do not bypass that contract because code work is not yet authorized. When a
+semantic step remains, invoke shared `factory-implement` with the full preserved
+sources, investigation, actionable plan, needed design/skip, repository
+instructions, prior attempts and code refs, config/runtime and offline/live mode.
+Pass applicable current direct user scope verbatim with observed provenance/item
+association; also supply this invocation's observed owner/worker identity. Verify
+saved authorization context rather than assuming earlier product/architecture
+answers authorize code work.
+
+Missing local implementation authorization requires an actual readable
+`<runtime>/work/<item-id>/implementation-<unique-attempt-id>/preparation.md`
+before saving `implement` / `waiting_for_human` / `factory-implement`. Verify
+that report records exact current direct instruction/provenance and absence of
+applicable authorization, item/repository, bounded proposed change/checks, limits,
+a concrete question with a stable identifier within the item, readable input
+references and stable save operation ID. Append its absolute path under a unique
+`implementation-<attempt-id>` artifact key in that same owner-gated save, preserving
+all earlier entries/bytes; point `next_action` to the report/question. Inline
+`next_action` text or `decision.json` alone does not satisfy this report contract.
+Only an unchanged wait with its readable referenced report consumes zero steps.
+An older wait lacking that report/reference needs one additive evidence-repair
+save, preserving its original decision/history; never fabricate missing earlier
+provenance. A current authorization can resolve the wait; a source quote cannot.
+
+For authorized resource preparation, read the returned report and verify
+authorization, actual Git/common directory/base/path/branch and ownership evidence,
+plus host mechanism/lifecycle.
+Before code edits, save the complete item at `implement` / `ready` /
+`factory-implement`, append its readable absolute report under a unique
+`implementation-<attempt-id>` key and set only observed code worktree/branch/worker
+references. A resource checkpoint consumes one step, so stop without editing if
+no step remains. Then pass the successful saved checkpoint to the implementer
+for code work within the remaining bound. No worker writes canonical state. If
+resources exist after an interrupted preparation/save, reconcile saved history,
+reports and actual Git state before retrying; do not create duplicate branches
+or worktrees. A valid saved same-owner preparation is reused without a duplicate
+step. After a deliberate verified-owner handoff, save the observed new worker
+reference and handoff report before further edits; do not take over a live or
+unknown worker. A completed review-stage handoff needs no branch write takeover.
+
+Read the implementation report, raw command results and exact revision/content
+artifacts before accepting completion. Check scope, prescribed verification and
+that the actual checkout matches the captured result; missing/failed required
+checks retain `implement` / `blocked` / `factory-implement` with a concrete unblock,
+even when code is present. Product/architecture problems return to their actual
+plan/design wait with evidence. Append unique preparation/final report paths,
+retaining earlier bytes and all source/cursor/history/counter/action/approval
+context. Save using ordinary owner-gated `save`, keeping stable operation ID and
+decision JSON beside each attempt and reconciling uncertain saves. Local edit or
+separately explicit local-commit authorization lives in immutable report context;
+the external-action ledger is unchanged. Initial implementation consumes no fix
+round. Leave `reviewed_commit` unset: code has not been independently reviewed.
+
+Successful implementation/checks save `review` / `blocked` / `factory-review`,
+pointing to the self-contained report, actual branch/worktree and exact diff/HEAD
+plus dirty-content evidence or authorized commit. Independent review is absent;
+no push/PR or external action follows. Fresh resumes reuse the saved implementation
+without another code change, worktree, branch or semantic step while that role is
+still absent. Finish and release at the actual wait/block.
 
 Legacy Phase 3 fixtures contain no original message body or duplicate/ownership
 observations. Router availability does not create that evidence. Preserve the
@@ -207,10 +268,10 @@ Stop on the first unavailable role, wait, block, completed single step, or step
 limit. Otherwise reread saved state and choose another available step within the
 remaining bound. A completed route can proceed to investigation within that
 bound; completed investigation can proceed to planning and actionable planning to
-design within the remaining bound; completed/skipped design stops at the absent
-implementer. Respect genuine waits, no-action and invocation bounds. An old
-investigator, planner or designer missing-role block alone must not stop a
-now-available role. Explicit offline/synthetic resume stays
+design, then authorized implementation within the remaining bound. Completed
+implementation stops at the absent reviewer. Respect genuine waits, no-action
+and invocation bounds. An old investigator, planner, designer or implementer
+missing-role block alone must not stop a now-available role. Explicit offline/synthetic resume stays
 offline; never invoke live watch merely because no new fixture is supplied. Call `finish` with the observed stop reason;
 on an error, preserve
 the saved transition and attempt a truthful `stopped` finish if ownership remains

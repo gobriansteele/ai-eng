@@ -2,14 +2,16 @@
 
 `factory` is a local plugin for Codex and Claude Code. The current source provides
 `factory-setup`, `factory-status`, `factory-run`, `factory-watch`,
-`factory-route`, `factory-investigate`, `factory-plan` and `factory-design`,
-backed by shared typed helpers. The orchestrator collects bounded read-only Slack
+`factory-route`, `factory-investigate`, `factory-plan`, `factory-design` and
+`factory-implement`, backed by shared typed helpers. The orchestrator collects bounded read-only Slack
 intake, saves and routes source threads, and resumes legacy work.
 It investigates scoped bug/feature reports with durable local evidence and no
 product changes. Product planning saves actionable behavior/checks or a decisive
 human question. Technical design records justified skips for small clear changes,
 resolves consequential architectural questions and produces an implementation
-handoff. Implementation and later roles are not implemented.
+handoff. Explicitly authorized local implementation uses one dedicated code
+worktree and saves exact diff/content and verification evidence. Independent
+review and later roles are not implemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -87,8 +89,13 @@ plans advance to the designer when a step remains. Design adds component,
 contract, compatibility, sequencing and verification decisions where needed; a
 small clear bug can skip a separate design with a durable reason and handoff.
 Consequential unresolved architecture/API choices wait for an actual direct user
-answer, saved with provenance. Completed/skipped designs stop at the absent
-implementer; unavailable evidence stops with a concrete unblock. No product fixes or external writes occur.
+answer, saved with provenance. Completed/skipped designs advance to the implementer.
+It requires applicable explicit selected-item local implementation authorization,
+saves authorization/resource ownership before code edits and follows repository
+checks in a dedicated worktree. Missing authorization saves a concrete human
+request; missing environment/tool capability saves a precise block. Code and
+prescribed successful checks hand off to the absent independent reviewer.
+No push, PR or other external write follows.
 
 For offline demonstrations select `--source <path>` under `fixtures/sources/`,
 legacy `--fixture <path>`, or `--collection <synthetic-json>` under `fixtures/watch/`.
@@ -116,9 +123,9 @@ natural-language answer naming the saved item/question (or clearly answering the
 selected item's sole pending question); no helper answer flag or new fixture is
 needed. New plan/design artifacts save the exact answer/provenance and retain the
 earlier question. Product or architectural answers grant no implementation or
-external-action permission. Completed design is reused on fresh resume, with no
-new semantic step for the still-missing implementer. Explicit offline resume
-must remain offline.
+external-action permission. Completed design is reused on fresh resume, including
+older missing-implementer blocks. An unchanged authorization wait or still-missing reviewer consumes no
+semantic step. Explicit offline resume must remain offline.
 
 For investigation evaluation, copy the tiny deliberately broken local sample
 outside plugin source into a disposable Git checkout. Use the raw reports under
@@ -129,8 +136,24 @@ For planner acceptance, reuse those saved investigations and the reviewer-only
 [planner evaluation](docs/planner-evaluation.md). Design acceptance reuses the
 accepted bug and adds the two-component sample/raw request under `fixtures/design/`;
 see reviewer-only [designer evaluation](docs/designer-evaluation.md) for isolated
-setup, human-answer resume and preservation checks. Do not give reviewer oracles
-to workers.
+setup, human-answer resume and preservation checks. Implementation acceptance
+reuses the accepted bug homes and actual saved handoffs; see reviewer-only
+[implementer evaluation](docs/implementer-evaluation.md) for authorization waits,
+worktree preparation, before/after checks and cross-host preservation. Do not
+give reviewer oracles to workers.
+
+Local edit authorization is saved with exact direct-user provenance in immutable
+implementation reports; product/design answers alone do not grant it. Local
+commit requires separate explicit authorization. One preparation checkpoint
+records actual source/common Git directory/base, dedicated worktree/branch and
+worker identity before code mutation; it consumes a semantic step. Resolve
+creation/adoption and lifecycle through the current harness guide. After an
+interruption or deliberate owner handoff, reconcile the same checkout, branch
+and result bytes instead of creating replacements. Final evidence lives outside
+the disposable code checkout, including the full diff and changed file bytes and
+hashes when HEAD is dirty. `reviewed_commit` stays unset until independent review.
+Initial implementation consumes no fix round; approvals and external-action
+ledgers remain unchanged.
 
 One durable run token covers the whole CLI invocation across helper calls. The
 [shared persistence contract](plugins/factory/skills/factory-run/references/persistence.md)

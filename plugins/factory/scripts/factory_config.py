@@ -586,8 +586,9 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             "scoped investigation with durable local evidence",
             "product planning with durable questions and answer resume",
             "technical design with justified skips and durable architectural choices",
+            "explicitly authorized local implementation with dedicated worktrees and durable evidence",
         ],
-        "workflow": "bounded Slack intake, routing, investigation, product planning and technical design; coverage limits reported; implementation not implemented",
+        "workflow": "bounded Slack intake, routing, investigation, product planning, technical design and authorized local implementation; coverage limits reported; review not implemented",
     }
 
 

@@ -82,7 +82,9 @@ with ordinary owner-gated save, keeping decision JSON beside the attempt and
 reconciling uncertain saves before retrying. Design consumes no fix round and
 changes no approval/action ledger.
 
-When design is complete or justifiably skipped, return `implement` / `blocked` /
+When design is complete or justifiably skipped, return `implement` / `ready` /
 `factory-implement` with a next action pointing to the self-contained handoff.
-That role is absent; do not claim implementation happened. The orchestrator
-releases ownership before reporting the saved outcome.
+The implementer is available but must first establish applicable explicit local
+implementation authorization and a dedicated worktree. Design itself grants no
+such permission. The orchestrator may continue within its remaining bound or
+release ownership at the actual wait/block.
