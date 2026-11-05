@@ -26,11 +26,12 @@ begin --owner-pid <observed-cli-pid> --run-id <uuid> --fixture <loaded-plugin>/f
 To test preservation instead, select `fixtures/synthetic-resume.json`; its one
 fix round, illustrative approval scope and proposed action are explicitly
 synthetic. They grant no real permissions and claim no external execution.
-`synthetic_cursors` are illustrative handoff metadata, not watcher cursors. Real
-cursor files and setup channel starts remain untouched. Existing state resumes with no fixture. Providing the same legacy fixture
+`synthetic_cursors` are illustrative handoff metadata, not watcher cursors. They remain separate from watcher cursors. Existing state resumes with no fixture;
+live collection follows the preserved setup channel starts. Providing the same legacy fixture
 identity never resets saved values; a different legacy fixture is refused.
 For saved-source routing use `begin --source <absolute-synthetic-source.json>`
-instead of `--fixture`. Both are explicit demonstration input, not live intake.
+instead of `--fixture`. Both are explicit offline demonstration input. Config-only begin is valid on a
+fresh production workspace, creating empty schema-2 inventory before collection.
 A new source can be saved even when an active item is blocked. Read
 [the router contract](../../factory-route/references/routing.md) for source and
 result fields. `route --decision <absolute-json> --expected-revision <revision>`
@@ -57,7 +58,7 @@ Only `begin`, under a verified owner and after checking prior owner liveness,
 migrates to schema 2 in its atomic snapshot. The legacy item, events, invocations,
 fix count, scopes/actions and cursor metadata are preserved. Legacy events remain
 verbatim and a migration event is appended. No source body is fabricated. Other
-mutators require schema 2; use a fresh begin to migrate. Corrupt schema 1 is
+mutators require schema 2 or 3; use a fresh begin to migrate. Corrupt schema 1 is
 refused before any replacement; live/unknown owners prevent migration.
 
 Normal `begin` defaults to `--max-steps 3`, with valid range 1..10;
@@ -122,8 +123,14 @@ source paths/content (excluding Python/tool caches), effective non-secret config
 and its hash. Current source/config changes during an invocation block further
 mutations; stop the owning CLI and resume with a fresh invocation. Runtime
 identity is the resolved config path plus factory ID, never a global default.
-Saved config values are evidence, not authorization. No standalone reset/migrate,
-external write, worker-completion or live-intake command exists. Add `--summary` to mutators to print a bounded receipt (path,
+Saved config values are evidence, not authorization. No standalone reset/migrate, external write or worker-completion command exists.
+`watch-plan` and owner-gated `collect --decision <observation-json>` implement
+[bounded collection](../../factory-watch/references/collection.md). The first
+collection adds schema 3 and its collection field, migration event, immutable
+source receipts and cursor in one atomic replacement. Collection consumes no
+semantic step; route/save keep their configured bound. Inspect supports schemas
+1/2/3 read-only; other mutators support 2/3. Old plugin versions must be refreshed
+before resuming schema 3. Failed/incomplete reads change no canonical bytes. Add `--summary` to mutators to print a bounded receipt (path,
 revision, IDs, invocation metadata) instead of repeating the whole history.
 Inspect the saved source and relevant inventory in the canonical file when
 needed; never edit it directly.

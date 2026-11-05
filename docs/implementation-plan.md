@@ -4,6 +4,14 @@ Build a factory Brian can run on his Mac for one or two weeks, learn from, and c
 
 This is a proposed implementation plan for review. It does not authorize installation, scheduling, external posts, or product changes. The implementing agent should build one approved phase, demonstrate it, and stop for discussion before starting the next phase. Approval of this document is not approval to build every phase at once.
 
+**Execution update (2026-11-05):** Brian has now asked to continue to the next
+phase after each phase passes tests and parent review, repeating that process.
+Delegate bounded tranches with model and reasoning effort chosen for the work.
+The original discussion pauses below are review checkpoints, not a requirement
+to ask again before ordinary implementation. This does not authorize external
+messages, product changes, schedule activation, destructive cleanup or other
+actions that still need their own concrete approval.
+
 ## What we are building
 
 One locally installed plugin, provisionally named `factory`, with a setup skill and an orchestrator as its entry point. No separate `brian-mode` dispatcher. The orchestrator uses role skills as the work requires them.

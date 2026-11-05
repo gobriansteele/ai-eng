@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-from typing import TypedDict, cast
+import re
+from typing import NotRequired, TypedDict, cast
 
-from factory_config import ConfigError, mapping, string
+from factory_config import ConfigError, mapping, string, timestamp
 
 
 class Message(TypedDict):
@@ -21,6 +22,24 @@ class Evidence(TypedDict):
     text: str
 
 
+class LiveEvidence(Evidence):
+    observed_at: str
+    sources: list[str]
+    limitations: str
+
+
+class Intake(TypedDict):
+    workspace_id: str
+    channel_id: str
+    thread_ts: str
+    trigger_message_ids: list[str]
+    mode: str
+    lower: str
+    scan_lower: str
+    upper: str
+    coverage: str
+
+
 class Source(TypedDict):
     synthetic: bool
     source_id: str
@@ -29,6 +48,7 @@ class Source(TypedDict):
     available_thread: list[Message]
     availability: str
     evidence: list[Evidence]
+    intake: NotRequired[Intake]
 
 
 class Finding(TypedDict):
@@ -49,6 +69,7 @@ class Routing(TypedDict):
     source_digest: str
     covered_message_ids: list[str]
     findings: list[Finding]
+    observations: NotRequired[list[LiveEvidence]]
 
 
 class Receipt(TypedDict):
@@ -75,10 +96,22 @@ def optional(value: object, where: str) -> str | None:
     return None if value is None else string(value, where)
 
 
+def message_text(value: object) -> str:
+    if not isinstance(value, str):
+        raise ConfigError("Message text must be a string")
+    return value
+
+
 def source(value: object) -> Source:
-    data = mapping(value, set(Source.__annotations__), "source")
-    if data["synthetic"] is not True:
-        raise ConfigError("Only explicitly synthetic saved sources are implemented")
+    raw_source = cast(dict[str, object], value) if isinstance(value, dict) else {}
+    fields = set(Source.__annotations__) - {"intake"}
+    data = mapping(
+        value, fields | ({"intake"} if "intake" in raw_source else set()), "source"
+    )
+    if type(data["synthetic"]) is not bool:
+        raise ConfigError("source.synthetic must be boolean")
+    if data["synthetic"] is False and "intake" not in data:
+        raise ConfigError("Live sources require intake provenance")
     messages: list[Message] = []
     for value in array(data["available_thread"], "available_thread"):
         raw = mapping(value, set(Message.__annotations__), "message")
@@ -86,7 +119,7 @@ def source(value: object) -> Source:
             {
                 "id": string(raw["id"], "message.id"),
                 "author": string(raw["author"], "author"),
-                "text": string(raw["text"], "text"),
+                "text": message_text(raw["text"]),
             }
         )
     if not messages:
@@ -104,8 +137,8 @@ def source(value: object) -> Source:
     ids = [v["id"] for v in messages] + [v["id"] for v in evidence]
     if len(ids) != len(set(ids)):
         raise ConfigError("Duplicate source evidence identity")
-    return {
-        "synthetic": True,
+    result: Source = {
+        "synthetic": data["synthetic"],
         "source_id": string(data["source_id"], "source_id"),
         "version": string(data["version"], "version"),
         "link": string(data["link"], "link"),
@@ -113,6 +146,46 @@ def source(value: object) -> Source:
         "availability": string(data["availability"], "availability"),
         "evidence": evidence,
     }
+
+    if "intake" in data:
+        raw_intake = mapping(data["intake"], set(Intake.__annotations__), "intake")
+        result["intake"] = {
+            "workspace_id": string(raw_intake["workspace_id"], "workspace_id"),
+            "channel_id": string(raw_intake["channel_id"], "channel_id"),
+            "thread_ts": string(raw_intake["thread_ts"], "thread_ts"),
+            "trigger_message_ids": text_list(
+                raw_intake["trigger_message_ids"], "triggers"
+            ),
+            "mode": string(raw_intake["mode"], "mode"),
+            "lower": string(raw_intake["lower"], "lower"),
+            "scan_lower": string(raw_intake["scan_lower"], "scan_lower"),
+            "upper": string(raw_intake["upper"], "upper"),
+            "coverage": string(raw_intake["coverage"], "coverage"),
+        }
+        if not set(result["intake"]["trigger_message_ids"]) <= {
+            m["id"] for m in messages
+        }:
+            raise ConfigError("Intake triggers must be saved messages")
+        intake = result["intake"]
+        if (
+            intake["mode"] not in ("live", "import")
+            or not intake["trigger_message_ids"]
+        ):
+            raise ConfigError(
+                "Collected sources require a valid mode and eligible triggers"
+            )
+        for key in ("thread_ts", "lower", "scan_lower", "upper"):
+            if re.fullmatch(r"[0-9]+\.[0-9]{6}", intake[key]) is None:
+                raise ConfigError("Invalid collected source timestamp")
+        prefix = [intake["workspace_id"], intake["channel_id"]]
+        root_id = "slack:" + json.dumps(
+            prefix + [intake["thread_ts"]], separators=(",", ":")
+        )
+        if result["source_id"] != root_id or root_id not in {m["id"] for m in messages}:
+            raise ConfigError(
+                "Collected source must retain its stable thread/root identity"
+            )
+    return result
 
 
 def source_digest(value: Source) -> str:
@@ -124,7 +197,13 @@ def receipt_id(value: Source) -> str:
 
 
 def routing(value: object, saved: Source) -> Routing:
-    data = mapping(value, set(Routing.__annotations__), "routing")
+    raw_routing = cast(dict[str, object], value) if isinstance(value, dict) else {}
+    fields = set(Routing.__annotations__) - {"observations"}
+    data = mapping(
+        value,
+        fields | ({"observations"} if "observations" in raw_routing else set()),
+        "routing",
+    )
     if (data["source_id"], data["source_version"], data["source_digest"]) != (
         saved["source_id"],
         saved["version"],
@@ -137,6 +216,26 @@ def routing(value: object, saved: Source) -> Routing:
     ids = {v["id"] for v in saved["available_thread"]} | {
         v["id"] for v in saved["evidence"]
     }
+    observations: list[LiveEvidence] = []
+    for value in array(data.get("observations", []), "observations"):
+        raw = mapping(value, set(LiveEvidence.__annotations__), "observation")
+        observations.append(
+            {
+                "id": string(raw["id"], "id"),
+                "kind": string(raw["kind"], "kind"),
+                "text": string(raw["text"], "text"),
+                "observed_at": timestamp(raw["observed_at"], "observed_at"),
+                "sources": text_list(raw["sources"], "observation.sources"),
+                "limitations": string(raw["limitations"], "limitations"),
+            }
+        )
+    if observations and saved["synthetic"]:
+        raise ConfigError("Synthetic routes cannot add live observations")
+    if len({v["id"] for v in observations}) != len(observations) or ids & {
+        v["id"] for v in observations
+    }:
+        raise ConfigError("Duplicate observation identity")
+    ids |= {v["id"] for v in observations}
     findings: list[Finding] = []
     for value in array(data["findings"], "findings"):
         raw = mapping(value, set(Finding.__annotations__), "finding")
@@ -179,13 +278,17 @@ def routing(value: object, saved: Source) -> Routing:
         )
     if not findings or len({v["key"] for v in findings}) != len(findings):
         raise ConfigError("Routing needs findings with unique stable keys")
-    return {
+    result: Routing = {
         "source_id": saved["source_id"],
         "source_version": saved["version"],
         "source_digest": source_digest(saved),
         "covered_message_ids": covered,
         "findings": findings,
     }
+
+    if "observations" in data:
+        result["observations"] = observations
+    return result
 
 
 def receipt(value: object) -> Receipt:

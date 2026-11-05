@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Supports saved synthetic source routing and post-intake handoffs; stops truthfully at unavailable investigation roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; stops truthfully at unavailable investigation roles.
 ---
 
 # Factory run
@@ -13,9 +13,11 @@ containing directory; use its scripts and fixtures, not an authoring checkout.
 Use the explicitly supplied or established `--config` and optional user-supplied
 `--local`. Default to at most three saved steps per invocation. Honor a requested
 single step (`--single-step`, one saved decision), or an explicit `--max-steps`
-from 1 through 10. These invocation options do not change YAML. A schedule will
-later invoke this skill with configuration. Saved synthetic inputs exercise the
-current implementation; live intake is a later phase.
+from 1 through 10. These invocation options do not change YAML. A schedule may later invoke this
+skill with configuration. An explicit config
+with no synthetic input is the production entry point: watch, then route/resume
+saved work. `--source`, `--fixture`, `--collection` or an explicit offline/synthetic
+request selects an offline demonstration; never call live integrations in that mode.
 
 First inspect saved state and discover the actual harness CLI owner. A durable
 run token owns the entire invocation, including time between helper calls. Use
@@ -33,9 +35,16 @@ Generate a run UUID once and retain it for retries; call `begin`. Existing state
 resumes without input. For saved-source demonstrations, use the explicitly selected
 synthetic JSON as `--source`; it is saved under the invocation owner before routing.
 A supplied new source must be considered even when another saved item is blocked.
-For legacy post-intake demonstrations `--fixture` remains supported. Do not read
-live Slack/Jira, run a repository workflow, or invent intake evidence. Helper
-failure blocks work; corruption needs repair preserving the original files. A
+For legacy post-intake demonstrations `--fixture` remains supported. A new
+production workspace needs no synthetic seed. After begin and before handling an
+active block, invoke shared `factory-watch` under this same owner/token. In live
+mode it checks current host access, collects every ready configured channel and
+reports coverage/blockers; `--import-thread` is an explicit historical import. In
+offline mode skip live watch; an explicit `--collection <synthetic-json>` passes
+that normalized observation through collect. Collection can proceed while saved
+work is blocked and does not consume semantic steps. Retain other channels'
+successful captures when one is blocked. Do not run a repository workflow or
+invent intake evidence. Helper failure blocks work; corruption needs repair preserving the original files. A
 live or unknown prior owner blocks takeover regardless of age.
 
 Read canonical `items`, `active_item_id`, source receipts, relevant history,
@@ -48,7 +57,12 @@ thread, observations and relevant inventory. The role returns semantic findings;
 you remain the orchestrator and own state updates. Use its routing contract to
 wrap the result with complete explicit affected item records, then persist with
 `route --decision <absolute-json> --expected-revision <revision>`. Use descriptive
-stable finding keys. New items start at zero fix rounds with empty approval and
+stable finding keys. For live sources, factory-route can gather current read-only
+Jira/ownership/code
+observations and return auditable observations committed with the routing; missing
+access remains an explicit incomplete check. Synthetic sources use only saved
+evidence and never live reads. New items start at zero fix rounds with empty
+approval and
 pending-action lists; include only observed code/artifact references and invent
 no worker or worktree ownership. Related sources/later capture versions attach to an existing
 item only with evidence; preserve all saved scopes/actions/counters and links.

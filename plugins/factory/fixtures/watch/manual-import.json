@@ -1,0 +1,43 @@
+{
+  "id": "synthetic-manual-import",
+  "synthetic": true,
+  "mode": "import",
+  "workspace_id": "T_SYNTHETIC",
+  "channel_id": "C_SYNTHETIC_ONE",
+  "start_at": "2023-11-14T22:13:20+00:00",
+  "lower": "1700000070.000000",
+  "scan_lower": "1700000000.000000",
+  "upper": "1700000080.000000",
+  "complete": true,
+  "history": [],
+  "discovery": [],
+  "discovery_note": "Explicit historical thread selected by the user; no channel search.",
+  "threads": [
+    {
+      "root": "1699998000.000000",
+      "pages": [
+        {
+          "cursor": null,
+          "next_cursor": null,
+          "messages": [
+            {
+              "ts": "1699998000.000000",
+              "thread_ts": "1699998000.000000",
+              "author": "synthetic-user",
+              "text": "Historical report explicitly selected for import: date filters reset on navigation."
+            },
+            {
+              "ts": "1699998010.000000",
+              "thread_ts": "1699998000.000000",
+              "author": "synthetic-user",
+              "text": "Only the saved report view is affected. Ordinary navigation works."
+            }
+          ]
+        }
+      ],
+      "complete": true,
+      "availability": "All available synthetic textual thread context is included; no live reads occurred.",
+      "link": "https://example.invalid/synthetic/slack/C_SYNTHETIC_ONE/1699998000.000000"
+    }
+  ]
+}

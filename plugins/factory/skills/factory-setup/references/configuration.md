@@ -14,7 +14,12 @@ schema below is available in installed packages; do not locate an
 authoring checkout to create a configuration.
 
 Commands: `validate` prints effective configuration without writing. `discover`
-reads only configured repository roots/paths without writing. `status --harness
+reads only configured repository roots/paths without writing. Its `repositories`
+result includes discovered repositories under effective `repositories.roots` plus
+explicit `repositories.paths`; paths does not narrow roots. With user authorization
+for a root, discovered repositories within it remain in scope even when absent
+from paths. A bounded role search can leave them unsearched; that is not evidence
+that they are unconfigured or unauthorized. `status --harness
 codex|claude-code` reads current matching evidence. `setup --harness ... --evidence
 <json>` writes setup metadata and establishes an intake start after selected
 Slack access is observed. Each command accepts optional `--local <yaml>`. Setup
@@ -137,7 +142,8 @@ connections/repos are readiness blocks. The fixed limits/actions validate this
 trial's supported choices; their enforcement during work is an agent instruction,
 not a deterministic execution engine. YAML never overrides host restrictions or
 grants external-action approval. Setup readiness also does not mean workflow roles
-exist: factory-run currently supports synthetic saved-work decisions only.
+exist: inspect the loaded skills and current factory-status capability report
+before choosing the next role.
 
 Runtime must be outside the loaded plugin/authoring source and all configured or
 discovered target repositories. Validation rejects a disposable or source-tree

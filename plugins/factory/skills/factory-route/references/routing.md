@@ -1,12 +1,14 @@
 # Saved source and routing artifact
 
 The `factory_work.py begin --source <absolute-json>` helper validates and saves
-an explicitly synthetic source. Source fields are `synthetic: true`, `source_id`
+a saved source. Explicit --source demonstrations remain synthetic; live
+collection writes sources with `synthetic: false` and intake provenance. Source fields are `synthetic: true`, `source_id`
 (stable thread identity), `version` (immutable capture identity), `link`,
 `available_thread` (ordered objects with `id`, `author`, `text`), `availability`
 (what was available or missing), and `evidence` (objects with `id`, `kind`, `text`).
 Message/evidence IDs are unique within a capture. Read every message and observation.
-This contract collects no live messages; future intake can supply later versions.
+The watcher supplies immutable live captures and eligibility/coverage separately
+from semantic routing. Preserve existing synthetic fields/digests unchanged.
 
 The receipt key is compact JSON `[source_id,version]`; its `digest` hashes the
 entire normalized source with Python `json.dumps(source, sort_keys=True)` and
@@ -50,7 +52,7 @@ The orchestrator wraps this artifact in a route commit with `id`, `reason`,
 `receipt_id`, `routing`, `items` (complete changed/new item records), and nullable
 `active_item_id`. It copies existing item records before changing justified fields.
 New item IDs use `factory_work.stable_id(source_id, finding.key)`; a new item uses
-that source/key, `synthetic: true`, and the saved source link. Fresh routed items
+that source/key, `synthetic` matching its source, and the saved source link. Fresh routed items
 start with `fix_rounds: 0`, `approvals: []`, and `pending_actions: []`; never copy
 the preservation fixture's illustrative counts or permissions into new work.
 Include code/artifact references only when observed in supplied evidence. Routing
@@ -58,3 +60,14 @@ does not create a worker, worktree or ownership claim. Every actionable
 finding has one updated item; no-action has none. Multiple findings may point to
 one evidenced existing item. The helper preserves prior source/Jira links, fix
 counts, scopes and actions. It does not choose stages, statuses or worker roles.
+
+For a live source, routing may additionally include `observations`, an array of
+objects with exactly `id`, `kind`, `text`, `observed_at` (ISO timestamp), `sources`
+(unique external IDs/links, possibly empty for unavailable capability), and
+`limitations` (explicit bounded coverage/access limits, or "none observed").
+Observation IDs must be unique across all messages/evidence and can be referenced
+by findings. They are committed immutably with the routing result. Synthetic
+routing rejects nonempty live observations; supplied synthetic evidence remains
+its only evidence. Current live reads must identify their actual source and
+time, including unavailable-capability observations when duplicate/ownership
+checks cannot run. A complete duplicate check describes the stated bounded read.

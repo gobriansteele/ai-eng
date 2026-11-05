@@ -12,10 +12,13 @@ missing/unreadable/inconsistent, state the limitation without claiming a verifie
 installed version. Do not use a remembered version or authoring checkout.
 
 Inspect `skills/` in that package. Implemented capabilities are status, setup,
-configuration validation, bounded read-only repository discovery, and synthetic
-saved-work orchestration through factory-run and semantic routing of saved
-synthetic sources through factory-route. Live intake, investigation and later
-work roles, and scheduling are not implemented. With an established config, optionally use
+configuration validation, bounded read-only repository discovery, and saved-work
+orchestration through factory-run, semantic routing through
+factory-route, and bounded read-only Slack intake/manual imports through
+factory-watch. Watch coverage includes declared overlap and tracked-thread
+rechecks, with connector/index limitations; it is not guaranteed complete.
+Investigation and later work roles, and scheduling are not implemented. With an
+established config, optionally use
 `factory_work.py inspect` read-only to report the selected active item stage/status/next
 action and pending item IDs and snapshot path; never acquire an invocation or change work for status.
 

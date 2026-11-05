@@ -580,10 +580,11 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             "setup",
             "configuration validation",
             "bounded repository discovery",
-            "synthetic saved-work orchestration",
+            "saved-work orchestration",
             "saved-source routing",
+            "bounded Slack collection and historical thread import",
         ],
-        "workflow": "synthetic saved-source routing; live intake and investigation not implemented",
+        "workflow": "bounded Slack intake and saved-source routing; coverage limits reported; investigation not implemented",
     }
 
 

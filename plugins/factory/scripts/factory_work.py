@@ -15,6 +15,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterator, Literal, NotRequired, TypedDict, cast
 
+from factory_collection import (
+    Collection,
+    collection,
+    observation,
+    overlap_start,
+    start_ts,
+)
+from factory_collection import (
+    apply as apply_collection,
+)
+from factory_collection import (
+    empty as empty_collection,
+)
+from factory_collection import (
+    identity as collection_identity,
+)
 from factory_config import (
     Config,
     ConfigError,
@@ -143,6 +159,7 @@ class Snapshot(TypedDict):
     synthetic_cursors: dict[str, str]
     invocations: list[Invocation]
     events: list[Event]
+    collection: NotRequired[Collection]
 
 
 class RouteDecision(TypedDict):
@@ -264,8 +281,8 @@ def stable_id(source_id: str, subitem_key: str) -> str:
 
 def item(value: object) -> Item:
     data = mapping(value, set(Item.__annotations__), "item")
-    if data["synthetic"] is not True:
-        raise WorkError("Only explicitly synthetic items are implemented")
+    if type(data["synthetic"]) is not bool:
+        raise WorkError("item.synthetic must be boolean")
     source_id = string(data["source_id"], "source_id")
     subitem_key = string(data["subitem_key"], "subitem_key")
     identity = stable_id(source_id, subitem_key)
@@ -295,7 +312,7 @@ def item(value: object) -> Item:
         raise WorkError("Worktree must be an absolute path")
     return {
         "id": identity,
-        "synthetic": True,
+        "synthetic": data["synthetic"],
         "source_id": source_id,
         "subitem_key": subitem_key,
         "source_links": strings(data["source_links"], "source_links"),
@@ -434,7 +451,7 @@ def event(value: object) -> Event:
     data = mapping(raw, keys | ({"change"} if modern else set()), "event")
     kind = string(data["kind"], "event.kind")
     if kind not in (
-        ("begin", "decision", "finish", "route", "migrate")
+        ("begin", "decision", "finish", "route", "migrate", "collect")
         if modern
         else ("begin", "decision", "finish")
     ):
@@ -597,6 +614,8 @@ def apply_route(
         if target not in updates:
             raise WorkError("Every actionable finding needs an explicit item update")
         updated = updates[target]
+        if target not in items and updated["synthetic"] != saved["source"]["synthetic"]:
+            raise WorkError("New item provenance must match its source")
         if target not in items and (
             updated["fix_rounds"] != 0
             or updated["approvals"]
@@ -662,9 +681,11 @@ def snapshot(value: object) -> Snapshot:
             "invocations": old["invocations"],
             "events": old["events"],
         }
-    data = mapping(raw, set(Snapshot.__annotations__), "snapshot")
-    if type(data["schema_version"]) is not int or data["schema_version"] != 2:
+    schema = raw.get("schema_version")
+    if type(schema) is not int or schema not in (2, 3):
         raise WorkError("Unsupported work schema")
+    fields = set(Snapshot.__annotations__) - {"collection"}
+    data = mapping(raw, fields | ({"collection"} if schema == 3 else set()), "snapshot")
     items = {k: item(v) for k, v in obj(data["items"], "items").items()}
     if any(k != v["id"] for k, v in items.items()):
         raise WorkError("Item inventory key mismatch")
@@ -688,6 +709,8 @@ def snapshot(value: object) -> Snapshot:
     replay_items: dict[str, Item] = {}
     replay_sources: dict[str, Receipt] = {}
     replay_active: str | None = None
+    replay_collection = empty_collection()
+    collected = False
     decisions: set[str] = set()
     modern_seen = False
     for e in events:
@@ -722,6 +745,15 @@ def snapshot(value: object) -> Snapshot:
                             "routing": None,
                             "item_ids": {},
                         }
+            elif e["kind"] == "collect":
+                op_collection = observation(change)
+                if op_collection["id"] in decisions:
+                    raise WorkError("Duplicate collection identity")
+                decisions.add(op_collection["id"])
+                replay_collection = apply_collection(
+                    replay_collection, replay_sources, op_collection
+                )
+                collected = True
             elif e["kind"] == "route":
                 op = route_decision(change, replay_sources)
                 if op["id"] in decisions:
@@ -747,14 +779,18 @@ def snapshot(value: object) -> Snapshot:
             decisions.add(d["id"])
     if items != replay_items or receipts != replay_sources or selected != replay_active:
         raise WorkError("Current inventory differs from committed history")
+    if (schema == 3) != collected or (
+        schema == 3 and collection(data["collection"]) != replay_collection
+    ):
+        raise WorkError("Collection state differs from committed history")
     for r in runs:
         if r["steps"] != sum(
             e["kind"] in ("decision", "route") and e["run_id"] == r["id"]
             for e in events
         ):
             raise WorkError("Invocation step count differs from history")
-    return {
-        "schema_version": 2,
+    result: Snapshot = {
+        "schema_version": schema,
         "config_path": string(data["config_path"], "config_path"),
         "factory_id": string(data["factory_id"], "factory_id"),
         "revision": revision,
@@ -766,6 +802,10 @@ def snapshot(value: object) -> Snapshot:
         "invocations": runs,
         "events": events,
     }
+
+    if schema == 3:
+        result["collection"] = replay_collection
+    return result
 
 
 def atomic_snapshot(path: Path, state: Snapshot) -> None:
@@ -1050,6 +1090,10 @@ class Store:
         incoming_source = (
             None if source_path is None else source(read_json(source_path))
         )
+        if incoming_source is not None and not incoming_source["synthetic"]:
+            raise WorkError(
+                "Live sources require owner-gated collection; --source is synthetic input"
+            )
         seeded: Item | None = None
         with self.mutation():
             state = self.read()
@@ -1096,10 +1140,6 @@ class Store:
                             "One active item supported; refuse a different fixture"
                         )
             else:
-                if fixture is None and incoming_source is None:
-                    raise WorkError(
-                        "No saved work; provide an explicit synthetic source or post-intake fixture (live intake is not implemented)"
-                    )
                 cursors: dict[str, str] = {}
                 if fixture is not None:
                     seeded, cursors = load_fixture(fixture)
@@ -1169,7 +1209,7 @@ class Store:
         allow_finished: bool = False,
     ) -> Invocation:
         identity = verify_owner(pid, harness)
-        if state["schema_version"] != 2:
+        if state["schema_version"] not in (2, 3):
             raise WorkError(
                 "Legacy state requires verified-owner begin migration first"
             )
@@ -1191,6 +1231,106 @@ class Store:
                 "Config or plugin changed during invocation; stop and resume in a fresh invocation"
             )
         return run
+
+    def channel_starts(self) -> dict[str, str]:
+        path = (
+            self.runtime / "setup" / self.config["factory_id"] / "channel-starts.json"
+        )
+        if not path.exists():
+            return {}
+        try:
+            values = string_map(read_json(path), "channel starts")
+            for value in values.values():
+                timestamp(value, "channel start")
+            return values
+        except (ValueError, OSError) as exc:
+            raise WorkError(f"Channel starts need repair; never reset: {exc}") from exc
+
+    def watch_plan(self) -> dict[str, object]:
+        state = self.read()
+        saved = (
+            empty_collection()
+            if state is None
+            else state.get("collection", empty_collection())
+        )
+        starts = self.channel_starts()
+        workspace = self.config["slack"]["workspace_id"]
+        channels: list[dict[str, object]] = []
+        for channel in self.config["slack"]["channels"]:
+            setup_key = f"{workspace}:{channel['id']}"
+            key = collection_identity(str(workspace), channel["id"])
+            start = starts.get(setup_key)
+            channels.append(
+                {
+                    "channel_id": channel["id"],
+                    "start_at": start,
+                    "lower": None
+                    if start is None
+                    else saved["cursors"].get(key, start_ts(start)),
+                    "scan_lower": None
+                    if start is None
+                    else overlap_start(
+                        saved["cursors"].get(key, start_ts(start)), start_ts(start)
+                    ),
+                    "tracked_roots": [
+                        cast(list[str], json.loads(k))[2]
+                        for k in saved["tracked"]
+                        if cast(list[str], json.loads(k))[:2]
+                        == [workspace, channel["id"]]
+                    ],
+                    "blocked": None
+                    if start is not None and workspace is not None
+                    else "Setup has not verified/started this channel",
+                }
+            )
+        return {
+            "workspace_id": workspace,
+            "channels": channels,
+            "blocked": (["Slack workspace not configured"] if workspace is None else [])
+            + (["Slack channels not selected"] if not channels else []),
+            "revision": None if state is None else state["revision"],
+        }
+
+    def collect(
+        self,
+        token: str,
+        harness: Harness,
+        pid: int,
+        expected_revision: int,
+        value: object,
+    ) -> Snapshot:
+        op = observation(value)
+        with self.mutation():
+            state = self.read()
+            if state is None:
+                raise WorkError("Begin an invocation before collecting")
+            self.owned(state, token, harness, pid)
+            for e in state["events"]:
+                if e["kind"] == "collect" and e.get("change", {}).get("id") == op["id"]:
+                    if e["change"] != op:
+                        raise WorkError("Collection ID reused with different content")
+                    return state
+            if state["revision"] != expected_revision:
+                raise WorkError("Revision conflict; reread and reconsider")
+            if op["workspace_id"] != self.config["slack"]["workspace_id"] or op[
+                "channel_id"
+            ] not in {c["id"] for c in self.config["slack"]["channels"]}:
+                raise WorkError("Collection must use a configured workspace/channel")
+            start = self.channel_starts().get(
+                f"{op['workspace_id']}:{op['channel_id']}"
+            )
+            if start is None or op["start_at"] != start:
+                raise WorkError("Collection requires the preserved setup channel start")
+            updated = apply_collection(
+                state.get("collection", empty_collection()), state["sources"], op
+            )
+            if state["schema_version"] == 2:
+                state["schema_version"] = 3
+                self.append(state, token, "migrate")
+            state["collection"] = updated
+            self.append(state, token, "collect", change=dict(op))
+            atomic_snapshot(self.path, state)
+            return state
 
     def save(
         self,
@@ -1321,7 +1461,9 @@ def load_fixture(path: Path) -> tuple[Item, dict[str, str]]:
 
 @dataclass
 class Arguments:
-    command: Literal["owners", "inspect", "begin", "save", "route", "finish"]
+    command: Literal[
+        "owners", "inspect", "watch-plan", "begin", "save", "route", "collect", "finish"
+    ]
     config: Path
     local: Path | None
     harness: Harness
@@ -1339,7 +1481,17 @@ class Arguments:
 def parse_arguments() -> Arguments:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "command", choices=("owners", "inspect", "begin", "save", "route", "finish")
+        "command",
+        choices=(
+            "owners",
+            "inspect",
+            "watch-plan",
+            "begin",
+            "save",
+            "route",
+            "collect",
+            "finish",
+        ),
     )
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--local", type=Path)
@@ -1358,7 +1510,16 @@ def parse_arguments() -> Arguments:
     raw: dict[str, object] = vars(parser.parse_args())
     return Arguments(
         command=cast(
-            Literal["owners", "inspect", "begin", "save", "route", "finish"],
+            Literal[
+                "owners",
+                "inspect",
+                "watch-plan",
+                "begin",
+                "save",
+                "route",
+                "collect",
+                "finish",
+            ],
             raw["command"],
         ),
         config=cast(Path, raw["config"]),
@@ -1384,6 +1545,8 @@ def main() -> int:
         result: object
         if args.command == "owners":
             result = {"owners": owners(harness)}
+        elif args.command == "watch-plan":
+            result = store.watch_plan()
         elif args.command == "inspect":
             result = {"state_path": str(store.path), "snapshot": store.read()}
         else:
@@ -1399,6 +1562,18 @@ def main() -> int:
                     args.fixture,
                     args.max_steps,
                     args.source,
+                )
+            elif args.command == "collect":
+                if args.decision is None or args.expected_revision is None:
+                    raise WorkError(
+                        "collect requires --decision and --expected-revision"
+                    )
+                result = store.collect(
+                    args.run_id,
+                    harness,
+                    args.owner_pid,
+                    args.expected_revision,
+                    read_json(args.decision),
                 )
             elif args.command == "route":
                 if args.decision is None or args.expected_revision is None:
@@ -1426,7 +1601,7 @@ def main() -> int:
                 result = store.finish(
                     args.run_id, harness, args.owner_pid, args.outcome
                 )
-        if args.summary and args.command not in ("owners", "inspect"):
+        if args.summary and args.command not in ("owners", "inspect", "watch-plan"):
             saved = store.read()
             if saved is not None:
                 result = {
@@ -1436,6 +1611,7 @@ def main() -> int:
                     "active_item_id": saved["active_item_id"],
                     "item_ids": list(saved["items"]),
                     "source_receipts": list(saved["sources"]),
+                    "collection": saved.get("collection"),
                     "invocation": next(
                         r for r in saved["invocations"] if r["id"] == args.run_id
                     ),

@@ -1,0 +1,50 @@
+{
+  "id": "synthetic-second-channel",
+  "synthetic": true,
+  "mode": "live",
+  "workspace_id": "T_SYNTHETIC",
+  "channel_id": "C_SYNTHETIC_TWO",
+  "start_at": "2023-11-14T22:13:45+00:00",
+  "lower": "1700000025.000000",
+  "scan_lower": "1700000025.000000",
+  "upper": "1700000040.000000",
+  "complete": true,
+  "history": [
+    {
+      "cursor": null,
+      "next_cursor": null,
+      "messages": [
+        {
+          "ts": "1700000026.000000",
+          "thread_ts": "1700000026.000000",
+          "author": "synthetic-user",
+          "text": "Could admins download the usage table as CSV? The existing copy button is not enough."
+        }
+      ]
+    }
+  ],
+  "discovery": [],
+  "discovery_note": "Reply discovery capability unavailable in this synthetic channel observation; only channel history and complete thread reads are represented. Older untracked replies are not covered. No live reads occurred.",
+  "threads": [
+    {
+      "root": "1700000026.000000",
+      "pages": [
+        {
+          "cursor": null,
+          "next_cursor": null,
+          "messages": [
+            {
+              "ts": "1700000026.000000",
+              "thread_ts": "1700000026.000000",
+              "author": "synthetic-user",
+              "text": "Could admins download the usage table as CSV? The existing copy button is not enough."
+            }
+          ]
+        }
+      ],
+      "complete": true,
+      "availability": "All available synthetic textual thread context is included; no live reads occurred.",
+      "link": "https://example.invalid/synthetic/slack/C_SYNTHETIC_TWO/1700000026.000000"
+    }
+  ]
+}

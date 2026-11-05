@@ -1,0 +1,111 @@
+{
+  "id": "synthetic-followup",
+  "synthetic": true,
+  "mode": "live",
+  "workspace_id": "T_SYNTHETIC",
+  "channel_id": "C_SYNTHETIC_ONE",
+  "start_at": "2023-11-14T22:13:20+00:00",
+  "lower": "1700000050.000000",
+  "scan_lower": "1700000000.000000",
+  "upper": "1700000070.000000",
+  "complete": true,
+  "history": [
+    {
+      "cursor": null,
+      "next_cursor": null,
+      "messages": []
+    }
+  ],
+  "discovery": [
+    {
+      "cursor": null,
+      "next_cursor": "search-last",
+      "messages": [
+        {
+          "ts": "1700000045.000000",
+          "thread_ts": "1699999000.000000",
+          "author": "synthetic-user",
+          "text": "Additional reply became visible late in the overlapping search window."
+        },
+        {
+          "ts": "1700000060.000000",
+          "thread_ts": "1699999000.000000",
+          "author": "synthetic-user",
+          "text": "The export completes eventually; please investigate the missing progress feedback, not lost data."
+        }
+      ]
+    },
+    {
+      "cursor": "search-last",
+      "next_cursor": null,
+      "messages": []
+    }
+  ],
+  "discovery_note": "Synthetic timestamp-sorted reply search, fixed scan interval, followed through terminal page; index completeness is unverified.",
+  "threads": [
+    {
+      "root": "1700000010.000000",
+      "pages": [
+        {
+          "cursor": null,
+          "next_cursor": null,
+          "messages": [
+            {
+              "ts": "1700000010.000000",
+              "thread_ts": "1700000010.000000",
+              "author": "synthetic-user",
+              "text": "The download button returns an error after choosing a date range."
+            },
+            {
+              "ts": "1700000020.000000",
+              "thread_ts": "1700000010.000000",
+              "author": "synthetic-user",
+              "text": "Reproduces only when the range crosses a month. Keep this clarification with the report."
+            }
+          ]
+        }
+      ],
+      "complete": true,
+      "availability": "All available synthetic textual thread context is included; no live reads occurred.",
+      "link": "https://example.invalid/synthetic/slack/C_SYNTHETIC_ONE/1700000010.000000"
+    },
+    {
+      "root": "1699999000.000000",
+      "pages": [
+        {
+          "cursor": null,
+          "next_cursor": null,
+          "messages": [
+            {
+              "ts": "1699999000.000000",
+              "thread_ts": "1699999000.000000",
+              "author": "synthetic-user",
+              "text": "CSV export progress stays at zero on larger reports."
+            },
+            {
+              "ts": "1700000030.000000",
+              "thread_ts": "1699999000.000000",
+              "author": "synthetic-user",
+              "text": "This older report reproduces again today, even with a small export."
+            },
+            {
+              "ts": "1700000045.000000",
+              "thread_ts": "1699999000.000000",
+              "author": "synthetic-user",
+              "text": "Additional reply became visible late in the overlapping search window."
+            },
+            {
+              "ts": "1700000060.000000",
+              "thread_ts": "1699999000.000000",
+              "author": "synthetic-user",
+              "text": "The export completes eventually; please investigate the missing progress feedback, not lost data."
+            }
+          ]
+        }
+      ],
+      "complete": true,
+      "availability": "All available synthetic textual thread context is included; no live reads occurred.",
+      "link": "https://example.invalid/synthetic/slack/C_SYNTHETIC_ONE/1699999000.000000"
+    }
+  ]
+}

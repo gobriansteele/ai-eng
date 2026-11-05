@@ -1,10 +1,10 @@
 # Local software factory
 
 `factory` is a local plugin for Codex and Claude Code. The current source provides
-`factory-setup`, `factory-status`, `factory-run` and `factory-route`, backed by
-shared typed helpers.
-The orchestrator saves and routes synthetic source threads and resumes legacy
-post-intake work; live intake, investigation and later roles are not implemented.
+`factory-setup`, `factory-status`, `factory-run`, `factory-watch` and
+`factory-route`, backed by shared typed helpers. The orchestrator collects bounded
+read-only Slack intake, saves and routes source threads, and resumes legacy work.
+Investigation and later roles are not implemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -46,12 +46,36 @@ PyYAML dependency runs in an isolated environment outside the plugin package.
 
 ## Run saved work
 
-Use `factory-run` with the same explicit config path in either host. Select a
-saved synthetic source under `fixtures/sources/` and request `--source <path>`.
-The shared router reads the full available thread plus supplied Jira/ownership/
-code observations, returns evidence-backed findings, and the orchestrator saves
-explicit item updates. It stops at the missing investigator, a human/existing-work
-wait, or no available work. No live integration or external write occurs.
+Use `factory-run` with the same explicit config path in either host. With no
+synthetic input, it invokes `factory-watch` under one durable invocation owner,
+then routes saved intake/resumes work to a bounded stop. Watch reads every ready
+configured channel with fixed bounds, a 24-hour overlap clamped to setup start,
+fully paginated channel history and available reply discovery, plus complete
+tracked-thread rechecks. Collection and cursor commit together. Repeated reads
+dedupe by workspace/channel/timestamp. New replies retain their observed root and
+full available thread; earlier captures remain immutable history.
+
+Coverage is explicitly bounded. Search indexing/late visibility, private-channel
+and bot coverage are not guaranteed. Without reply discovery, older untracked
+roots can be missed. Use an explicit `--import-thread` request naming configured
+channel and root/link to import historical context without changing live cursors.
+Edits/deletions alone do not initiate intake in v1. See the
+[collection contract](plugins/factory/skills/factory-watch/references/collection.md).
+Setup owns channel selection and starts; adding/removing channels preserves work
+and existing cursors. Partial/missing setup blocks affected channels.
+
+The shared router reads full saved threads, trigger boundaries, relevant inventory
+and current read-only Jira/ownership/code evidence for live sources. Missing access
+remains incomplete. It returns findings; the orchestrator saves explicit updates
+and stops at the missing investigator, a human/existing-work wait, no available
+work or its bound. No external writes occur.
+
+For offline demonstrations select `--source <path>` under `fixtures/sources/`,
+legacy `--fixture <path>`, or `--collection <synthetic-json>` under `fixtures/watch/`.
+These explicit synthetic/offline requests never call integrations. Raw normalized
+watch fixtures exercise pagination, independent channels, failure/retry, overlap,
+tracked replies and import; reviewer criteria are in
+[watcher evaluation](docs/watcher-evaluation.md).
 
 Sources include conversation, open ticket without code work, a feature, uncertain
 duplicate, three requests, related thread, unavailable Jira, active code work and
@@ -72,12 +96,13 @@ explains owner discovery, CLI commands, retries and repair. Desktop dispatches
 one foreground bounded CLI worker in the same harness; its app service cannot
 own an invocation. Missing process inspection or dispatch is a visible block.
 
-The canonical `<runtime>/state/work.json` atomically commits inventory, one
-selected active ID, source receipts, history and invocation bookkeeping. Schema 2
-retains multiple saved/pending items. Schema 1 is validated read-only and migrated
-only by verified-owner begin with original history and handoff metadata intact.
-Corruption requests repair, never reset. Source identity plus immutable capture
-version/content preserves later replies without overwriting historical evidence.
+The canonical `<runtime>/state/work.json` is the inbox and work authority. It
+atomically commits inventory, one active ID, source receipts, collection cursors,
+history and invocation bookkeeping. Source-only states remain schema 2; the first
+verified-owner collection atomically migrates to schema 3. Schema 1/2 inspect
+writes nothing; begin migrates 1 to 2 preserving history/handoff metadata.
+Both hosts need this phase's plugin to resume schema 3. Corruption requests repair,
+never reset. Immutable captures preserve earlier evidence and unrouted intake.
 
 ## Verify
 

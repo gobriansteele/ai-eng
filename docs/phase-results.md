@@ -629,3 +629,196 @@ status helper, confirmed matching manifests and the corrected capability/workflo
 report, and left the synthetic canonical snapshots byte-for-byte unchanged.
 `status-verification.json` records this check. Model-driven routing acceptance is
 the 0.4.1 focused run above; the final report-only change was checked directly.
+
+## Phase 5 candidate — watcher source verification (not installed acceptance)
+
+Added shared `factory-watch` plus typed normalized-page collection in
+`factory_collection.py`; `factory_work.py` now supports config-only begin,
+read-only watch-plan and owner-gated collect. Canonical work.json remains the
+inbox/work authority. First successful collection migrates schema 2 to 3 atomically
+with its immutable captures, seen ledger, per-channel synthetic/live mode, tracked
+roots, coverage and cursor. Schemas 1/2 inspect remain read-only; source-only
+work remains schema 2. Existing handoff metadata/history and synthetic cursors
+are preserved. No split source/cursor commit or second work authority was added.
+
+Collection accepts observed paginated history and optional reply discovery,
+requires complete new/tracked thread rechecks, preserves root and full currently
+observed textual context, and records trigger IDs separately from old context.
+Repeated root/pages dedupe; terminal restart, incomplete fetch and conflicting
+same-ID content refuse. Explicit imports can promote previously seen context
+once without changing live cursors. Per-channel mode is fixed even on empty reads;
+synthetic source-file input cannot bypass the live collector. Observed permalinks
+are retained, with durable workspace/channel/root identity as an honest non-URL
+fallback. Current capture text never unions deleted/absent old messages; older
+immutable captures remain history. Edits/deletions alone do not trigger intake.
+
+The orchestrator invokes watch before handling blocked work, then routes/resumes
+within semantic bounds. Live routing can save timestamped read-only observations
+with source references and access/search limitations; synthetic runs stay offline.
+Both status skill and configuration-helper workflow report now include watcher
+capability. Investigation still stops at `factory-investigate`; no later role,
+external write, schedule or integration service was added.
+
+Raw synthetic observations are under `plugins/factory/fixtures/watch/`; reviewer
+criteria are separate in `docs/watcher-evaluation.md`. There are 21 new unit tests,
+66 total including the original 45. They cover independent channels, multipage
+history/thread/search overlap, failure then retry, exact replay, late-indexed
+replies below the prior cursor (including an untracked root), tracked old roots,
+no-discovery coverage limits, manual imports, partial setup/channel removal and
+re-addition, mode isolation, corruption, cross-host state preservation and failures
+before/after atomic replacement. Real subprocess lock/liveness/locale tests ran;
+none were skipped.
+
+Executed from `/Users/briansteele/repos/ai-eng`, using isolated frozen uv and
+`--cache-dir /private/tmp/ai-eng-checks/uv-cache` throughout:
+
+- Ruff check over `plugins/factory/scripts tests`: passed.
+- Ruff format check over `plugins/factory/scripts tests`: passed (8 files).
+- Strict mypy over all four helpers with cache at
+  `/private/tmp/ai-eng-checks/mypy`: passed.
+- `PYTHONDONTWRITEBYTECODE=1 uv run --isolated --frozen --cache-dir /private/tmp/ai-eng-checks/uv-cache --project plugins/factory python -m unittest discover -s tests`: 66 passed.
+- System skill-creator quick_validate for watch, run, route and status: passed.
+- JSON parsing for all six watch fixtures and `git diff --check`: passed.
+
+This entry records candidate source/helper checks only. Fresh model-driven
+Codex/Claude fixture acceptance, installed refresh, and actual read-only live
+collection/repeat/import acceptance are delegated to the parent and remain to be
+recorded separately. No model calls, live integration calls, real runtime edits,
+version bump, installation, product changes, commits or pushes were performed by
+this implementing agent. Search/index/private/bot completeness is not claimed.
+
+### Phase 5 candidate instruction correction after initial live trials
+
+Parent acceptance exposed a read-bound ambiguity: an integer-string thread
+`latest` produced a parent-only terminal response, while the parent observed
+replies/cursor using the equivalent six-fractional-digit Slack timestamp.
+Shared watch instructions/contract and both harness guides now distinguish
+channel/thread `oldest`/`latest` (`seconds.ffffff`, including whole seconds) from
+reply-search `after`/`before` (schema-specific Unix seconds). Search widening
+applies only to search. Malformed read bounds or contradictory reply evidence
+require corrected refetch before collection; unresolved contradiction blocks
+cursor advancement even after an apparent terminal response. Prior failed live
+acceptance evidence and private runtimes were not edited by this agent.
+
+The second-channel fixture now honestly describes unavailable discovery when
+`discovery: []`; it no longer claims a terminal search occurred. Router guidance
+also clarifies that explicit import grants eligibility, while full thread meaning
+still decides whether an answered/settled question needs work.
+
+Only instructions/guides and that synthetic provenance note changed; helpers,
+models, schemas, dependencies, version and installations did not. Repeated isolated
+frozen checks passed: Ruff lint and format (8 files), strict mypy (4 helpers), both
+changed skill validators, fixture JSON/provenance check, all 66 unit tests including
+real process checks, and git diff whitespace validation. Fresh installed/live
+retests remain parent-owned; this entry does not claim they passed.
+
+### Phase 5 candidate scope/reporting correction
+
+Shared router guidance now obtains effective repository scope with
+`factory_config.py discover --config <same-config>` and any supplied `--local`.
+The linked configuration contract explicitly explains that discovered repositories
+under roots remain in scope and explicit paths adds to that set rather than
+narrowing it. Bounded searches may select relevant repositories; other in-scope
+repositories are unsearched, not unconfigured or unauthorized simply because
+absent from paths. Discovery/access limitations remain explicit evidence.
+
+Manual-import instructions and contract now require selecting and saving the
+fixed six-fractional-digit upper in the local draft observation before the first
+thread read, then reusing it as latest across every page. No helper/schema or
+runtime change was made. This implementing agent touched no private runtime,
+installation, version or prior failed evidence.
+
+Validation repeated with the same isolated frozen uv commands/cache: Ruff lint,
+format check (8 files), strict mypy (4 helpers), watch/route/setup skill validators,
+all 66 unit tests including real process checks, and git diff whitespace check
+passed. Fresh focused scope/contract behavior in both installed hosts is
+parent-owned and is not claimed by these source checks.
+
+### Phase 5 parent acceptance — Factory 0.5.2
+
+Parent reviewed the collection, replay/migration, source-provenance and skill
+changes, then ran installed model sessions in both hosts. Codex CLI was
+0.166.0-alpha.6 with gpt-6.1-sol/medium; Claude Code was 2.1.310 with
+Sonnet/medium. Each test used its own private temporary factory home.
+
+The complete offline suites ran on 0.5.0: partial, first, second-channel, repeat,
+followup, historical import, repeated import. Both ended with five routed
+captures, four items, nine seen identities and seven finished invocations.
+The partial rejection left canonical bytes identical before finish bookkeeping.
+Channel cursors advanced independently; repeated reads created no duplicate
+captures; a late-visible reply below the prior cursor and a fresh reply attached
+to the existing report; imports preserved live cursors. Earlier capture bodies,
+digests, routing, fix counts and action/approval records remained intact.
+Codex routed one pending capture per blocked invocation, while Claude initially
+routed two; both retained remaining work and respected the three-step bound.
+All selected work stopped honestly at the unavailable investigator.
+
+Live acceptance found and corrected a real connector failure: a whole-second
+thread `latest` argument returned only the parent with an apparent terminal
+response. Repeating that read with six fractional digits returned replies and a
+cursor. The initial Codex 0.5.0 live run was rejected, not counted as success.
+0.5.1 explicitly separated decimal Slack read bounds from whole-second search
+bounds, required refetch on malformed/contradictory reads, and clarified that
+historical import does not revive settled requests.
+
+Fresh 0.5.1 live runs in both hosts completed two automatic reads followed by an
+explicit historical import. Each automatic read returned terminal empty history
+and reply-search pages after the preserved setup start. Each import retained
+seven unique messages across three pages, preserved the live cursor and routed
+the conversation to no-action with zero work items. Current bounded Jira/code
+observations and their limits were saved privately. Separate independent probes
+in both hosts demonstrated discovery of replies whose roots predated the search
+window, including following an empty terminal search page. This establishes the
+observed public-channel capability, not complete indexing/private/bot coverage.
+
+One Claude import selected its upper bound after fetching. Its old messages were
+all below that bound, but this did not establish the required ordering. A focused
+fresh import subsequently saved the upper before the first connected read and
+used that exact decimal `latest` on all three pages; parent audited the actual
+call order and final state. A preceding focused attempt stopped safely before
+reads because its shell spelling did not match the launcher's existing narrow
+allowlist. The retry used the already-permitted literal uv/python3 commands;
+permissions were not broadened. The failed attempts remain in private evidence.
+
+0.5.2 adds explicit repository discovery before live code scope checks: configured
+roots and explicit paths form a union. A bounded search leaves other discovered
+repositories unsearched; it does not make them unconfigured. It also makes the
+pre-read import-boundary step explicit at the import instruction, fixes the
+second-channel fixture's absent-discovery note and removes an obsolete setup
+capability statement. Helper logic is unchanged from the tested collector.
+
+Parent verification on the final source includes all 66 unit tests (including
+real process checks), Ruff lint/format, strict mypy, skill/JSON validation and
+`git diff --check`. Both hosts refreshed through their normal local plugin
+installation commands. Final fresh 0.5.2 preflights independently checked actual
+repository discovery, root/path scope semantics, import-boundary order and the
+loaded version; both discovered the same 33 repositories with no unavailable
+paths. Status correctly refused setup readiness in these copied preflight homes,
+which intentionally lacked the saved setup association for their non-null intake
+start; validate/discover succeeded and no setup readiness was claimed. The full live suites were not repeated for these final guidance
+clarifications; the focused checks cover the changed behavior.
+
+Private evidence (not committed):
+
+- `/private/tmp/ai-eng-phase5/{codex,claude}/suite/`: exact prompts, events, seven
+  checkpoints and byte-identical partial snapshots.
+- `/private/tmp/ai-eng-phase5/verification.json`: parent schema replay, counts,
+  preservation, cursor and related-source assertions.
+- `/private/tmp/ai-eng-phase5-live/{codex,claude}-accepted/`: exact live prompts,
+  tool calls, normalized observations, routing and three checkpoints each.
+- `/private/tmp/ai-eng-phase5-live/verification.json` and `read-bound-audit.json`:
+  parent live-state assertions and actual read argument precision.
+- `/private/tmp/ai-eng-phase5-live/claude-import-retry/verification.json`: focused
+  import ordering, three identical upper arguments, full capture and released owner.
+- `/private/tmp/ai-eng-phase5/{codex,claude}/scope/`: final installed preflight.
+
+Normal entry points are `$factory-run --config <factory-home>/config.yaml` in
+Codex and `/factory:factory-run --config <factory-home>/config.yaml` in Claude
+Code. Use an explicit `--import-thread` with selected configured channel and root
+for historical intake. For the reproducible offline evaluation, use
+`--collection <loaded-plugin>/fixtures/watch/<fixture>.json` with the isolated
+synthetic configuration described in `docs/watcher-evaluation.md`. Actual outputs
+and resulting canonical records are in the evidence locations above.
+
+Watcher acceptance is complete. Investigation remains the next tranche; no
+scheduled operation or external write was exercised by these tests.
