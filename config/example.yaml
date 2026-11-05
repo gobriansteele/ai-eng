@@ -1,0 +1,24 @@
+schema_version: 1
+factory_id: example
+runtime_path: ~/factories/example
+slack:
+  workspace_id: null
+  channels: []
+jira:
+  project_key: EXAMPLE
+repositories:
+  roots: [~/projects/example-org]
+  paths: []
+intake:
+  start_at: null
+limits:
+  active_work_items: 1
+  fix_rounds: 2
+actions:
+  tickets: approval_required
+  posts: approval_required
+  pushes: approval_required
+  pull_requests: approval_required
+  merge: disabled
+  deployment: disabled
+  cleanup: preview_only

@@ -1,0 +1,14 @@
+{
+  "name": "ai-eng-local",
+  "description": "Local software factory development plugins.",
+  "owner": {
+    "name": "Brian Steele"
+  },
+  "plugins": [
+    {
+      "name": "factory",
+      "source": "./plugins/factory",
+      "description": "Configure and inspect a local software factory."
+    }
+  ]
+}

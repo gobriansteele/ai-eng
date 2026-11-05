@@ -1,0 +1,12 @@
+{
+  "name": "factory",
+  "version": "0.2.2",
+  "description": "Configure and inspect a local software factory.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Factory",
+    "shortDescription": "Inspect factory version and setup readiness",
+    "developerName": "Brian Steele",
+    "category": "Productivity"
+  }
+}

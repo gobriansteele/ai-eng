@@ -1,0 +1,8 @@
+{
+  "name": "factory",
+  "version": "0.2.2",
+  "description": "Configure and inspect a local software factory.",
+  "author": {
+    "name": "Brian Steele"
+  }
+}

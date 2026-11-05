@@ -1,0 +1,11 @@
+.claude/settings.local.json
+config/*.local.yaml
+config/honor.yaml
+.venv/
+__pycache__/
+*.pyc
+artifacts/
+.idea/
+.DS_Store
+.mypy_cache/
+.ruff_cache/
