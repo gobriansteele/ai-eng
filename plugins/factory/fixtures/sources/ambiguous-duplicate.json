@@ -1,0 +1,31 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:ambiguous-duplicate",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/threads/ambiguous-duplicate",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Dev",
+      "text": "The dashboard chart sometimes shows stale totals after switching teams. Is this LAB-207 again?"
+    },
+    {
+      "id": "m2",
+      "author": "Dev",
+      "text": "I cannot reproduce it reliably. LAB-207 describes date filters and might be unrelated; I only changed teams."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_search",
+      "text": "LAB-207 Open, assigned Pat: chart refresh with date-filter changes. Search returned this possible match; no team-switch reproduction is attached."
+    },
+    {
+      "id": "code",
+      "kind": "code_activity",
+      "text": "No linked PR or branch supplied for LAB-207; assignment alone does not establish active code work."
+    }
+  ]
+}

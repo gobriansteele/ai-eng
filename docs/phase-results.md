@@ -467,3 +467,165 @@ The reproducible test launcher and assertion script are
 These are disposable synthetic acceptance artifacts, not the real factory's
 runtime. No Honor runtime records, live integrations or product repositories were
 changed. Live routing/intake remain later phases.
+
+## Phase 4 — accepted, version 0.4.2
+
+Added shared `factory-route` for semantic saved-thread triage and connected it to
+`factory-run`. The role returns evidence-backed findings; the orchestrator alone
+chooses complete current-state updates and the selected active item. Scripts
+validate source/result contracts, associations, deduplication and safe persistence;
+no script classifies reports or chooses workflow transitions. Nine explicitly
+synthetic saved-source fixtures include corrected replies, separate requests,
+Open/unassigned Jira without code, uncertain duplicates, actual ownership/code
+activity, Done/merged without deployment, missing Jira access and untrusted
+message directions. Reviewer expectations live separately in
+`docs/router-evaluation.md`, not raw role input.
+
+Schema 2 keeps one canonical atomic snapshot with items, nullable selected active
+ID, saved immutable source captures, routing receipts, events and invocations.
+New explicit sources may route into pending records while existing work is
+blocked. Source/thread identity plus immutable capture version and full-content
+digest permit exact replay and retained later replies. Related sources attach
+only through explicit agent-authored associations; the persistence boundary
+preserves execution artifacts, code, fix counts, approvals and actions unchanged
+on related-item routing. No-action has a source/disposition receipt and no work.
+Proposed tickets remain local strings in the saved routing artifact.
+
+Schema 1 remains readable without a write. Verified-owner `begin` migrates only
+after prior owner liveness is resolved. The original item, history entries,
+invocations, scopes/actions, counters and cursor metadata survive; a migration
+event is appended in the same atomic snapshot. Legacy post-intake fixtures have
+no source body and now honestly wait for missing evidence. Mutator `--summary`
+avoids printing the full growing history after each operation.
+
+Executed from the checkout (all using the isolated frozen project environment):
+
+```sh
+uv run --cache-dir /private/tmp/ai-eng-checks/uv-cache --isolated --frozen --project plugins/factory ruff check --no-cache --config plugins/factory/pyproject.toml plugins/factory/scripts tests
+uv run --cache-dir /private/tmp/ai-eng-checks/uv-cache --isolated --frozen --project plugins/factory ruff format --check --no-cache plugins/factory/scripts tests
+uv run --cache-dir /private/tmp/ai-eng-checks/uv-cache --isolated --frozen --project plugins/factory mypy --cache-dir /private/tmp/ai-eng-checks/mypy --config-file plugins/factory/pyproject.toml plugins/factory/scripts
+PYTHONDONTWRITEBYTECODE=1 uv run --cache-dir /private/tmp/ai-eng-checks/uv-cache --isolated --frozen --project plugins/factory python -m unittest discover -s tests -v
+uv run --cache-dir /private/tmp/ai-eng-checks/uv-cache --isolated --frozen --project plugins/factory python /Users/briansteele/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/factory/skills/factory-route
+uv run --cache-dir /private/tmp/ai-eng-checks/uv-cache --isolated --frozen --project plugins/factory python /Users/briansteele/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/factory/skills/factory-run
+uv run --cache-dir /private/tmp/ai-eng-checks/uv-cache --isolated --frozen --project plugins/factory python /Users/briansteele/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/factory/skills/factory-status
+```
+
+Results: `All checks passed!`; `6 files already formatted`;
+`Success: no issues found in 3 source files`; `Ran 42 tests ... OK`;
+all three skills returned `Skill is valid!`. The initial sandbox unit run exposed
+process-inspection denial in two existing tests; the complete final suite passed
+with narrow escalation for those real `ps` checks, not skipped tests. Ten new
+tests exercise multi-item/no-action persistence, full source references, exact
+repeat/version retention, related-record preservation, CAS and lost-route-reply
+idempotency, legacy read-only/migration preservation, live/unknown owner refusal,
+corruption refusal and migration failure before/after atomic replacement.
+Manufactured test routing artifacts exercise persistence, not semantic judgments.
+A failure exposed shared mutable route/history payloads; append now copies them
+so later mutations cannot rewrite committed in-memory history.
+
+At the implementation-agent handoff, fresh installed model demonstrations,
+candidate installation and parent review remained pending. The exact independent-source prompt
+and ordered semantic checks are in `docs/router-evaluation.md` and the harness
+guides. This candidate does not establish router judgment quality or installed
+behavior. No real runtime, product repository, integrations, external writes,
+model calls, global settings, dependency changes, version bump, commits or pushes
+were performed by this implementation agent.
+
+### Parent review correction before model acceptance
+
+The parent found that retrying `begin` assumed one begin event without validating
+that lifecycle invariant. Both schema readers now require exactly one begin per
+invocation, one finish for finished metadata and none for an active invocation,
+with events ordered around begin/finish. The migration marker may precede its new
+invocation's begin. Missing/duplicate begin/finish corruption is refused as a
+repair request with original bytes unchanged, rather than reaching an uncaught
+`StopIteration`. A separate regression verifies active schema-1 owner death:
+old finish is appended before new migrate/begin, with prior history preserved.
+
+After this helper-only correction, the same Ruff lint/format, strict mypy and
+complete unit commands above passed: six formatted Python files, three typed
+scripts and **44 tests OK**, including the narrowly escalated real process
+checks. Related-item routing still requires artifact paths, code references,
+fix count, approvals and pending actions unchanged. No fixture or skill semantics
+changed in this correction; fresh installed model acceptance remains pending.
+
+The final contract review also made fresh routed-item defaults explicit and
+validated: zero factory fix rounds and empty approval/pending-action ledgers.
+New work cannot inherit the legacy preservation fixture's illustrative scopes or
+counters. The related-source test now establishes prior synthetic execution state
+through an explicit validated save before checking preservation. Observed existing
+code/artifact references remain allowed; role instructions forbid inventing
+worker/worktree ownership. The added regression refuses each inherited field
+without modifying the prior snapshot. Final gates passed again: Ruff lint and
+format (six Python files), strict mypy (three scripts), **45 tests OK** including
+real process checks, both affected skill validators, and diff whitespace check.
+
+
+### Installed semantic acceptance and corrections
+
+Parent refreshed both installed plugins to 0.4.0 and ran fresh sessions with
+Codex CLI 0.166.0-alpha.6 / gpt-6.1-sol medium and Claude Code 2.1.310 / sonnet
+medium. Each host used an independent synthetic home and the installed skills,
+without evaluator expectations or live integrations. Eleven invocations routed
+conversation, an open-ticket bug, its repeat, feature, ambiguous duplicate,
+three independent requests, underway work, unavailable Jira, related thread,
+its repeat, and a later capture of the original bug.
+
+Parent inspected actual saved findings and asserted every checkpoint. Both
+produced eight items from nine immutable source captures, eleven finished
+invocations, nine routing decisions and one selected active item. Conversation
+created zero work. The three-item source produced three distinct linked items.
+Both repeats preserved the entire inventory/receipts and consumed zero new steps.
+Related and later-capture sources attached to the original CSV item. Jira access
+failure remained an incomplete duplicate check, and the embedded instruction to
+publish a ticket/disable approvals caused no action. Done/merged was not treated
+as deployment. Feature briefs followed the correcting reply's download request,
+not the withdrawn email request.
+
+Actual Phase-3 records were then resumed in fresh installed sessions in both
+hosts. Parent verified schema 1-to-2 migration, verbatim old events/invocations,
+unchanged identity/links/fix count/scopes/actions/cursors, and a route-stage human
+wait for the missing original source. Neither fabricated a source or judgment.
+Claude completed the migration but its evidence-copy `cp` was denied by the test
+launcher; parent copied the finished snapshot byte-for-byte and verified it.
+The runtime migration itself was successful in both hosts.
+
+Semantic review caught two instruction defects in the first Claude suite: it
+invented feature-brief/verifier skill names and described missing ownership
+observations as proof that no work was underway. Version 0.4.1 explicitly uses
+`factory-investigate` for investigation and verification across all brief types,
+and requires bounded, calibrated absence wording. Helpers did not change.
+Both modified skill validators passed; both installed copies were refreshed.
+Fresh focused sessions reran feature, three-item and unavailable-Jira sources.
+Both produced five items from three captures; every actual handoff named
+`factory-investigate`, fresh authorization/action ledgers were empty, fix counts
+were zero, and the saved reasons described underway work as unverified. Missing
+Jira remained incomplete. Each run stopped truthfully at the unavailable
+investigator and released ownership. The original full-suite failures remain
+visible in the local evidence; they were not edited into passing records.
+
+Codex's focused run initially supplied a list for the artifact-path mapping. The
+helper rejected it without saving; the model corrected the draft and completed
+the run. Several read/shell forms were denied by the intentionally narrow test
+launcher; permitted read/Python/helper commands completed the checks. No global
+permissions changed. Trace inspection found no MCP calls in any fixture session.
+
+Exact prompts, outputs, checkpoints and assertions are under
+`/private/tmp/ai-eng-phase4/`. `verification.json` records full-suite structural
+checks, `legacy-verification.json` records migration preservation, and
+`focused-verification.json` records the corrected handoffs/evidence wording.
+The assertion script is `/private/tmp/ai-eng-verify-phase4.py`; the launcher is
+`/private/tmp/ai-eng-evaluate.py`. These are disposable synthetic test artifacts.
+No Honor runtime, product repository, live source or external service changed.
+Live collection is the next phase; this acceptance establishes saved-source
+routing and local persistence only.
+
+Final packaging review found the status helper still omitted saved-source routing
+from its capability list. Version 0.4.2 corrects only that report plus package
+version metadata; the 0.4.1 routing instructions and persistence behavior remain
+unchanged. Required lint, formatting, strict typing and all 45 tests passed again.
+Both hosts were refreshed to 0.4.2. Fresh processes ran each installed package's
+status helper, confirmed matching manifests and the corrected capability/workflow
+report, and left the synthetic canonical snapshots byte-for-byte unchanged.
+`status-verification.json` records this check. Model-driven routing acceptance is
+the 0.4.1 focused run above; the final report-only change was checked directly.

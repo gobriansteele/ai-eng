@@ -1,0 +1,26 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:conversation",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/threads/conversation",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Lee",
+      "text": "The import tutorial looks much clearer now, thanks!"
+    },
+    {
+      "id": "m2",
+      "author": "Jo",
+      "text": "The screenshot I posted above was just an example, not a report or a request. No follow-up needed."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_access",
+      "text": "Not searched: this is a saved conversation sample."
+    }
+  ]
+}

@@ -18,6 +18,10 @@ sys.path.insert(0, str(ROOT / "plugins/factory/scripts"))
 fw = importlib.import_module("factory_work")
 
 
+def current(state):
+    return state["items"][state["active_item_id"]]
+
+
 class WorkTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
@@ -49,7 +53,7 @@ class WorkTests(unittest.TestCase):
         )
 
     def operation(self, state, name="choose-route"):
-        updated = deepcopy(state["item"])
+        updated = deepcopy(current(state))
         updated.update(
             stage="route",
             status="blocked",
@@ -82,17 +86,17 @@ class WorkTests(unittest.TestCase):
                 saved = self.save(initial, harness=first)
                 self.store.finish("run-one", first, 12345, "blocked")
                 resumed = self.begin("run-two", second)
-                self.assertEqual(resumed["item"], saved["item"])
+                self.assertEqual(current(resumed), current(saved))
                 self.assertEqual(
                     resumed["synthetic_cursors"], initial["synthetic_cursors"]
                 )
-                self.assertEqual(resumed["item"]["fix_rounds"], 1)
+                self.assertEqual(current(resumed)["fix_rounds"], 1)
                 self.assertEqual(
-                    resumed["item"]["approvals"], initial["item"]["approvals"]
+                    current(resumed)["approvals"], current(initial)["approvals"]
                 )
                 self.assertEqual(
-                    resumed["item"]["pending_actions"],
-                    initial["item"]["pending_actions"],
+                    current(resumed)["pending_actions"],
+                    current(initial)["pending_actions"],
                 )
                 self.assertEqual(cursors.read_text(), '{"synthetic:C_ONE":"unaltered"}')
                 self.assertEqual(
@@ -125,7 +129,7 @@ class WorkTests(unittest.TestCase):
         saved = self.save(self.begin())
         with patch.object(fw, "owner_alive", return_value=False):
             resumed = self.begin("run-two", "claude-code", fixture=False)
-        self.assertEqual(resumed["item"], saved["item"])
+        self.assertEqual(current(resumed), current(saved))
         self.assertEqual(resumed["invocations"][0]["outcome"], "interrupted_owner_dead")
         self.assertEqual(resumed["active_run"], "run-two")
         self.assertEqual(sum(e["kind"] == "decision" for e in resumed["events"]), 1)
@@ -187,10 +191,10 @@ class WorkTests(unittest.TestCase):
     def test_semantic_history_corruption_and_missing_fields_refused(self):
         initial = self.begin()
         for mutate in (
-            lambda s: s["item"].update(fix_rounds=0),
+            lambda s: current(s).update(fix_rounds=0),
             lambda s: s.update(revision=19),
             lambda s: s["invocations"][0].update(steps=1),
-            lambda s: s["item"].pop("approvals"),
+            lambda s: current(s).pop("approvals"),
         ):
             bad = deepcopy(initial)
             mutate(bad)
@@ -233,7 +237,7 @@ class WorkTests(unittest.TestCase):
         changed = self.root / "same-input-new-path.json"
         changed.write_text(json.dumps(incoming))
         resumed = self.store.begin("claude-code", 12345, "run-two", changed)
-        self.assertEqual(resumed["item"], saved["item"])
+        self.assertEqual(current(resumed), current(saved))
         self.store.finish("run-two", "claude-code", 12345, "blocked")
         incoming["item"]["source_id"] = "synthetic:other"
         changed.write_text(json.dumps(incoming))
@@ -392,8 +396,8 @@ class WorkTests(unittest.TestCase):
         )
         self.store.finish("run-one", "codex", 12345, "blocked")
         resumed = self.begin("run-two", "claude-code", fixture=False)
-        self.assertEqual(resumed["item"]["fix_rounds"], 2)
-        self.assertEqual(saved["item"], resumed["item"])
+        self.assertEqual(current(resumed)["fix_rounds"], 2)
+        self.assertEqual(current(saved), current(resumed))
 
     def test_fingerprint_includes_local_content_changes(self):
         self.fingerprint.stop()

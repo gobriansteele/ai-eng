@@ -1,0 +1,36 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:open-ticket",
+  "version": "capture-2",
+  "link": "https://example.invalid/synthetic/threads/open-ticket",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Ari",
+      "text": "The people CSV import now drops surnames with apostrophes after last week\u2019s release. Could we fix it? I saw LAB-201."
+    },
+    {
+      "id": "m2",
+      "author": "Ari",
+      "text": "Correction: the interactive form is fine; only the CSV path fails, even with a valid quoted field. One report, not two bugs."
+    },
+    {
+      "id": "m3",
+      "author": "Ari",
+      "text": "New detail since the first capture: only batch upload is affected, not single-file upload. Please add this to the same investigation."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_search",
+      "text": "LAB-201 remains Open/unassigned."
+    },
+    {
+      "id": "relation",
+      "kind": "cross_thread",
+      "text": "This capture adds one reply to synthetic:thread:open-ticket; prior messages and permalink are unchanged."
+    }
+  ]
+}

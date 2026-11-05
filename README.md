@@ -1,9 +1,10 @@
 # Local software factory
 
-`factory` is a local plugin for Codex and Claude Code. Version `0.3.0` provides
-`factory-setup`, `factory-status` and `factory-run`, backed by shared typed helpers.
-The orchestrator saves and resumes synthetic post-intake work; live intake and
-work-processing roles are not implemented yet.
+`factory` is a local plugin for Codex and Claude Code. The current source provides
+`factory-setup`, `factory-status`, `factory-run` and `factory-route`, backed by
+shared typed helpers.
+The orchestrator saves and routes synthetic source threads and resumes legacy
+post-intake work; live intake, investigation and later roles are not implemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -45,17 +46,25 @@ PyYAML dependency runs in an isolated environment outside the plugin package.
 
 ## Run saved work
 
-Use `factory-run` with the same explicit config path in either host. A new Phase 3
-example requires an explicitly synthetic fixture from the loaded package;
-`fixtures/synthetic-item.json` is ordinary input and `synthetic-resume.json` tests
-preserved fix counts, approval scope and pending-action fields. These fixtures
-represent what happens after intake. Future schedules invoke the orchestrator
-with configuration, with live intake added in later phases.
+Use `factory-run` with the same explicit config path in either host. Select a
+saved synthetic source under `fixtures/sources/` and request `--source <path>`.
+The shared router reads the full available thread plus supplied Jira/ownership/
+code observations, returns evidence-backed findings, and the orchestrator saves
+explicit item updates. It stops at the missing investigator, a human/existing-work
+wait, or no available work. No live integration or external write occurs.
 
-Single-step saves one decision; normal invocation defaults to at most three
-saved decisions (`--max-steps 1..10`). Both stop at a wait or missing role. The
-current expected result is stage `route`, status `blocked`, required role
-`factory-route`; no worker or external action is simulated.
+Sources include conversation, open ticket without code work, a feature, uncertain
+duplicate, three requests, related thread, unavailable Jira, active code work and
+a later thread capture. Repeat the identical source path to test exact replay;
+route `open-ticket.json` before `related-thread.json` to test attachment. Separate
+[evaluation criteria](docs/router-evaluation.md) are for reviewers, not router input.
+
+Legacy `--fixture` input remains supported: `synthetic-item.json` and
+`synthetic-resume.json` contain post-intake metadata with no original source body.
+They now wait honestly for that missing evidence, preserving fix counts/scopes/
+actions/cursors. Single-step saves one decision; bounded invocation defaults to
+at most three (`--max-steps 1..10`). New explicit sources are routed even when a
+previous item's missing-investigator block remains active.
 
 One durable run token covers the whole CLI invocation across helper calls. The
 [shared persistence contract](plugins/factory/skills/factory-run/references/persistence.md)
@@ -63,12 +72,12 @@ explains owner discovery, CLI commands, retries and repair. Desktop dispatches
 one foreground bounded CLI worker in the same harness; its app service cannot
 own an invocation. Missing process inspection or dispatch is a visible block.
 
-The canonical file is `<runtime>/state/work.json`, with item, events and run
-metadata committed together through atomic replacement. This Phase 3 layout
-refines the plan's suggested separate record/events/runs files to avoid split
-commits. Schema version 1 supports one synthetic saved item; multiple routed
-items require a later compatible migration. Existing setup and cursor files are
-untouched. Corruption requests repair preserving files; it never resets work.
+The canonical `<runtime>/state/work.json` atomically commits inventory, one
+selected active ID, source receipts, history and invocation bookkeeping. Schema 2
+retains multiple saved/pending items. Schema 1 is validated read-only and migrated
+only by verified-owner begin with original history and handoff metadata intact.
+Corruption requests repair, never reset. Source identity plus immutable capture
+version/content preserves later replies without overwriting historical evidence.
 
 ## Verify
 

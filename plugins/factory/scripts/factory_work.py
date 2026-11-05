@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterator, Literal, TypedDict, cast
+from typing import Iterator, Literal, NotRequired, TypedDict, cast
 
 from factory_config import (
     Config,
@@ -23,6 +23,15 @@ from factory_config import (
     mapping,
     string,
     timestamp,
+)
+from factory_source import (
+    Receipt,
+    Routing,
+    receipt,
+    receipt_id,
+    routing,
+    source,
+    source_digest,
 )
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -106,10 +115,11 @@ class Event(TypedDict):
     run_id: str
     kind: str
     decision: Decision | None
-    item: Item
+    item: Item | None
+    change: NotRequired[dict[str, object]]
 
 
-class Snapshot(TypedDict):
+class LegacySnapshot(TypedDict):
     schema_version: int
     config_path: str
     factory_id: str
@@ -119,6 +129,29 @@ class Snapshot(TypedDict):
     synthetic_cursors: dict[str, str]
     invocations: list[Invocation]
     events: list[Event]
+
+
+class Snapshot(TypedDict):
+    schema_version: int
+    config_path: str
+    factory_id: str
+    revision: int
+    active_run: str | None
+    items: dict[str, Item]
+    active_item_id: str | None
+    sources: dict[str, Receipt]
+    synthetic_cursors: dict[str, str]
+    invocations: list[Invocation]
+    events: list[Event]
+
+
+class RouteDecision(TypedDict):
+    id: str
+    reason: str
+    receipt_id: str
+    routing: Routing
+    items: list[Item]
+    active_item_id: str | None
 
 
 def now() -> str:
@@ -232,7 +265,7 @@ def stable_id(source_id: str, subitem_key: str) -> str:
 def item(value: object) -> Item:
     data = mapping(value, set(Item.__annotations__), "item")
     if data["synthetic"] is not True:
-        raise WorkError("Phase 3 accepts explicitly synthetic items only")
+        raise WorkError("Only explicitly synthetic items are implemented")
     source_id = string(data["source_id"], "source_id")
     subitem_key = string(data["subitem_key"], "subitem_key")
     identity = stable_id(source_id, subitem_key)
@@ -395,29 +428,59 @@ def invocation(value: object) -> Invocation:
 
 
 def event(value: object) -> Event:
-    data = mapping(value, set(Event.__annotations__), "event")
+    raw = obj(value, "event")
+    keys = {"revision", "at", "run_id", "kind", "decision", "item"}
+    modern = "change" in raw
+    data = mapping(raw, keys | ({"change"} if modern else set()), "event")
     kind = string(data["kind"], "event.kind")
-    if kind not in ("begin", "decision", "finish"):
+    if kind not in (
+        ("begin", "decision", "finish", "route", "migrate")
+        if modern
+        else ("begin", "decision", "finish")
+    ):
         raise WorkError("Invalid event kind")
     operation = None if data["decision"] is None else decision(data["decision"])
     if (kind == "decision") != (operation is not None):
         raise WorkError("Event decision mismatch")
-    return {
+    result: Event = {
         "revision": integer(data["revision"], "event.revision", 1, 2**53),
         "at": timestamp(data["at"], "event.at"),
         "run_id": string(data["run_id"], "event.run_id"),
         "kind": kind,
         "decision": operation,
-        "item": item(data["item"]),
+        "item": None if data["item"] is None and modern else item(data["item"]),
     }
+    if modern:
+        result["change"] = obj(data["change"], "event.change")
+    return result
 
 
-def snapshot(value: object) -> Snapshot:
-    data = mapping(value, set(Snapshot.__annotations__), "snapshot")
+def validate_lifecycles(runs: list[Invocation], events: list[Event]) -> None:
+    for run in runs:
+        history = [e for e in events if e["run_id"] == run["id"]]
+        begins = [e["revision"] for e in history if e["kind"] == "begin"]
+        finishes = [e["revision"] for e in history if e["kind"] == "finish"]
+        if len(begins) != 1 or len(finishes) != (
+            0 if run["finished_at"] is None else 1
+        ):
+            raise WorkError(
+                "Invocation lifecycle requires one begin and matching finish"
+            )
+        if any(
+            e["revision"] < begins[0] and e["kind"] != "migrate" for e in history
+        ) or (finishes and any(e["revision"] > finishes[0] for e in history)):
+            raise WorkError("Invocation lifecycle events are out of order")
+
+
+def legacy_snapshot(value: object) -> LegacySnapshot:
+    data = mapping(value, set(LegacySnapshot.__annotations__), "snapshot")
     if type(data["schema_version"]) is not int or data["schema_version"] != 1:
         raise WorkError("Unsupported work schema")
     runs = [invocation(v) for v in sequence(data["invocations"], "invocations")]
     events = [event(v) for v in sequence(data["events"], "events")]
+    validate_lifecycles(runs, events)
+    if any("change" in e for e in events):
+        raise WorkError("Schema 1 contains unsupported history fields")
     revision = integer(data["revision"], "revision", 1, 2**53)
     active = nullable(data["active_run"], "active_run")
     current = item(data["item"])
@@ -437,6 +500,7 @@ def snapshot(value: object) -> Snapshot:
     for e in events:
         if (
             e["run_id"] not in {r["id"] for r in runs}
+            or e["item"] is None
             or e["item"]["id"] != current["id"]
         ):
             raise WorkError("History identity mismatch")
@@ -457,6 +521,247 @@ def snapshot(value: object) -> Snapshot:
         "revision": revision,
         "active_run": active,
         "item": current,
+        "synthetic_cursors": string_map(data["synthetic_cursors"], "synthetic_cursors"),
+        "invocations": runs,
+        "events": events,
+    }
+
+
+def preserve(previous: Item, updated: Item) -> None:
+    if (
+        previous["id"],
+        previous["synthetic"],
+        previous["source_id"],
+        previous["subitem_key"],
+    ) != (
+        updated["id"],
+        updated["synthetic"],
+        updated["source_id"],
+        updated["subitem_key"],
+    ):
+        raise WorkError("Cannot replace saved source identity")
+    if updated["fix_rounds"] < previous["fix_rounds"]:
+        raise WorkError("Fix-round count cannot decrease")
+    for key in ("source_links", "jira_keys"):
+        if not set(previous[key]) <= set(updated[key]):
+            raise WorkError("Cannot drop saved source/Jira links")
+    if any(entry not in updated["approvals"] for entry in previous["approvals"]) or any(
+        entry not in updated["pending_actions"] for entry in previous["pending_actions"]
+    ):
+        raise WorkError(
+            "Preserve scoped approvals and pending actions; reconcile explicitly in a future role"
+        )
+
+
+def route_decision(value: object, receipts: dict[str, Receipt]) -> RouteDecision:
+    data = mapping(value, set(RouteDecision.__annotations__), "route decision")
+    key = string(data["receipt_id"], "receipt_id")
+    if key not in receipts:
+        raise WorkError("Route requires a saved source receipt")
+    return {
+        "id": string(data["id"], "route.id"),
+        "reason": string(data["reason"], "route.reason"),
+        "receipt_id": key,
+        "routing": routing(data["routing"], receipts[key]["source"]),
+        "items": [item(v) for v in sequence(data["items"], "route.items")],
+        "active_item_id": nullable(data["active_item_id"], "active_item_id"),
+    }
+
+
+def apply_route(
+    items: dict[str, Item], receipts: dict[str, Receipt], operation: RouteDecision
+) -> str | None:
+    saved = receipts[operation["receipt_id"]]
+    if saved["routing"] is not None:
+        raise WorkError(
+            "Source version already routed; reuse its receipt, never reroute"
+        )
+    updates = {v["id"]: v for v in operation["items"]}
+    if len(updates) != len(operation["items"]):
+        raise WorkError("Duplicate updated item identity")
+    associations: dict[str, str] = {}
+    for finding in operation["routing"]["findings"]:
+        if finding["disposition"] == "no_action":
+            if finding["existing_item_id"] is not None:
+                raise WorkError("No-action finding cannot attach a work item")
+            continue
+        target = finding["existing_item_id"]
+        if target is None:
+            target = stable_id(saved["source"]["source_id"], finding["key"])
+            if target in items:
+                raise WorkError(
+                    "Existing item requires an explicit evidenced association"
+                )
+        elif target not in items:
+            raise WorkError("Related-source target is not a saved item")
+        if target not in updates:
+            raise WorkError("Every actionable finding needs an explicit item update")
+        updated = updates[target]
+        if target not in items and (
+            updated["fix_rounds"] != 0
+            or updated["approvals"]
+            or updated["pending_actions"]
+        ):
+            raise WorkError(
+                "Fresh routed items require zero fix rounds and empty approval/action ledgers"
+            )
+        if target in items:
+            preserve(items[target], updated)
+            previous = items[target]
+            if (
+                previous["artifact_paths"],
+                previous["code"],
+                previous["fix_rounds"],
+                previous["approvals"],
+                previous["pending_actions"],
+            ) != (
+                updated["artifact_paths"],
+                updated["code"],
+                updated["fix_rounds"],
+                updated["approvals"],
+                updated["pending_actions"],
+            ):
+                raise WorkError(
+                    "Routing must preserve execution artifacts, code, fix count, approvals and pending actions unchanged"
+                )
+        elif (updated["source_id"], updated["subitem_key"]) != (
+            saved["source"]["source_id"],
+            finding["key"],
+        ):
+            raise WorkError(
+                "New item must use the source identity and stable finding key"
+            )
+        if saved["source"]["link"] not in updated["source_links"]:
+            raise WorkError("Item must retain the routed source link")
+        associations[finding["key"]] = target
+    if set(updates) != set(associations.values()):
+        raise WorkError("Route cannot change unrelated items or create no-action work")
+    items.update(updates)
+    selected = operation["active_item_id"]
+    if selected is not None and selected not in items:
+        raise WorkError("Active item must be a saved item")
+    saved["routing"] = operation["routing"]
+    saved["item_ids"] = associations
+    return selected
+
+
+def snapshot(value: object) -> Snapshot:
+    raw = obj(value, "snapshot")
+    if raw.get("schema_version") == 1:
+        old = legacy_snapshot(raw)
+        return {
+            "schema_version": 1,
+            "config_path": old["config_path"],
+            "factory_id": old["factory_id"],
+            "revision": old["revision"],
+            "active_run": old["active_run"],
+            "items": {old["item"]["id"]: old["item"]},
+            "active_item_id": old["item"]["id"],
+            "sources": {},
+            "synthetic_cursors": old["synthetic_cursors"],
+            "invocations": old["invocations"],
+            "events": old["events"],
+        }
+    data = mapping(raw, set(Snapshot.__annotations__), "snapshot")
+    if type(data["schema_version"]) is not int or data["schema_version"] != 2:
+        raise WorkError("Unsupported work schema")
+    items = {k: item(v) for k, v in obj(data["items"], "items").items()}
+    if any(k != v["id"] for k, v in items.items()):
+        raise WorkError("Item inventory key mismatch")
+    receipts = {k: receipt(v) for k, v in obj(data["sources"], "sources").items()}
+    if any(k != receipt_id(v["source"]) for k, v in receipts.items()):
+        raise WorkError("Source receipt identity mismatch")
+    runs = [invocation(v) for v in sequence(data["invocations"], "invocations")]
+    events = [event(v) for v in sequence(data["events"], "events")]
+    validate_lifecycles(runs, events)
+    revision = integer(data["revision"], "revision", 1, 2**53)
+    active = nullable(data["active_run"], "active_run")
+    selected = nullable(data["active_item_id"], "active_item_id")
+    if len({r["id"] for r in runs}) != len(runs) or [
+        r["id"] for r in runs if r["finished_at"] is None
+    ] != ([] if active is None else [active]):
+        raise WorkError("Active invocation mismatch")
+    if len(events) != revision or [e["revision"] for e in events] != list(
+        range(1, revision + 1)
+    ):
+        raise WorkError("History revision gap")
+    replay_items: dict[str, Item] = {}
+    replay_sources: dict[str, Receipt] = {}
+    replay_active: str | None = None
+    decisions: set[str] = set()
+    modern_seen = False
+    for e in events:
+        if e["run_id"] not in {r["id"] for r in runs}:
+            raise WorkError("History run identity mismatch")
+        if "change" not in e:
+            if modern_seen or e["item"] is None:
+                raise WorkError("Invalid legacy history prefix")
+            replay_items[e["item"]["id"]] = e["item"]
+            replay_active = e["item"]["id"]
+        else:
+            modern_seen = True
+            change = e["change"]
+            if e["kind"] == "begin":
+                incoming = mapping(change, {"source", "fixture"}, "begin change")
+                if incoming["fixture"] is not None:
+                    seed = item(incoming["fixture"])
+                    if replay_items:
+                        raise WorkError("Fixture cannot replace saved inventory")
+                    replay_items[seed["id"]] = seed
+                    replay_active = seed["id"]
+                if incoming["source"] is not None:
+                    saved_source = source(incoming["source"])
+                    key = receipt_id(saved_source)
+                    if key in replay_sources:
+                        if replay_sources[key]["source"] != saved_source:
+                            raise WorkError("Conflicting immutable source version")
+                    else:
+                        replay_sources[key] = {
+                            "source": saved_source,
+                            "digest": source_digest(saved_source),
+                            "routing": None,
+                            "item_ids": {},
+                        }
+            elif e["kind"] == "route":
+                op = route_decision(change, replay_sources)
+                if op["id"] in decisions:
+                    raise WorkError("Duplicate decision identity")
+                decisions.add(op["id"])
+                replay_active = apply_route(replay_items, replay_sources, op)
+            else:
+                mapping(change, set(), "event change")
+            if e["kind"] == "decision":
+                op_item = e["decision"]
+                if op_item is None or op_item["item"]["id"] not in replay_items:
+                    raise WorkError("Decision item missing from inventory")
+                preserve(replay_items[op_item["item"]["id"]], op_item["item"])
+                replay_items[op_item["item"]["id"]] = op_item["item"]
+            if e["item"] != (
+                None if replay_active is None else replay_items[replay_active]
+            ):
+                raise WorkError("Event active item differs from saved inventory")
+        d = e["decision"]
+        if d is not None:
+            if d["id"] in decisions or d["item"] != e["item"]:
+                raise WorkError("Decision identity/history mismatch")
+            decisions.add(d["id"])
+    if items != replay_items or receipts != replay_sources or selected != replay_active:
+        raise WorkError("Current inventory differs from committed history")
+    for r in runs:
+        if r["steps"] != sum(
+            e["kind"] in ("decision", "route") and e["run_id"] == r["id"]
+            for e in events
+        ):
+            raise WorkError("Invocation step count differs from history")
+    return {
+        "schema_version": 2,
+        "config_path": string(data["config_path"], "config_path"),
+        "factory_id": string(data["factory_id"], "factory_id"),
+        "revision": revision,
+        "active_run": active,
+        "items": items,
+        "active_item_id": selected,
+        "sources": receipts,
         "synthetic_cursors": string_map(data["synthetic_cursors"], "synthetic_cursors"),
         "invocations": runs,
         "events": events,
@@ -697,19 +1002,32 @@ class Store:
                 fcntl.flock(mutex, fcntl.LOCK_UN)
 
     def append(
-        self, state: Snapshot, run_id: str, kind: str, operation: Decision | None = None
+        self,
+        state: Snapshot,
+        run_id: str,
+        kind: str,
+        operation: Decision | None = None,
+        change: dict[str, object] | None = None,
     ) -> None:
         state["revision"] += 1
         # Copy through validated parsing so later mutations cannot edit history.
-        saved_item = item(read_copy(state["item"]))
+        selected = state["active_item_id"]
+        saved_item = (
+            None if selected is None else item(read_copy(state["items"][selected]))
+        )
         state["events"].append(
             {
                 "revision": state["revision"],
                 "at": now(),
                 "run_id": run_id,
                 "kind": kind,
-                "decision": operation,
+                "decision": None
+                if operation is None
+                else decision(read_copy(operation)),
                 "item": saved_item,
+                "change": {}
+                if change is None
+                else obj(read_copy(change), "event.change"),
             }
         )
 
@@ -720,12 +1038,19 @@ class Store:
         request_id: str,
         fixture: Path | None,
         max_steps: int = 3,
+        source_path: Path | None = None,
     ) -> Snapshot:
         identity = verify_owner(pid, harness)
         integer(max_steps, "max_steps", 1, 10)
         string(request_id, "request_id")
         version, fingerprint = plugin_identity()
         effective = saved_config(read_copy(self.config))
+        if fixture is not None and source_path is not None:
+            raise WorkError("Choose saved source or legacy fixture, not both")
+        incoming_source = (
+            None if source_path is None else source(read_json(source_path))
+        )
+        seeded: Item | None = None
         with self.mutation():
             state = self.read()
             if state is not None:
@@ -740,6 +1065,15 @@ class Store:
                         ):
                             raise WorkError(
                                 "Invocation ID reused with different inputs"
+                            )
+                        started = next(
+                            e
+                            for e in state["events"]
+                            if e["run_id"] == request_id and e["kind"] == "begin"
+                        )
+                        if started.get("change", {}).get("source") != incoming_source:
+                            raise WorkError(
+                                "Invocation ID reused with different source inputs"
                             )
                         return state
                 if state["active_run"] is not None:
@@ -757,27 +1091,47 @@ class Store:
                     self.append(state, active["id"], "finish")
                 if fixture is not None:
                     incoming, _ = load_fixture(fixture)
-                    if incoming["id"] != state["item"]["id"]:
+                    if incoming["id"] not in state["items"]:
                         raise WorkError(
                             "One active item supported; refuse a different fixture"
                         )
             else:
-                if fixture is None:
+                if fixture is None and incoming_source is None:
                     raise WorkError(
-                        "No saved item; Phase 3 requires an explicit synthetic fixture (live intake is not implemented)"
+                        "No saved work; provide an explicit synthetic source or post-intake fixture (live intake is not implemented)"
                     )
-                incoming, cursors = load_fixture(fixture)
+                cursors: dict[str, str] = {}
+                if fixture is not None:
+                    seeded, cursors = load_fixture(fixture)
                 state = {
-                    "schema_version": 1,
+                    "schema_version": 2,
                     "config_path": str(self.config_path),
                     "factory_id": self.config["factory_id"],
                     "revision": 0,
                     "active_run": None,
-                    "item": incoming,
+                    "items": {} if seeded is None else {seeded["id"]: seeded},
+                    "active_item_id": None if seeded is None else seeded["id"],
+                    "sources": {},
                     "synthetic_cursors": cursors,
                     "invocations": [],
                     "events": [],
                 }
+            if incoming_source is not None:
+                key = receipt_id(incoming_source)
+                if (
+                    key in state["sources"]
+                    and state["sources"][key]["source"] != incoming_source
+                ):
+                    raise WorkError(
+                        "Conflicting immutable source version; preserve evidence and supply a new explicit version"
+                    )
+                if key not in state["sources"]:
+                    state["sources"][key] = {
+                        "source": incoming_source,
+                        "digest": source_digest(incoming_source),
+                        "routing": None,
+                        "item_ids": {},
+                    }
             run: Invocation = {
                 "id": request_id,
                 "owner": identity,
@@ -794,7 +1148,15 @@ class Store:
             }
             state["invocations"].append(run)
             state["active_run"] = request_id
-            self.append(state, request_id, "begin")
+            if state["schema_version"] == 1:
+                state["schema_version"] = 2
+                self.append(state, request_id, "migrate")
+            self.append(
+                state,
+                request_id,
+                "begin",
+                change={"source": incoming_source, "fixture": seeded},
+            )
             atomic_snapshot(self.path, state)
             return state
 
@@ -807,6 +1169,10 @@ class Store:
         allow_finished: bool = False,
     ) -> Invocation:
         identity = verify_owner(pid, harness)
+        if state["schema_version"] != 2:
+            raise WorkError(
+                "Legacy state requires verified-owner begin migration first"
+            )
         matches = [r for r in state["invocations"] if r["id"] == token]
         if len(matches) != 1:
             raise WorkError("Unknown invocation token")
@@ -841,6 +1207,11 @@ class Store:
                 raise WorkError("No saved work; repair without resetting")
             run = self.owned(state, token, harness, pid)
             for e in state["events"]:
+                if (
+                    e["kind"] == "route"
+                    and e.get("change", {}).get("id") == operation["id"]
+                ):
+                    raise WorkError("Decision ID reused with different content")
                 if e["decision"] is not None and e["decision"]["id"] == operation["id"]:
                     if e["decision"] != operation:
                         raise WorkError("Decision ID reused with different content")
@@ -851,33 +1222,51 @@ class Store:
                 raise WorkError(
                     "Invocation step limit reached; finish and resume later"
                 )
-            previous, updated = state["item"], operation["item"]
-            if (
-                previous["id"],
-                previous["synthetic"],
-                previous["source_id"],
-                previous["subitem_key"],
-            ) != (
-                updated["id"],
-                updated["synthetic"],
-                updated["source_id"],
-                updated["subitem_key"],
-            ):
-                raise WorkError("Cannot replace saved source identity")
-            if updated["fix_rounds"] < previous["fix_rounds"]:
-                raise WorkError("Fix-round count cannot decrease")
-            if not set(previous["source_links"]) <= set(
-                updated["source_links"]
-            ) or not set(previous["jira_keys"]) <= set(updated["jira_keys"]):
-                raise WorkError("Cannot drop saved source/Jira links")
-            for key in ("approvals", "pending_actions"):
-                if any(entry not in updated[key] for entry in previous[key]):
-                    raise WorkError(
-                        "Preserve scoped approvals and pending actions; reconcile explicitly in a future role"
-                    )
-            state["item"] = updated
+            updated = operation["item"]
+            if updated["id"] != state["active_item_id"]:
+                raise WorkError("Only the selected active item may advance")
+            preserve(state["items"][updated["id"]], updated)
+            state["items"][updated["id"]] = updated
             run["steps"] += 1
             self.append(state, token, "decision", operation)
+            atomic_snapshot(self.path, state)
+            return state
+
+    def route(
+        self,
+        token: str,
+        harness: Harness,
+        pid: int,
+        expected_revision: int,
+        value: object,
+    ) -> Snapshot:
+        with self.mutation():
+            state = self.read()
+            if state is None:
+                raise WorkError("No saved source")
+            run = self.owned(state, token, harness, pid)
+            operation = route_decision(value, state["sources"])
+            for e in state["events"]:
+                if (
+                    e["kind"] == "route"
+                    and e.get("change", {}).get("id") == operation["id"]
+                ):
+                    if e["change"] != operation:
+                        raise WorkError("Decision ID reused with different content")
+                    return state
+                if e["decision"] is not None and e["decision"]["id"] == operation["id"]:
+                    raise WorkError("Decision ID reused with different content")
+            if state["revision"] != expected_revision:
+                raise WorkError("Revision changed; reread before deciding")
+            if run["steps"] >= run["max_steps"]:
+                raise WorkError(
+                    "Invocation step limit reached; finish and resume later"
+                )
+            state["active_item_id"] = apply_route(
+                state["items"], state["sources"], operation
+            )
+            run["steps"] += 1
+            self.append(state, token, "route", change=dict(operation))
             atomic_snapshot(self.path, state)
             return state
 
@@ -932,23 +1321,25 @@ def load_fixture(path: Path) -> tuple[Item, dict[str, str]]:
 
 @dataclass
 class Arguments:
-    command: Literal["owners", "inspect", "begin", "save", "finish"]
+    command: Literal["owners", "inspect", "begin", "save", "route", "finish"]
     config: Path
     local: Path | None
     harness: Harness
     owner_pid: int | None
     run_id: str | None
     fixture: Path | None
+    source: Path | None
     max_steps: int
     expected_revision: int | None
     decision: Path | None
     outcome: str | None
+    summary: bool
 
 
 def parse_arguments() -> Arguments:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "command", choices=("owners", "inspect", "begin", "save", "finish")
+        "command", choices=("owners", "inspect", "begin", "save", "route", "finish")
     )
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--local", type=Path)
@@ -956,16 +1347,19 @@ def parse_arguments() -> Arguments:
     parser.add_argument("--owner-pid", type=int)
     parser.add_argument("--run-id")
     parser.add_argument("--fixture", type=Path)
+    parser.add_argument("--source", type=Path)
     bounds = parser.add_mutually_exclusive_group()
     bounds.add_argument("--single-step", action="store_true")
     bounds.add_argument("--max-steps", type=int, default=3)
     parser.add_argument("--expected-revision", type=int)
     parser.add_argument("--decision", type=Path)
     parser.add_argument("--outcome")
+    parser.add_argument("--summary", action="store_true")
     raw: dict[str, object] = vars(parser.parse_args())
     return Arguments(
         command=cast(
-            Literal["owners", "inspect", "begin", "save", "finish"], raw["command"]
+            Literal["owners", "inspect", "begin", "save", "route", "finish"],
+            raw["command"],
         ),
         config=cast(Path, raw["config"]),
         local=cast(Path | None, raw["local"]),
@@ -973,10 +1367,12 @@ def parse_arguments() -> Arguments:
         owner_pid=cast(int | None, raw["owner_pid"]),
         run_id=cast(str | None, raw["run_id"]),
         fixture=cast(Path | None, raw["fixture"]),
+        source=cast(Path | None, raw["source"]),
         max_steps=1 if raw["single_step"] is True else cast(int, raw["max_steps"]),
         expected_revision=cast(int | None, raw["expected_revision"]),
         decision=cast(Path | None, raw["decision"]),
         outcome=cast(str | None, raw["outcome"]),
+        summary=raw["summary"] is True,
     )
 
 
@@ -1002,6 +1398,17 @@ def main() -> int:
                     args.run_id,
                     args.fixture,
                     args.max_steps,
+                    args.source,
+                )
+            elif args.command == "route":
+                if args.decision is None or args.expected_revision is None:
+                    raise WorkError("route requires --decision and --expected-revision")
+                result = store.route(
+                    args.run_id,
+                    harness,
+                    args.owner_pid,
+                    args.expected_revision,
+                    read_json(args.decision),
                 )
             elif args.command == "save":
                 if args.decision is None or args.expected_revision is None:
@@ -1019,6 +1426,20 @@ def main() -> int:
                 result = store.finish(
                     args.run_id, harness, args.owner_pid, args.outcome
                 )
+        if args.summary and args.command not in ("owners", "inspect"):
+            saved = store.read()
+            if saved is not None:
+                result = {
+                    "state_path": str(store.path),
+                    "revision": saved["revision"],
+                    "active_run": saved["active_run"],
+                    "active_item_id": saved["active_item_id"],
+                    "item_ids": list(saved["items"]),
+                    "source_receipts": list(saved["sources"]),
+                    "invocation": next(
+                        r for r in saved["invocations"] if r["id"] == args.run_id
+                    ),
+                }
         print(json.dumps(result, indent=2))
         return 0
     except (WorkError, ConfigError, OSError, KeyError) as exc:

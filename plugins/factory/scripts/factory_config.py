@@ -581,8 +581,9 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             "configuration validation",
             "bounded repository discovery",
             "synthetic saved-work orchestration",
+            "saved-source routing",
         ],
-        "workflow": "synthetic orchestration only; live intake and worker roles not implemented",
+        "workflow": "synthetic saved-source routing; live intake and investigation not implemented",
     }
 
 

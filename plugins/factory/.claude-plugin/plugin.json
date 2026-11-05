@@ -1,6 +1,6 @@
 {
   "name": "factory",
-  "version": "0.3.0",
+  "version": "0.4.2",
   "description": "Configure, inspect, and resume a local software factory.",
   "author": {
     "name": "Brian Steele"

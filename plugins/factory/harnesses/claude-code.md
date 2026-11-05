@@ -83,3 +83,13 @@ cannot launch/authorize this foreground invocation, report the gap. Its CLI owns
 the entire bounded run; desktop service and transient shell PIDs do not. This is
 not a daemon or schedule. Either harness can resume after the prior CLI has
 finished or actually stopped; destination tool permissions must be checked anew.
+
+
+For saved-source routing, ask the same `factory-run` entry point to use the loaded
+package's `fixtures/sources/open-ticket.json` as `--source` with the explicit
+configuration. Follow with `related-thread.json`, then repeat it. Use separate
+synthetic homes for independent acceptance; keep all runtime records outside the
+plugin. Router judgments are shared across hosts; no host adapter or model call
+is embedded in the helper. Use `--summary` on mutations to keep repeated history
+out of the model context; read full saved source and relevant inventory before
+deciding. Legacy post-intake fixtures now wait for missing source evidence.

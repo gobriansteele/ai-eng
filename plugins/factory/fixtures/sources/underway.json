@@ -1,0 +1,36 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:underway",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/threads/underway",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Val",
+      "text": "Is anyone fixing the export spinner? It stays forever."
+    },
+    {
+      "id": "m2",
+      "author": "Val",
+      "text": "I am asking about LAB-230; no separate symptom."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_search",
+      "text": "LAB-230 In Progress, assigned Casey: export spinner never resolves."
+    },
+    {
+      "id": "ownership",
+      "kind": "ownership",
+      "text": "Casey explicitly claimed LAB-230 yesterday and posted an implementation update."
+    },
+    {
+      "id": "code",
+      "kind": "code_activity",
+      "text": "Open draft PR /pull/230 on branch fix/export-spinner, linked to LAB-230. Latest commit synthetic230. No merge/deployment yet."
+    }
+  ]
+}

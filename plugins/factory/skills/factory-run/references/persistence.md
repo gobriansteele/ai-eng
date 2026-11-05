@@ -27,12 +27,38 @@ To test preservation instead, select `fixtures/synthetic-resume.json`; its one
 fix round, illustrative approval scope and proposed action are explicitly
 synthetic. They grant no real permissions and claim no external execution.
 `synthetic_cursors` are illustrative handoff metadata, not watcher cursors. Real
-cursor files and setup channel starts remain untouched. On an existing item omit
-`--fixture`; providing the same fixture deduplicates by source ID/subitem key and
-never resets persisted values. A different fixture is refused while this single
-item is present. Phase 3 snapshot schema version 1 deliberately supports only one
-synthetic item; later multi-item intake needs a reviewed compatible migration,
-not resetting this state.
+cursor files and setup channel starts remain untouched. Existing state resumes with no fixture. Providing the same legacy fixture
+identity never resets saved values; a different legacy fixture is refused.
+For saved-source routing use `begin --source <absolute-synthetic-source.json>`
+instead of `--fixture`. Both are explicit demonstration input, not live intake.
+A new source can be saved even when an active item is blocked. Read
+[the router contract](../../factory-route/references/routing.md) for source and
+result fields. `route --decision <absolute-json> --expected-revision <revision>`
+uses the same owner/run arguments as save. It commits the agent-authored result,
+explicit item updates and selected active ID together and consumes one step.
+No-action commits a receipt/disposition audit with zero work items.
+
+Exact source identity/version/content replay reuses its receipt and routing;
+repeated captures cannot silently reroute or reset items. Conflicting content
+under the same immutable version refuses. A distinct version of the same thread
+is retained separately; the router reads prior captures/items and may attach with
+evidence. All source bodies and local ticket proposals stay inside runtime.
+
+Schema 2 uses `items` keyed by stable ID, nullable `active_item_id`, and `sources`
+keyed by compact JSON `[source_id,version]`. There is no mirrored current item.
+Only the selected item advances through ordinary `save`; a route may add/update
+several associated items while retaining one selected active ID. Additional
+saved items are pending. The helper validates explicit changes; the agent chooses
+workflow transitions, active selection and stop reasons.
+
+Schema 1 is still readable. `inspect` returns a validated compatibility view
+with the original schema number and inventory projection; it writes nothing.
+Only `begin`, under a verified owner and after checking prior owner liveness,
+migrates to schema 2 in its atomic snapshot. The legacy item, events, invocations,
+fix count, scopes/actions and cursor metadata are preserved. Legacy events remain
+verbatim and a migration event is appended. No source body is fabricated. Other
+mutators require schema 2; use a fresh begin to migrate. Corrupt schema 1 is
+refused before any replacement; live/unknown owners prevent migration.
 
 Normal `begin` defaults to `--max-steps 3`, with valid range 1..10;
 `--single-step` is equivalent to 1. No YAML limit is added. The run UUID is the
@@ -58,7 +84,7 @@ worker_reference when observed. Durable paths/links are the handoff; a host work
 ID alone is insufficient. Approval scope is exactly action/target/revision with
 an ID and evidence; a pending action additionally carries status
 proposed/uncertain/confirmed, nullable returned_id/returned_url and evidence.
-Confirmed actions require observed returned ID and URL. Phase 3 preserves prior
+Confirmed actions require observed returned ID and URL. The helper preserves prior
 approvals/actions verbatim; a future implementing role must add a reviewed
 reconciliation operation before changing them. The helper validates structure;
 it cannot prove human permission, remote state, or artifact existence.
@@ -78,7 +104,7 @@ owner is dead or its PID now has a different observed identity. An alive owner
 blocks even when it seems idle; unknown ownership blocks until inspection/repair.
 No elapsed-time takeover. Stop the original CLI before switching harnesses.
 
-The only authority is `<runtime>/state/work.json`, containing current item,
+The only authority is `<runtime>/state/work.json`, containing items, selected active ID, saved source receipts,
 ordered decision history and all invocation records together. This is a small
 Phase 3 refinement of the plan's suggested record/event/run tree: no mirrors or
 multi-file transaction engine. The helper validates the full snapshot before
@@ -96,5 +122,8 @@ source paths/content (excluding Python/tool caches), effective non-secret config
 and its hash. Current source/config changes during an invocation block further
 mutations; stop the owning CLI and resume with a fresh invocation. Runtime
 identity is the resolved config path plus factory ID, never a global default.
-Saved config values are evidence, not authorization. No reset, migrate, external
-write, worker-completion or live-intake command exists in this helper.
+Saved config values are evidence, not authorization. No standalone reset/migrate,
+external write, worker-completion or live-intake command exists. Add `--summary` to mutators to print a bounded receipt (path,
+revision, IDs, invocation metadata) instead of repeating the whole history.
+Inspect the saved source and relevant inventory in the canonical file when
+needed; never edit it directly.

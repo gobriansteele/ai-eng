@@ -1,0 +1,36 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:three-items",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/threads/three-items",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Ren",
+      "text": "Three things: saved searches crash on blank names; please add keyboard shortcuts to saved searches; and the weekly summary still has duplicate recipients."
+    },
+    {
+      "id": "m2",
+      "author": "Ren",
+      "text": "The shortcut request is independent of the crash. The duplicate-recipient issue is LAB-220; QA reproduced it on the currently deployed release after that ticket was closed."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_search",
+      "text": "Read access available. No matching tickets for blank-name crash or shortcut request. LAB-220 is Done for duplicate weekly-summary recipients."
+    },
+    {
+      "id": "code",
+      "kind": "code_activity",
+      "text": "LAB-220 has merged PR /pull/220, commit synthetic220. No deployment record for synthetic220 is present. The deployed release manifest still references synthetic219."
+    },
+    {
+      "id": "ownership",
+      "kind": "ownership",
+      "text": "No owner/code activity supplied for the first two requests."
+    }
+  ]
+}

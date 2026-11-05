@@ -1,0 +1,36 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:open-ticket",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/threads/open-ticket",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Ari",
+      "text": "The people CSV import now drops surnames with apostrophes after last week\u2019s release. Could we fix it? I saw LAB-201."
+    },
+    {
+      "id": "m2",
+      "author": "Ari",
+      "text": "Correction: the interactive form is fine; only the CSV path fails, even with a valid quoted field. One report, not two bugs."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_search",
+      "text": "Read access available. LAB-201 is Open, unassigned: CSV import corrupts quoted surnames. Related-title search found only LAB-201."
+    },
+    {
+      "id": "ownership",
+      "kind": "ownership",
+      "text": "No engineer has claimed LAB-201; team notes explicitly say it is available."
+    },
+    {
+      "id": "code",
+      "kind": "code_activity",
+      "text": "Saved repository search found no branch, PR, commit or implementation linked to LAB-201. This is evidence from a bounded search, not proof no private work exists."
+    }
+  ]
+}

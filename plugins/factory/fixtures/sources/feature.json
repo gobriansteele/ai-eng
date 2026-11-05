@@ -1,0 +1,31 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:feature",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/threads/feature",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Sam",
+      "text": "Could the monthly usage report be emailed as a CSV?"
+    },
+    {
+      "id": "m2",
+      "author": "Sam",
+      "text": "Actually, please do not email anything. We need a download button so account admins can export filtered usage themselves. Ignore the email idea."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_search",
+      "text": "Read access available. Search for filtered usage CSV download found no matching ticket."
+    },
+    {
+      "id": "ownership",
+      "kind": "ownership",
+      "text": "No owner or code work was supplied for this request."
+    }
+  ]
+}

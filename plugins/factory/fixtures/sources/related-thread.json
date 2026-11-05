@@ -1,0 +1,36 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:thread:related-thread",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/threads/related-thread",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Kai",
+      "text": "I can reproduce the apostrophe surname corruption when using CSV import too. This follows the original report at https://example.invalid/synthetic/threads/open-ticket. LAB-201 is the ticket."
+    },
+    {
+      "id": "m2",
+      "author": "Kai",
+      "text": "My example uses a different valid quoted surname, same CSV path and failure; the interactive form works. This is additional reproduction evidence, not another requested feature."
+    }
+  ],
+  "availability": "All messages currently available in this synthetic saved thread are included. No live integration reads occurred.",
+  "evidence": [
+    {
+      "id": "jira",
+      "kind": "jira_search",
+      "text": "LAB-201 remains Open and unassigned. No additional matching issue found."
+    },
+    {
+      "id": "code",
+      "kind": "code_activity",
+      "text": "No implementation activity supplied."
+    },
+    {
+      "id": "relation",
+      "kind": "cross_thread",
+      "text": "The saved message references the original source synthetic:thread:open-ticket and LAB-201."
+    }
+  ]
+}

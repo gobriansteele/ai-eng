@@ -70,3 +70,13 @@ never accepted as owner. If dispatch/inspection cannot run with permitted tools,
 report that gap. No background service or scheduler is added. A CLI owner is
 valid until the bounded worker stops; switching to Claude requires it to finish
 or stop first. Saved approvals are scoped evidence, not transferred tool grants.
+
+
+For saved-source routing, ask the same `factory-run` entry point to use the loaded
+package's `fixtures/sources/open-ticket.json` as `--source` with the explicit
+configuration. Follow with `related-thread.json`, then repeat it. Use separate
+synthetic homes for independent acceptance; keep all runtime records outside the
+plugin. Router judgments are shared across hosts; no host adapter or model call
+is embedded in the helper. Use `--summary` on mutations to keep repeated history
+out of the model context; read full saved source and relevant inventory before
+deciding. Legacy post-intake fixtures now wait for missing source evidence.

@@ -13,10 +13,11 @@ installed version. Do not use a remembered version or authoring checkout.
 
 Inspect `skills/` in that package. Implemented capabilities are status, setup,
 configuration validation, bounded read-only repository discovery, and synthetic
-saved-work orchestration through factory-run. Live intake, work roles and
-scheduling are not implemented. With an established config, optionally use
-`factory_work.py inspect` read-only to report the saved item stage/status/next
-action and snapshot path; never acquire an invocation or change work for status.
+saved-work orchestration through factory-run and semantic routing of saved
+synthetic sources through factory-route. Live intake, investigation and later
+work roles, and scheduling are not implemented. With an established config, optionally use
+`factory_work.py inspect` read-only to report the selected active item stage/status/next
+action and pending item IDs and snapshot path; never acquire an invocation or change work for status.
 
 Without an explicitly supplied or already established config path, say **Setup
 not assessed — provide a configuration path or use factory-setup.** Do not search
