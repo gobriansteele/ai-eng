@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; stops truthfully at unavailable investigation roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code and hands findings to planning; stops truthfully at unavailable later roles.
 ---
 
 # Factory run
@@ -71,15 +71,62 @@ Choose each affected item's next stage/status/action from the actual findings.
 For both `investigate` and `verify_existing_work`, the handoff role is exactly
 `factory-investigate`. Bug, regression, feature and verification use different
 briefs within that one role. Do not invent separate feature-brief or verifier
-skill names. The investigator is not implemented yet, so save a missing-role
-block with `required_role: factory-investigate`.
+skill names. The shared investigator is available: save `stage: investigate`, `status: ready`
+and `required_role: factory-investigate` with the concrete brief/next action.
+An older missing-role block for this role is resumable now; role availability is
+not evidence that the underlying investigation completed.
 An underway result waits for existing work with a concrete check; clarification
 waits for a human with a concrete question. No-action creates no work item. You
-may save the route and truthful missing-role/wait outcome in one decision; do not
-claim investigation ran. Select at most one item for active execution. Retain an
+may save the route and its truthful ready/wait outcome in one decision; do not
+claim investigation ran before it does. Select at most one item for active execution. Retain an
 existing active item when suitable while saving additional pending items; report
 the new source's findings even if its items were not selected. Do not discard
 unrouted sources or pending work when stopping at the selected item's block.
+
+When an investigation item is selected and a semantic step remains, invoke shared
+`factory-investigate` with the saved item, source captures/routing brief, explicit
+config/local override, runtime path, prior artifact paths and current offline/live
+mode. Workers return artifacts/findings only; all save calls retain this invocation's
+verified owner/token. The investigator may read scoped code and reproduce safely
+in an authorized isolated checkout, but must not implement a product change.
+
+Read the returned final report and its evidence files before accepting the
+handoff. Check that required executions used the repository's declared runtime/tool
+prerequisites, with exact executable paths and versions in the evidence. Unsupported
+environment observations do not complete required supported-runtime validation:
+use an existing compatible environment when available and authorized, or retain a
+concrete validation block/limit. Missing, unreadable or partial output is not
+completed investigation.
+Preserve prior evidence on retry: use distinct attempt directories under
+`<runtime>/work/<item-id>/`, and merge new absolute report paths into the existing
+`artifact_paths` map under unique `investigation-<attempt-id>` keys. Evidence paths
+inside each report are absolute. Keep observed revision/environment in the report;
+do not invent a worktree/worker claim or populate `reviewed_commit` from an
+investigation revision. Retain source links/captures, counters, scopes, actions,
+code references and collection cursors unchanged unless an evidenced addition is
+needed. Investigation does not consume a fix round.
+
+For completed bug/feature/verification findings, save `stage: plan`,
+`status: blocked`, `required_role: factory-plan` and a concrete next action pointing to the
+findings and any unresolved product choices. Phase 7 is absent: do not invent a
+plan or ask the investigator to choose product policy. For unavailable reproduction
+or a necessary missing input, save the report but retain `stage: investigate`
+with `waiting_for_human` and the precise unblock question, or `blocked` and the
+actual capability blocker; keep `required_role: factory-investigate`. Failed
+reproduction is honest evidence, not a mandatory retry loop. A useful bounded
+investigation with remaining uncertainty may hand off to planning when the
+report explains that limit; never claim the symptom was reproduced if it was not.
+
+Write the complete save decision JSON beside its attempt artifacts with a stable
+operation ID; read/reconcile current history before retrying an uncertain save.
+After interruption, inspect prior evidence and saved decisions first. If artifacts
+exist but the transition was not saved, validate them and reconcile/save the
+handoff under the current revision/owner; only reuse identical operation content
+for an exact retry. If a newer state changes the decision, reconsider it rather
+than overwriting it. If the completed investigation transition is already saved,
+explain its findings from the artifacts and stop at the actual planner block;
+do not investigate again. Artifact existence alone is not a state transition.
+Only report completion after the artifact is readable and the save succeeded.
 
 Legacy Phase 3 fixtures contain no original message body or duplicate/ownership
 observations. Router availability does not create that evidence. Preserve the
@@ -100,8 +147,11 @@ retry; no external action is implemented here.
 
 Stop on the first unavailable role, wait, block, completed single step, or step
 limit. Otherwise reread saved state and choose another available step within the
-remaining bound. A completed route stops at the actual missing investigator,
-wait, no-action or invocation bound. Call `finish` with the observed stop reason;
+remaining bound. A completed route can proceed to investigation within that
+bound; a completed investigation stops at the absent planner. Respect genuine
+waits, no-action and invocation bounds. An old investigator missing-role block
+alone must not stop a now-available role. Explicit offline/synthetic resume stays
+offline; never invoke live watch merely because no new fixture is supplied. Call `finish` with the observed stop reason;
 on an error, preserve
 the saved transition and attempt a truthful `stopped` finish if ownership remains
 valid. Never mark completed work for an unsaved decision. Report the routed

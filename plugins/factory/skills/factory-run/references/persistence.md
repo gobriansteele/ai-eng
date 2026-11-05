@@ -134,3 +134,32 @@ before resuming schema 3. Failed/incomplete reads change no canonical bytes. Add
 revision, IDs, invocation metadata) instead of repeating the whole history.
 Inspect the saved source and relevant inventory in the canonical file when
 needed; never edit it directly.
+
+## Investigation artifacts and handoff
+
+Investigation uses the existing item `artifact_paths` map and ordinary owner-gated
+`save`; no worker state API or schema migration is needed. Workers return findings
+and paths, never mutate the snapshot. Each attempt lives under
+`<runtime>/work/<item-id>/investigation-<unique-attempt-id>/`; preserve prior attempt
+directories and map entries. Add an absolute final-report path under a distinct
+`investigation-<attempt-id>` key. The report records actual revision/tree state,
+source versions, command working directories/exit statuses/raw output paths,
+limits and next action. Do not use `reviewed_commit` as an investigation revision.
+
+Create raw evidence first and final report last, then verify readability before
+saving a complete copied item. Store the save operation ID and decision JSON with
+the attempt for interruption reconciliation. A report without a saved transition
+is not completed work. After an uncertain response inspect history and retry exact
+operation/content when applicable; new owner/revision does not authorize overwriting
+newer decisions. Partial attempts are evidence only. Retain them and append a new
+attempt or explicitly validate/reuse the prior completed report.
+
+Completed investigation normally saves `plan` / `blocked` / `factory-plan` until
+that role exists. An unavailable case keeps `investigate` with its actual wait or
+block and concrete unblock, plus its durable report. Pending product choices stay
+in the findings for the planner, not an invented investigation policy. Old
+`factory-investigate` missing-role blocks can now progress. A saved planner block
+reuses the report rather than replaying investigation. Preserve explicit offline
+mode on resume; no new fixture is needed to read saved evidence and no live watch
+is implied by resuming it. Helpers validate item structure and ownership, not
+artifact existence or causal explanations; the orchestrator must check both.

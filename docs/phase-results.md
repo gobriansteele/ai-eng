@@ -822,3 +822,214 @@ and resulting canonical records are in the evidence locations above.
 
 Watcher acceptance is complete. Investigation remains the next tranche; no
 scheduled operation or external write was exercised by these tests.
+
+
+## Phase 6 — candidate, parent acceptance pending
+
+The candidate adds one shared `factory-investigate` role for bug/regression,
+feature and existing-work verification. It reads configured repository instructions,
+discovers the root/path union, records actual code revision/environment and raw
+command evidence, and distinguishes observations, hypotheses and unknowns. Local
+probes are limited to authorized isolated checkouts; no product fix or external
+write is part of investigation. Failed/unavailable reproduction stays explicit.
+
+`factory-run` now dispatches the investigator (including older missing-role blocks),
+verifies durable reports and saves the existing `artifact_paths` map using the
+same verified CLI owner/token. Completed findings stop at the absent `factory-plan`;
+unavailable evidence retains investigation with a concrete unblock. Artifacts and
+partial attempts are retained across fresh-chat resume; an unsaved report alone
+is not completed work. Explicit offline resume stays offline. No persistence or
+configuration schema, helper process semantics, dependency or framework was added.
+Only helper capability/workflow reporting changed.
+
+The raw reports and deliberately broken standard-library sample live under
+`plugins/factory/fixtures/investigate/`. The sample must be copied into a disposable
+Git checkout outside plugin source before use; reviewer-only setup/oracle and
+fresh-chat prompts are in `docs/investigator-evaluation.md`. They cover repeatable
+completed-task selection failure, CSV scope ambiguity and a hosted reconnect case
+that the local sample cannot reproduce. Existing router/watcher evaluation results
+remain historical acceptance for those phases, not proof of investigator behavior.
+
+Static/helper checks and parent fresh-session model acceptance are recorded below
+as they execute. This candidate is not an accepted Phase 6 release until both
+hosts' actual artifacts and stop/resume behavior pass parent review. Version bumps,
+installation, live probes and publication remain parent-owned.
+
+### Candidate validation executed
+
+From `/Users/briansteele/repos/ai-eng`:
+
+```sh
+uv --cache-dir /private/tmp/ai-eng-checks/uv-cache run --isolated --frozen --project plugins/factory ruff check --no-cache --config plugins/factory/pyproject.toml plugins/factory/scripts tests
+uv --cache-dir /private/tmp/ai-eng-checks/uv-cache run --isolated --frozen --project plugins/factory ruff format --check --no-cache plugins/factory/scripts tests
+uv --cache-dir /private/tmp/ai-eng-checks/uv-cache run --isolated --frozen --project plugins/factory mypy --cache-dir /private/tmp/ai-eng-checks/phase6-mypy --config-file plugins/factory/pyproject.toml plugins/factory/scripts
+PYTHONDONTWRITEBYTECODE=1 uv --cache-dir /private/tmp/ai-eng-checks/uv-cache run --isolated --frozen --project plugins/factory python -m unittest discover -s tests
+```
+
+All exited 0. Ruff: `All checks passed!`; format: `8 files already formatted`;
+mypy: `Success: no issues found in 4 source files`; unittest: `Ran 66 tests in
+0.460s`, `OK`, with no skips. The unit run used narrow escalation for the existing
+real-process ownership checks. Helper logic/contracts did not change; no new
+helper regression tests were justified by the capability-text-only edit.
+
+The system `skill-creator/scripts/quick_validate.py` ran for `factory-investigate`,
+`factory-run` and `factory-status` via isolated frozen no-dev plugin Python (with
+`-B`); all three exited 0 with `Skill is valid!`. A standard-library JSON parse
+checked all 26 repository JSON files, and `factory_source.source` accepted each
+of the three new raw source fixtures. `git diff --check` exited 0.
+
+A separate copied sample smoke check ran under
+`/private/tmp/ai-eng-phase6-sample-check/taskboard-sample` with bytecode disabled.
+Two actual `python3 tasks.py list --status done` calls both exited 0 and returned
+`1\topen\tDraft workshop agenda`. Default open and all selectors exited 0;
+`python3 -m unittest -v` exited 1 with exactly three tests and one completed-selection
+failure. Both source and copied baseline file hashes stayed unchanged. Exact
+commands, stdout/stderr and statuses are in the sibling `evidence/commands.json`
+and individual output files; these are fixture checks, not a model investigation
+or a claim of fresh-host acceptance. The sample's failure is deliberate and is
+separate from the passing 66 helper tests.
+
+Not executed in this implementation tranche: installed fresh-host model runs,
+cross-host artifact resume, interruption-at-artifact-production probe, live
+integrations, version/install changes or publication. These remain explicit
+parent-owned acceptance checks; no result is inferred from skill text.
+
+
+### Runtime prerequisite correction — fresh-host acceptance pending
+
+Parent review rejected the initial Claude `0.6.0` acceptance run as incomplete:
+its sample observations honestly identified Python `3.9.6`, which does not satisfy
+the sample's declared Python prerequisite. Discovering a newer helper interpreter
+without using it for the sample did not resolve that gap. The initial Codex
+sample observations used Python `3.12.3`, a supported runtime; parent retains that
+evidence subject to its other acceptance checks. These are parent-observed model
+results, not a completed acceptance claim by the implementation worker. The
+worker's earlier fixture smoke test likewise did not record its interpreter path
+and version and is not supported-runtime validation evidence.
+
+The shared investigator now requires checking declared runtime/tool prerequisites
+before relying on executions, discovering an existing compatible environment when
+the default fails them, and recording the exact executable/version for every
+command environment. Unsupported observations remain evidence but do not satisfy
+required supported-runtime checks. Missing compatible environments produce a
+concrete validation block/limit. `factory-run` verifies this prerequisite when
+accepting findings. No sample-specific version is hardcoded into shared guidance;
+no runtime install, dependencies, schema or helper behavior changes were added.
+The evaluation guide explains how the reviewer can identify an already available
+compatible interpreter through the provisioned locked helper environment.
+
+Parent owns fresh Claude reruns and cross-host handoffs after repackaging. The
+prior model artifacts remain historical evidence; this correction does not
+retroactively make unsupported executions valid.
+
+
+Correction validation: the changed investigator/run frontmatter both passed the
+system `quick_validate.py` through isolated frozen no-dev plugin Python; both
+exited 0 with `Skill is valid!`. `git diff --check` exited 0. This correction
+changes only skills/evaluation/results prose; no helper, metadata, fixture or
+schema changed, so the previously passing helper checks were not repeated.
+
+A new copied-sample fixture smoke used the already available locked helper Python
+`3.12.8` (Anaconda build), satisfying the declared sample prerequisite. Raw command
+environments record the exact executable
+`/private/tmp/ai-eng-checks/uv-cache/builds-v0/.tmpxIOUXN/bin/python` and full version
+at execution time. Two done-filter calls reproduced the same open-task output;
+three sample tests again had exactly the deliberate one failure. Copied/source
+baseline bytes remained equal. Actual commands/statuses/stdout/stderr/environment
+are saved at
+`/private/tmp/ai-eng-phase6-sample-supported-check/evidence/commands.json`.
+This is supported-runtime fixture verification, not fresh-host model acceptance.
+The evaluation guide accounts for transient isolated-environment paths when
+reusing an already available interpreter.
+
+### Phase 6 parent acceptance — Factory 0.6.1
+
+Parent reviewed the shared investigator, run integration, sample and raw reports.
+Existing owner-gated save/artifact_paths contracts were sufficient: there is no
+new state schema, workflow engine or dependency. Status skill and helper both
+report investigation available and planning absent. Runtime reports preserve
+facts, hypotheses, raw command evidence, examined revision, limitations and next
+action, with distinct attempt paths.
+
+Fresh installed Codex and Claude sessions each investigated independent bug,
+feature and unavailable cases, using separate factory homes and disposable sample
+Git baselines. Codex CLI 0.166.0-alpha.6 used gpt-6.1-sol/medium; Claude Code
+2.1.310 used Sonnet/medium. The sample has three tests with one deliberately
+failing completed-task filter test. Its failure is reproduction evidence, not a
+passing product test suite. No sample fix was made.
+
+| Case | Observed result in both hosts | Saved handoff |
+| --- | --- | --- |
+| Bug | Repeated done selector returned the open task; code hardcodes open for every non-all selector; two other tests pass. Revision/tree state and command outputs support the local explanation. | plan / blocked / factory-plan |
+| Feature | List-only CLI rejects export; concrete parser/selection/output/test areas identified; requested fields preserved and default task inclusion remains unresolved. | plan / blocked / factory-plan |
+| Unavailable | Hosted reconnect loss cannot be established from an unrelated local file-backed CLI. Missing version, sequence, board/session and logs are concrete unblock evidence; local failure is not promoted to the hosted cause. | investigate / waiting_for_human / factory-investigate |
+
+Each initial case saved two semantic steps within the default bound of three,
+one source, one item and readable investigation artifacts. Parent replayed all
+canonical snapshots and independently verified original baseline HEADs/clean
+working trees, source records, absolute report paths, zero fix rounds and empty
+approval/action ledgers. Reports were read against actual raw command logs.
+
+The first Claude 0.6.0 run used default Python 3.9.6 despite the sample's declared
+Python 3.11+ requirement. It reported that limitation honestly, but parent rejected
+it as supported-runtime acceptance. 0.6.1 now checks declared runtime/tool
+prerequisites before relying on executions, discovers existing compatible
+environments without installing or changing permissions, and records executable
+and version. Fresh Claude runs used the existing Python 3.12.8 interpreter from
+the locked uv environment. Codex's original runs used supported Python 3.12.3 and
+remain valid evidence. Unsupported observations are distinguished from required
+validation. A relaunch also made the isolated test's no-global-refresh instruction
+explicit after an ambient startup rule caused a safe stop before any case began;
+its denied unrelated pull was not authorized by broadening test permissions.
+
+Parent made a refresh timing error: installing 0.6.1 removed the versioned Codex
+0.6.0 cache while its final case still needed the old helper for finish. Its report
+and investigation wait were saved at revision 3, but the owner remained active.
+After that CLI exited, a fresh 0.6.1 invocation verified owner death, recorded
+interrupted_owner_dead and finished the same wait at revision 6 with zero new
+semantic steps. Parent verified unchanged items, sources, prior event prefix,
+artifact bytes and baseline. This is observed post-save interruption recovery,
+not a claimed successful finish of the initial run. README now requires all
+active CLI sessions to stop before package refresh, even with versioned caches.
+
+Fresh cross-host bug resumes then passed in both directions on 0.6.1. Each read
+and explained the other host's saved report/raw evidence without the original
+transcript, retained plan/blocked, used zero new steps, and released ownership at
+revision 6. Parent verified exact item/source/prior-invocation/event preservation,
+unchanged artifact files (18 in one home, 17 in the other), and clean baselines.
+A separate interruption between artifact creation and state save was not injected;
+no claim of tested orphan-artifact reconciliation is made here.
+
+Checks passed: all 66 helper unit tests (including actual process checks), Ruff
+lint and formatting, strict mypy, six skill frontmatter validations, fixture/source
+JSON validation and git diff --check. No helper logic changed after those checks;
+the runtime correction affects shared instructions and reviewer guidance. Both
+hosts were refreshed through their normal local plugin commands, and fresh
+sessions observed the installed versions.
+
+Private acceptance evidence is outside source:
+
+- `/private/tmp/ai-eng-phase6/codex/{bug,feature,unavailable}/`: original 0.6.0
+  case prompts, baseline identities, reports and snapshots. The unavailable
+  snapshot is the preserved interrupted record, not its final recovery.
+- `/private/tmp/ai-eng-phase6-accepted/claude/{bug,feature,unavailable}/`: final
+  0.6.1 supported-runtime records and evidence; exact session prompt/events in
+  the sibling `suite-retry/` directory.
+- `/private/tmp/ai-eng-phase6/verification.json`: parent six-case structural,
+  state, path and baseline assertions, including final recovery where required.
+- `/private/tmp/ai-eng-phase6/recovery/codex/`: old and recovered snapshots,
+  exact recovery prompt/output and preservation verification.
+- `/private/tmp/ai-eng-phase6/resume/{codex,claude}/` and its `verification.json`:
+  exact fresh-session prompts, responses, before/after state and artifact hashes.
+- Initial unsupported/runtime and startup-stop evidence remains under
+  `/private/tmp/ai-eng-phase6/claude/` and the accepted tree's original `suite/`.
+
+For an offline sample use `$factory-run --config <home>/config.yaml --source
+<loaded-plugin>/fixtures/investigate/bug.json --max-steps 3` in Codex, or
+`/factory:factory-run` in Claude, with explicit offline instructions and the copied
+sample/config from `docs/investigator-evaluation.md`. Substitute feature.json or
+unavailable.json for the other cases. For a fresh resume provide the same config,
+explicit offline mode, and ask it to explain saved findings without replaying
+investigation. Actual outputs and work records are in the evidence above.
+
+Investigator acceptance is complete. Product planning is the next tranche.

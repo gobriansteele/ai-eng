@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "title": "Draft workshop agenda",
+    "status": "open"
+  },
+  {
+    "id": 2,
+    "title": "Book meeting room",
+    "status": "done"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:investigation:bug",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/investigation/bug",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Avery",
+      "text": "In the local taskboard-sample CLI, `python3 tasks.py list --status done` shows task 1, Draft workshop agenda, even though that task is still open. I expected task 2, Book meeting room, which is completed."
+    },
+    {
+      "id": "m2",
+      "author": "Avery",
+      "text": "I see the same result each time from the supplied tasks.json. The default open list seems fine. I have not tried the hosted taskboard."
+    }
+  ],
+  "availability": "Complete supplied synthetic thread. Only the authorized local sample checkout is available; no live integrations or hosted application access.",
+  "evidence": []
+}

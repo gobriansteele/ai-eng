@@ -1,10 +1,12 @@
 # Local software factory
 
 `factory` is a local plugin for Codex and Claude Code. The current source provides
-`factory-setup`, `factory-status`, `factory-run`, `factory-watch` and
-`factory-route`, backed by shared typed helpers. The orchestrator collects bounded
-read-only Slack intake, saves and routes source threads, and resumes legacy work.
-Investigation and later roles are not implemented.
+`factory-setup`, `factory-status`, `factory-run`, `factory-watch`,
+`factory-route` and `factory-investigate`, backed by shared typed helpers. The
+orchestrator collects bounded read-only Slack intake, saves and routes source
+threads, and resumes legacy work.
+It investigates scoped bug/feature reports with durable local evidence and no
+product changes. Planning and later roles are not implemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -27,6 +29,11 @@ Follow the [Codex guide](plugins/factory/harnesses/codex.md) or
 same `plugins/factory/skills/` source, with separate manifests and marketplace
 catalogs. An authenticated Slack MCP connection is required independently in each
 host; installation does not transfer connections or credentials.
+
+Finish or stop all active factory CLI sessions before refreshing either plugin.
+A refresh can remove a prior versioned cache directory still needed by a running
+session. After an interrupted session exits, resume through normal verified-owner
+recovery; do not clear its saved token or rewrite state.
 
 The [synthetic configuration](config/example.yaml) and
 [configuration contract](plugins/factory/skills/factory-setup/references/configuration.md)
@@ -67,8 +74,12 @@ and existing cursors. Partial/missing setup blocks affected channels.
 The shared router reads full saved threads, trigger boundaries, relevant inventory
 and current read-only Jira/ownership/code evidence for live sources. Missing access
 remains incomplete. It returns findings; the orchestrator saves explicit updates
-and stops at the missing investigator, a human/existing-work wait, no available
-work or its bound. No external writes occur.
+and can run the shared investigator within the invocation bound. Investigation
+records actual code revision, reproduction commands/output, facts, hypotheses and
+unknowns in versioned runtime artifacts. Feature briefs preserve unresolved
+product choices for planning. Completed investigations stop at the missing planner;
+unavailable evidence stops with a concrete unblock. No product fixes or external
+writes occur.
 
 For offline demonstrations select `--source <path>` under `fixtures/sources/`,
 legacy `--fixture <path>`, or `--collection <synthetic-json>` under `fixtures/watch/`.
@@ -88,7 +99,16 @@ Legacy `--fixture` input remains supported: `synthetic-item.json` and
 They now wait honestly for that missing evidence, preserving fix counts/scopes/
 actions/cursors. Single-step saves one decision; bounded invocation defaults to
 at most three (`--max-steps 1..10`). New explicit sources are routed even when a
-previous item's missing-investigator block remains active.
+previous item is blocked. Older missing-investigator blocks resume when this
+role is available. Completed investigation artifacts are reused across fresh chats;
+the absent planner does not trigger another investigation. Explicit offline resume
+must remain offline.
+
+For investigation evaluation, copy the tiny deliberately broken local sample
+outside plugin source into a disposable Git checkout. Use the raw reports under
+`fixtures/investigate/` and follow the separate
+[investigator evaluation](docs/investigator-evaluation.md) for exact setup commands,
+review criteria and fresh-chat handoff. Never run probes against installed fixtures.
 
 One durable run token covers the whole CLI invocation across helper calls. The
 [shared persistence contract](plugins/factory/skills/factory-run/references/persistence.md)

@@ -1,0 +1,20 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:investigation:feature",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/investigation/feature",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Rowan",
+      "text": "Could taskboard-sample export a CSV from the command line for a spreadsheet handoff? We currently copy the tab-separated list output by hand."
+    },
+    {
+      "id": "m2",
+      "author": "Casey",
+      "text": "I would use it for the list I am looking at, but the weekly handoff sometimes needs every task, including completed ones. Can we get an export command? We have not agreed which tasks it should include by default. ID, title and status are enough for now."
+    }
+  ],
+  "availability": "Complete supplied synthetic thread. Only the authorized local sample checkout is available; no live integrations or hosted application access.",
+  "evidence": []
+}

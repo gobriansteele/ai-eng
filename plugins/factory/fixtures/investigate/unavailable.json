@@ -1,0 +1,20 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:investigation:unavailable",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/investigation/unavailable",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Morgan",
+      "text": "The hosted Teamboard browser app intermittently loses a completed task after reconnecting from airplane mode. It is on a hosted shared board, not the local taskboard-sample CLI."
+    },
+    {
+      "id": "m2",
+      "author": "Morgan",
+      "text": "I cannot share the board or a browser session yet. I do not have the deployed version, browser logs or exact reconnect sequence. The sample tasks.json is not a capture of that board."
+    }
+  ],
+  "availability": "Complete supplied synthetic thread. Only the authorized local sample checkout is available; no live integrations or hosted application access.",
+  "evidence": []
+}

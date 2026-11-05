@@ -17,7 +17,9 @@ orchestration through factory-run, semantic routing through
 factory-route, and bounded read-only Slack intake/manual imports through
 factory-watch. Watch coverage includes declared overlap and tracked-thread
 rechecks, with connector/index limitations; it is not guaranteed complete.
-Investigation and later work roles, and scheduling are not implemented. With an
+Scoped bug/feature investigation and existing-work verification are available
+through factory-investigate, with durable evidence and no product changes.
+Planning and later work roles, and scheduling are not implemented. With an
 established config, optionally use
 `factory_work.py inspect` read-only to report the selected active item stage/status/next
 action and pending item IDs and snapshot path; never acquire an invocation or change work for status.
