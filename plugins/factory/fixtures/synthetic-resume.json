@@ -1,0 +1,50 @@
+{
+  "synthetic": true,
+  "description": "Synthetic post-intake test input only. No Slack read, real work or real permission. Production intake is a later phase.",
+  "item": {
+    "id": "computed-on-import",
+    "synthetic": true,
+    "source_id": "synthetic:phase3:resume",
+    "subitem_key": "one",
+    "source_links": [
+      "https://example.invalid/synthetic/phase3"
+    ],
+    "jira_keys": [],
+    "classification": "unclassified",
+    "stage": "intake",
+    "status": "ready",
+    "next_action": "Select the next required role from saved evidence",
+    "required_role": null,
+    "artifact_paths": {},
+    "code": {},
+    "fix_rounds": 1,
+    "approvals": [
+      {
+        "id": "synthetic-approval-001",
+        "scope": {
+          "action": "pull_requests",
+          "target": "https://example.invalid/synthetic/repository",
+          "revision": "synthetic-commit-001"
+        },
+        "evidence": "Synthetic preservation fixture only; grants no permission for any real action."
+      }
+    ],
+    "pending_actions": [
+      {
+        "id": "synthetic-action-001",
+        "scope": {
+          "action": "pull_requests",
+          "target": "https://example.invalid/synthetic/repository",
+          "revision": "synthetic-commit-001"
+        },
+        "status": "proposed",
+        "returned_id": null,
+        "returned_url": null,
+        "evidence": "Synthetic proposed action only; no external request was sent."
+      }
+    ]
+  },
+  "synthetic_cursors": {
+    "synthetic-workspace:synthetic-channel": "synthetic-cursor-001"
+  }
+}

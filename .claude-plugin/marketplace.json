@@ -8,7 +8,7 @@
     {
       "name": "factory",
       "source": "./plugins/factory",
-      "description": "Configure and inspect a local software factory."
+      "description": "Configure, inspect, and resume a local software factory."
     }
   ]
 }

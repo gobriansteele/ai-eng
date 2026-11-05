@@ -53,3 +53,33 @@ See [phase results](../../../docs/phase-results.md) for observations and limits.
 References: installed CLI help,
 [plugin creation](https://code.claude.com/docs/en/plugins/create), and
 [local marketplaces](https://code.claude.com/docs/en/plugins/create-marketplace).
+
+## Run and resume
+
+In a fresh CLI session:
+
+```text
+/factory:factory-run Use configuration <factory-home>/config.yaml and the loaded package's fixtures/synthetic-resume.json. Single step: save the next-step decision, then stop at an unavailable role. Report the canonical snapshot path.
+```
+
+Resume after the original CLI stops with the same config and no fixture. Normal
+bounded use defaults to at most three saved steps; explicit `--max-steps` is 1..10.
+The helper discovers the long-lived `claude` CLI ancestor; use that observed PID
+rather than a transient helper/shell. Process-inspection or mutation denial is a
+block until the specific command can run through normal permission review. Do
+not infer owner death or automatically relax permissions.
+
+For desktop, launch one foreground CLI worker from the selected factory home and
+wait for its completion, passing the explicit configuration and bound:
+
+```sh
+claude -p '/factory:factory-run Use configuration <factory-home>/config.yaml. Resume saved work with --max-steps 3; finish and report the result.'
+```
+
+Use the actual config path. Include a selected synthetic fixture only for a new
+Phase 3 test. Preserve the CLI's normal reviewed tool permissions; noninteractive
+permission denial must be reported rather than bypassed. If the current desktop
+cannot launch/authorize this foreground invocation, report the gap. Its CLI owns
+the entire bounded run; desktop service and transient shell PIDs do not. This is
+not a daemon or schedule. Either harness can resume after the prior CLI has
+finished or actually stopped; destination tool permissions must be checked anew.

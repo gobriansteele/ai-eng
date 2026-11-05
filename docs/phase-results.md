@@ -354,3 +354,116 @@ Exact prompts/results and the migration receipt remain in the private runtime.
 The Claude synthetic run also left a disposable evidence scratch file in its
 isolated temporary test directory after its cleanup command was denied. No plugin
 source or real factory state was affected by that scratch file.
+
+## Phase 3 — accepted, version 0.3.0
+
+Added shared `factory-run`, typed `factory_work.py`, and two explicitly synthetic
+post-intake fixtures under the loaded package's `fixtures/`. The ordinary fixture
+starts unclassified; the resume fixture carries one illustrative fix round,
+scoped synthetic approval and proposed action. Neither represents live intake or
+permission for real work. The agent chooses the next role; an unavailable router
+must become a visible route/blocked record. Normal invocation defaults to three
+saved steps (explicit range 1..10); single-step allows one. No YAML changes,
+live intake, work roles or schedules were added.
+
+Parent reviewed the persistence/owner design before implementation. The sole
+canonical `runtime/state/work.json` snapshot commits item, history and invocation
+bookkeeping together with file fsync, atomic replace and directory fsync. This
+refines the original suggested separate record/events/runs layout to avoid split
+commits without a transaction engine. Schema version 1 is deliberately limited
+to one synthetic saved item; later routing of multiple pending items needs a
+reviewed compatible migration. Setup/channel-start and existing cursor files
+are preserved; `synthetic_cursors` are illustrative fixture metadata only.
+
+A short fcntl mutation mutex protects a durable whole-invocation token. Mutations
+verify the nearest actual harness CLI ancestor, PID/start identity and executable;
+process inspection uses full-width ps with normalized C locale/UTC timezone.
+Alive or unknown owners block, irrespective of elapsed time. Codex's desktop
+app-server is rejected. Guides describe one foreground bounded CLI worker from
+desktop, using ordinary permission review. Parent acceptance below exercised bounded CLI dispatch from this desktop
+session and fresh model-driven behavior in both hosts. Native desktop UI/picker
+behavior was not separately tested.
+
+Executed from the checkout in the isolated frozen project environment:
+
+```sh
+uv run --isolated --frozen --project plugins/factory ruff check --no-cache --config plugins/factory/pyproject.toml plugins/factory/scripts tests
+uv run --isolated --frozen --project plugins/factory ruff format --check --no-cache plugins/factory/scripts tests
+uv run --isolated --frozen --project plugins/factory mypy --cache-dir /tmp/ai-eng-phase3-mypy --config-file plugins/factory/pyproject.toml plugins/factory/scripts
+PYTHONDONTWRITEBYTECODE=1 uv run --isolated --frozen --project plugins/factory python -m unittest discover -s tests -v
+uv run --isolated --frozen --project plugins/factory python /Users/briansteele/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/factory/skills/factory-run
+uv run --isolated --frozen --project plugins/factory python /Users/briansteele/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/factory/skills/factory-status
+```
+
+Results: lint passed; four Python files already formatted; strict mypy passed
+for both helper files; all 32 tests passed; both changed skills validated.
+The suite includes both harness-order resumptions at the persistence boundary,
+source deduplication, cumulative fix rounds, scoped-record preservation, revision
+conflict, corruption refusal, unknown/live owner exclusion, actual subprocess
+mutex contention and actual process death. Failure injection before replacement
+leaves the complete prior snapshot. Failure after replacement leaves the complete
+committed snapshot; retrying the same decision ID does not consume another step.
+Begin and finish retries are likewise idempotent. These boundary tests do not
+substitute for fresh model-driven skill demonstrations.
+
+A separate no-prompt process smoke test started the installed Codex CLI with
+`exec --skip-git-repo-check --json -` and Claude CLI with `-p`, keeping stdin open.
+Both full native executable identities were accepted, then verified dead after
+termination/wait. No model prompt or model call was supplied. The initial macOS
+combined ps columns truncated executable names; full-width comm-last plus a
+separate argument read fixed that observed failure. A regression also preserves
+CLI prompts containing the word app-server without accepting the actual service.
+
+No installs, real factory runtime mutations, product repository writes, external
+calls, commits or pushes were performed by this implementation agent. Parent owns
+candidate metadata/installation and remaining actual host acceptance evidence.
+
+
+### Parent acceptance
+
+Refreshed installed factory 0.3.0 with `codex plugin add factory@ai-eng-local
+--json` and `claude plugin update factory@ai-eng-local --scope user --json`.
+Fresh sessions used Codex CLI 0.166.0-alpha.6 with gpt-6.1-sol/medium and Claude
+Code 2.1.310 with its sonnet alias (reported claude-sonnet-5-5)/medium. Codex loaded
+its versioned plugin cache; Claude loaded the registered local source folder.
+Both observed version 0.3.0 and saved the package source fingerprint.
+
+Each host independently ran the installed `factory-run` on the loaded
+`fixtures/synthetic-resume.json` in a separate synthetic home. Actual result:
+`item-cef6818e93db732933b7ccbb`, stage `route`, status `blocked`, required role
+`factory-route`, one saved decision and ownership released. The missing router
+was not simulated. A new invocation in the other host resumed the same config
+without a fixture: both directions preserved the entire item and synthetic
+cursor object, saved zero additional decisions, and ended at revision 5 with no
+active owner. Both bounded resume invocations used a maximum of three steps.
+
+Both fresh hosts also inspected separate deliberately corrupt snapshots. Each
+stopped for repair; parent verification confirmed all 43 original bytes remained
+unchanged. No reset or repair was performed.
+
+For real process contention and interruption, the test controller paused its own
+Codex CLI immediately after the first decision was committed (revision 2).
+A separate Claude invocation's `begin` refused with “Another invocation still
+owns this workspace”; the canonical snapshot remained identical. The controller
+verified the recorded PID/executable, terminated only that test CLI, waited for
+exit, then launched fresh Claude. Its helper verified owner death, recorded
+`interrupted_owner_dead`, and resumed without replay. Final state had one
+decision, fix count 1, unchanged approval/action/cursor fields, and no active run.
+
+The parent independently reran lint, formatting and strict typing: passed.
+All 32 tests passed after narrow permission escalation for the two tests needing
+`ps`; the initial sandbox run reported those restrictions rather than skipping
+checks. A first Claude model test stopped on a denied compound inspection shell
+command; a fresh retry used the already-permitted Read/Glob and uv/python tools.
+A contention attempt similarly stopped on raw ps denial; a fresh attempt used
+the helper's built-in owner verification. No global permissions were changed.
+
+Exact prompts, JSONL traces, final responses, before/after records and parent
+assertions are local test artifacts under `/private/tmp/ai-eng-phase3/`;
+`verification.json` records the five preservation/corruption checks, and
+`interrupted/contention-verification.json` records the unchanged live-owner case.
+The reproducible test launcher and assertion script are
+`/private/tmp/ai-eng-evaluate.py` and `/private/tmp/ai-eng-verify-phase3.py`.
+These are disposable synthetic acceptance artifacts, not the real factory's
+runtime. No Honor runtime records, live integrations or product repositories were
+changed. Live routing/intake remain later phases.

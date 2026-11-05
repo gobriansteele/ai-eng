@@ -1,0 +1,27 @@
+{
+  "synthetic": true,
+  "description": "Synthetic post-intake test input only. No Slack read, real work or real permission. Production intake is a later phase.",
+  "item": {
+    "id": "computed-on-import",
+    "synthetic": true,
+    "source_id": "synthetic:phase3:ordinary",
+    "subitem_key": "one",
+    "source_links": [
+      "https://example.invalid/synthetic/phase3"
+    ],
+    "jira_keys": [],
+    "classification": "unclassified",
+    "stage": "intake",
+    "status": "ready",
+    "next_action": "Select the next required role from saved evidence",
+    "required_role": null,
+    "artifact_paths": {},
+    "code": {},
+    "fix_rounds": 0,
+    "approvals": [],
+    "pending_actions": []
+  },
+  "synthetic_cursors": {
+    "synthetic-workspace:synthetic-channel": "synthetic-cursor-001"
+  }
+}

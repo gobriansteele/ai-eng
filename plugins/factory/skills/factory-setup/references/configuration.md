@@ -129,14 +129,15 @@ retain older reports; another host cannot inherit current-host readiness. Status
 uses only the matching hash; observations are historical evidence, not a current
 connection guarantee. Recheck integrations before later actions. Minimal
 `channel-starts.json` in that same directory retains workspace/channel starts.
-Other runtime files/directories are created only by future implemented work.
+factory-run additionally uses the canonical runtime/state/work.json snapshot;
+see its persistence contract. Setup leaves saved work and existing cursors alone.
 
 Unknown settings/schema versions and root escapes are validation errors. Missing
 connections/repos are readiness blocks. The fixed limits/actions validate this
 trial's supported choices; their enforcement during work is an agent instruction,
 not a deterministic execution engine. YAML never overrides host restrictions or
 grants external-action approval. Setup readiness also does not mean workflow roles
-exist: this tranche implements setup and status only.
+exist: factory-run currently supports synthetic saved-work decisions only.
 
 Runtime must be outside the loaded plugin/authoring source and all configured or
 discovered target repositories. Validation rejects a disposable or source-tree

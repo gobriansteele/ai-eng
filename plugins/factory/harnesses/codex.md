@@ -39,3 +39,34 @@ not separately exercised. See [phase results](../../../docs/phase-results.md).
 
 References: installed CLI help and
 [OpenAI plugin packaging](https://developers.openai.com/plugins/build/plugins).
+
+## Run and resume
+
+In a fresh CLI session:
+
+```text
+Use $factory-run with configuration <factory-home>/config.yaml and the loaded package's fixtures/synthetic-resume.json. Single step: save the next-step decision, then stop at an unavailable role. Report the canonical snapshot path.
+```
+
+Resume after the original CLI stops with the same config and no fixture. For
+normal bounded use request at most three steps (default), or `--max-steps 1..10`.
+The shared skill discovers the exact long-lived `codex` CLI ancestor through
+`factory_work.py owners`; its helper/shell PID is not the owner. Process
+inspection denied by sandbox is unknown: retry the specific command through the
+normal host approval mechanism, preserving sandbox settings. Never infer death.
+
+For desktop, dispatch one foreground CLI worker and wait for completion:
+
+```sh
+codex exec --skip-git-repo-check --approve-for-me --sandbox workspace-write -C '<factory-home>' 'Use $factory-run with configuration <factory-home>/config.yaml. Resume saved work with --max-steps 3; finish and report the result.'
+```
+
+Use an existing selected home and substitute the actual config path. For a new
+synthetic test include the explicitly selected fixture in that prompt. `--approve-for-me` retains workspace-write and routes specific required commands
+through automatic approval review; it does not disable the sandbox or grant
+external-action permission.
+The desktop `codex app-server` lifetime is unrelated to the invocation and is
+never accepted as owner. If dispatch/inspection cannot run with permitted tools,
+report that gap. No background service or scheduler is added. A CLI owner is
+valid until the bounded worker stops; switching to Claude requires it to finish
+or stop first. Saved approvals are scoped evidence, not transferred tool grants.
