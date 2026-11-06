@@ -64,26 +64,16 @@ for supported settings.
 
 ## How it runs
 
-Start with one real bug report or feature request from a configured Slack channel.
-Using the example home above, replace `<channel-id>` and `<thread-link>`:
+A **work item** is one bug report or feature request that Factory is working on.
+A **run** is one invocation of `factory-run`: it reads new input, continues saved
+work, saves its progress and stops. A work item can take several runs to finish.
 
-**Claude Code**
+By default, a run takes up to three **steps**. A step is a saved decision or result,
+such as selecting a request, recording investigation findings or saving a plan.
+For example, a run might investigate a bug and then stop to ask what the expected
+behavior should be. The next run uses your answer and continues from those findings.
 
-```text
-/factory:factory-run Use configuration ~/factories/work/config.yaml.
-Import thread <thread-link> from configured channel <channel-id> with --import-thread.
-Investigate the request and show me the next action.
-```
-
-**Codex**
-
-```text
-Use $factory-run with configuration ~/factories/work/config.yaml.
-Import thread <thread-link> from configured channel <channel-id> with --import-thread.
-Investigate the request and show me the next action.
-```
-
-`factory-run` coordinates the work; the component skills handle each part:
+`factory-run` coordinates these component skills:
 
 | Part | Skills | What happens |
 | --- | --- | --- |
@@ -95,25 +85,90 @@ Investigate the request and show me the next action.
 | Updates | `factory-report` | Prepare local Slack and linked Jira update drafts. |
 | Supporting tools | `factory-status`, `factory-retro`, `factory-maintain` | Inspect progress, propose improvements and preview maintenance. |
 
-Each run advances up to three workflow steps by default, saving its progress. It
-stops earlier if it needs your answer or cannot proceed. Once the run stops, invoke
-`factory-run` again with the same configuration and ask it to resume. Include your
-answer if it left a question.
+Factory works on one selected item at a time; other items wait. It asks before
+editing code, committing, pushing, opening a PR or sending an update. For example,
+it can prepare a Slack progress update for you to read, then wait for approval to
+post it. Factory does not merge or deploy changes.
 
-Without an explicit import, runs check configured channels for new work and
-continue saved work. Imports let you select older threads directly. You can resume
-in either host after checking setup there.
+### Start with a Slack thread
 
-Factory handles one active item at a time. It asks before editing code, committing,
-pushing, opening a PR or sending an update. Updates stay local drafts by default;
-Factory does not merge or deploy. To check progress without advancing work, use
-`/factory:factory-status` in Claude Code or `$factory-status` in Codex with your
-configuration path.
+Choose a thread containing a bug report or feature request. An **import** tells
+Factory to read that specific thread and save it as input. This lets you choose
+an older request instead of waiting for a new message in a configured channel.
+Importing does not post to Slack or authorize code changes.
 
-You can run Factory manually or configure a
-[recurring run](plugins/factory/skills/factory-run/references/scheduling.md) in your
-host. Installation does not start a schedule. The current release has passed
-offline checks; live PR publishing and scheduled execution still need validation.
+Use your configuration path, the thread's link and its channel ID. The channel
+must be one you selected during setup.
+
+**Claude Code**
+
+```text
+/factory:factory-run Use configuration ~/factories/work/config.yaml.
+Use --import-thread to read <thread-link> from configured channel <channel-id>.
+Investigate the request and show me the next action.
+```
+
+**Codex**
+
+```text
+Use $factory-run with configuration ~/factories/work/config.yaml.
+Use --import-thread to read <thread-link> from configured channel <channel-id>.
+Investigate the request and show me the next action.
+```
+
+You can also start a run without selecting a thread. Factory then checks your
+configured Slack channels for new messages and continues any saved work.
+
+### Continue saved work
+
+When a run reaches its step limit, needs your answer or encounters a problem, it
+saves its place and stops. After it stops, use the same configuration to continue:
+
+**Claude Code**
+
+```text
+/factory:factory-run Use configuration ~/factories/work/config.yaml.
+Resume saved work.
+```
+
+**Codex**
+
+```text
+Use $factory-run with configuration ~/factories/work/config.yaml.
+Resume saved work.
+```
+
+If Factory asked a question, include your answer. For example, if it asked whether
+CSV export should include completed tasks, add: “Include both open and completed
+tasks in the export.” It uses that answer with the saved plan; you do not need to
+import the thread again or repeat the conversation.
+
+You can continue in a fresh session or the other host. Let the previous run finish
+first. When switching hosts, run `factory-setup` with the existing configuration
+to check that host's connections before continuing.
+
+### Check progress
+
+Status reads saved progress without starting more work. For example:
+
+```text
+/factory:factory-status Use configuration ~/factories/work/config.yaml.
+What is Factory working on, what has it finished, and what does it need from me?
+```
+
+In Codex, use `$factory-status` with the same request.
+
+### Run on a schedule
+
+A schedule starts the same `factory-run` request at a chosen interval—for example,
+every weekday morning. Each run checks for new Slack input and continues from the
+last saved result. If it needs your answer or approval, later runs still wait for
+that response.
+
+Set up recurring execution separately using the
+[Factory scheduling guide](plugins/factory/skills/factory-run/references/scheduling.md).
+Installing Factory does not create a schedule. Tests with sample work items have
+passed; publishing a real PR and running on a schedule still need validation.
 
 ## Troubleshooting
 
