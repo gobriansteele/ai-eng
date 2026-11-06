@@ -1,12 +1,28 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements authorized local changes, independently reviews exact content, adjudicates findings and applies at most two shared fix rounds; stops truthfully at unavailable later roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements authorized local changes, independently reviews exact content, adjudicates findings and applies at most two shared fix rounds; follows authorized draft PRs and fresh CI/review activity; stops truthfully at unavailable later roles.
 ---
 
 # Factory run
 
 Act as the orchestrator: read durable evidence, choose the next step, and save
-that decision. Read the loaded plugin's [persistence contract](references/persistence.md)
+that decision. For startup files, use already exposed and permitted native file
+reading/discovery tools when available. A denied command has its observed scope:
+a denied listing/read does not establish that all execution or the prescribed
+helper is unavailable. Inspect the actual permission result/allowlist and attempt
+the prescribed literal helper command if that distinct operation is already
+permitted before declaring its capability unavailable. Do not bypass a denial of
+the underlying access/action or broaden permissions; command-pattern permissions
+do not revoke separately granted file reads/discovery or helper commands. Report
+the precise blocked operation when required access still fails. Under a command prefix
+allowlist, issue each already permitted command separately with literal
+paths and values. Obtain the run UUID in a separate permitted Python call, then
+paste its observed value into the literal helper command. Do not wrap helpers in
+shell assignments, substitutions or command chains. Rejection of such a compound
+command is not a denial of the required literal helper; report that helper denied
+only after its actual permitted-form call fails.
+
+Read the loaded plugin's [persistence contract](references/persistence.md)
 before running the helper. Resolve the package two directories above this skill's
 containing directory; use its scripts and fixtures, not an authoring checkout.
 
@@ -276,7 +292,7 @@ findings/check failures before another edit; a completed batch cannot authorize
 further changes. Interrupted partial edits
 resume the same pending batch; unchanged/no-code attempts consume no round and
 cannot pass. Initial implementation/review consume zero. Internal review and
-future PR follow-up share the same two total rounds; never reset it. Re-review
+PR follow-up share the same two total rounds; never reset it. Re-review
 corrected code with fresh independent workers under the review contract.
 
 After two unsuccessful rounds, save a readable escalation report and the actual
@@ -291,10 +307,45 @@ availability alone does not resolve them.
 A pass needs the complete disposition audit and exact current fingerprint in a
 readable final report. Only a clean exact reviewed commit can populate
 `code.reviewed_commit`; for dirty accepted code keep it unset and use full
-base/HEAD, diff and file/hash evidence. Save follow_pr/blocked/factory-follow-pr
-with the report and precise missing-role next action. Follow-up is unavailable:
-finish/release with no push, PR or other external action. A fresh read-only resume
-reuses this handoff without another review or code ownership transfer.
+base/HEAD, diff and file/hash evidence. Save follow_pr/ready/factory-follow-pr
+with the report and exact-content handoff.
+Follow-up is available; an old missing-role block resumes without repeating review
+or code ownership transfer. A pass grants no publication authorization.
+
+At follow_pr, read the loaded [follow-up contract](../factory-follow-pr/SKILL.md)
+and reference before deciding any outcome, including an authorization wait. Invoke
+that shared role with all saved review/implementation/content, authorization,
+code refs, pending actions/batches and counter history, config/runtime, actual
+owner and mode. Verify its immutable reports and current exact checkout/remote
+identities. Reuse observed existing PRs; save code.pr_url plus evidence without
+claiming a factory creation action. For a new approved push/draft request, append
+its exact scoped approval/proposed action via ordinary save, then use the narrow
+owner-gated reconcile command to checkpoint uncertain BEFORE execution and confirm
+only observed results. Reserve the required steps before starting; a partial or
+ambiguous remote read never authorizes retry. Workers return reports; the
+orchestrator owns these checkpoints and remote execution coordination. Follow the
+contract for authoritative non-application, stable IDs, unchanged request retries
+and unknown remote waits. Do not replace pending entries through ordinary save.
+
+Read current-head CI/status/log/review/comment coverage, disposition findings with
+evidence, and save a single accepted pending fix batch before implementer dispatch
+with the completed count unchanged. Use the existing shared count/close/re-review
+rules above, including failed checks counting once and count-two escalation.
+Re-review corrected content before any separately authorized fix push; verify its
+new remote SHA, not old CI. Append unique follow-pr report paths, preserving old
+artifacts/bytes, history, sources/cursors, approval scopes and counts. Save actual
+follow_pr blocked/ready/waiting_for_human outcomes with concrete next action;
+unchanged observed waits need no repeated step. Stop/release after one follow-up
+observation/handoff; no automatic poll, merge, deployment or messages. A ready
+draft waits for Brian, with remote checks and coverage stated precisely.
+
+A focused follow-up evaluation may import synthetic:follow-pr-evaluation: through
+begin --fixture with a readable raw snapshot/actual-checkout manifest. It labels
+synthetic PR/CI/comments and absent upstream model-role history explicitly. Honor
+this declared existing-PR observation scope, not an invented passed review; new
+publication still needs genuine exact review. Explicit synthetic/offline mode
+stays offline on all resumes. This exception neither grants edit/external
+permission nor weakens the legacy missing-source behavior below.
 
 A focused review evaluation may explicitly import a synthetic stage fixture with
 `begin --fixture`: its `synthetic:review-evaluation:` source identity, readable
@@ -319,17 +370,20 @@ Persist after each completed step. Keep stage separate from status: a human wait
 must retain the step needing help. Only this orchestrator writes current state;
 workers return artifacts/findings. Tool permission and current user
 approval are independent of saved configuration and synthetic approval examples.
-An uncertain external action must be reconciled from live returned IDs before a
-retry; no external action is implemented here.
+An uncertain external action must be reconciled from fresh observations in the
+selected mode before retry; actual external actions require the loaded follow-up
+contract and applicable authorization.
 
 Stop on the first unavailable role, wait, block, completed single step, or step
 limit. Otherwise reread saved state and choose another available step within the
 remaining bound. A completed route can proceed to investigation within that
 bound; completed investigation can proceed to planning and actionable planning to
 design, then authorized implementation within the remaining bound. Completed
-implementation can proceed to independent review and bounded fixes, then stops
-at absent PR follow-up. Respect genuine waits, no-action and invocation bounds.
-An old investigator, planner, designer, implementer or reviewer missing-role block
+implementation can proceed to independent review and bounded fixes, then
+authorized draft PR follow-up when prerequisites hold. Respect genuine waits,
+no-action and invocation bounds.
+An old investigator, planner, designer, implementer, reviewer or follow-up
+missing-role block
 alone must not stop a now-available role. Explicit offline/synthetic resume stays
 offline; never invoke live watch merely because no new fixture is supplied. Call `finish` with the observed stop reason;
 on an error, preserve

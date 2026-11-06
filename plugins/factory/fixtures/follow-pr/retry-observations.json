@@ -1,0 +1,77 @@
+{
+  "synthetic": true,
+  "provenance": "Controlled saved PR/CI/review snapshot. Not an actual remote read, executed check, model report, approval or passed factory review.",
+  "observed_at": "2026-11-05T12:00:00Z",
+  "repository": "synthetic-owner/taskboard",
+  "pr": {
+    "id": 17,
+    "url": "https://example.invalid/synthetic-owner/taskboard/pull/17",
+    "state": "open",
+    "draft": true,
+    "base_ref": "trial-base",
+    "base_sha": "0000000000000000000000000000000000000000",
+    "head_ref": "trial-head",
+    "head_sha": "1111111111111111111111111111111111111111"
+  },
+  "coverage": {
+    "pull_requests": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "checks": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "statuses": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "reviews": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "comments": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "logs": "Included excerpts are synthetic raw input; no real check was executed."
+  },
+  "checks": [
+    {
+      "id": "check-network-1",
+      "name": "dependency probe",
+      "head_sha": "1111111111111111111111111111111111111111",
+      "status": "completed",
+      "conclusion": "failure",
+      "attempt": 1,
+      "log": "Before checkout: HTTP 503 from external dependency."
+    },
+    {
+      "id": "check-network-2",
+      "name": "dependency probe",
+      "head_sha": "1111111111111111111111111111111111111111",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 2,
+      "log": "Same revision, dependency probe succeeded. Repository tests were not executed by this check."
+    }
+  ],
+  "statuses": [],
+  "reviews": [],
+  "comments": []
+}

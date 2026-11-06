@@ -56,6 +56,42 @@ class WatchTests(unittest.TestCase):
             value or self.capture(name),
         )
 
+    def test_operation_ids_cannot_cross_collection_and_decision_domains(self):
+        self.store.path.unlink()
+        initial = self.store.begin("codex", 12345, "watch-run", self.fixture)
+        op = work_tests.WorkTests.operation(self, initial, "synthetic-first")
+        saved = self.store.save("watch-run", "codex", 12345, initial["revision"], op)
+        with self.assertRaisesRegex(fw.WorkError, "domain"):
+            self.collect("first")
+        capture = self.capture("first")
+        capture["id"] = "collection-domain"
+        collected = self.collect("first", value=capture)
+        op["id"] = "collection-domain"
+        with self.assertRaisesRegex(fw.WorkError, "domain"):
+            self.store.save("watch-run", "codex", 12345, collected["revision"], op)
+        self.assertEqual(collected["schema_version"], 3)
+        self.assertEqual(self.store.read(), collected)
+        reconciliation = work_tests.WorkTests.reconciliation(
+            self, collected, name="collection-domain"
+        )
+        with self.assertRaisesRegex(fw.WorkError, "domain"):
+            self.store.reconcile(
+                "watch-run", "codex", 12345, collected["revision"], reconciliation
+            )
+        reconciliation["id"] = "reconcile-domain"
+        reconciled = self.store.reconcile(
+            "watch-run", "codex", 12345, collected["revision"], reconciliation
+        )
+        capture["id"] = "reconcile-domain"
+        with self.assertRaisesRegex(fw.WorkError, "domain"):
+            self.collect("first", value=capture)
+        self.assertEqual(self.store.read(), reconciled)
+        bad = deepcopy(collected)
+        bad["events"][-1]["change"]["id"] = "synthetic-first"
+        with self.assertRaisesRegex(fw.WorkError, "Duplicate operation"):
+            fw.snapshot(bad)
+        self.assertEqual(saved["invocations"][0]["steps"], 1)
+
     def test_empty_production_begin_and_independent_channel_cursors(self):
         self.assertEqual(self.state["schema_version"], 2)
         saved = self.collect("first")

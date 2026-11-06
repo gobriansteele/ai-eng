@@ -83,7 +83,7 @@ any missing role. No panel runs for already accepted/dismissed findings.
 
 ## Pending batch and shared two-round allowance
 
-One item has two total fix rounds across internal review and future PR follow-up.
+One item has two total fix rounds across internal review and PR follow-up.
 A round means the engineer receives one accepted batch, changes implementation
 and returns it for verification. Initial implementation/review and unchanged
 reviews consume zero. Group currently accepted findings into one batch; avoid a
@@ -146,8 +146,9 @@ raw role reports, panel use/cost when observed, verification, scope and limitati
 Only a clean exact reviewed commit may populate `code.reviewed_commit`; dirty code
 keeps it unset and is identified by its full diff/files/hash manifest in the report.
 Invalidate `reviewed_commit` and affected verdicts on subsequent content changes.
-A pass saves follow_pr / blocked / factory-follow-pr with the reviewed artifact and
-precise missing-role next action. Follow-up is unavailable, so stop/release without
-external actions. No judgment about merge, deployment or production verification
+A pass saves follow_pr / ready / factory-follow-pr with the reviewed artifact and
+exact-content handoff. Follow-up is available and requires its own scoped
+authorization before any external action. No judgment about merge, deployment
+or production verification
 follows from an internal pass. Durable paths and exact evidence, rather than a
 host transcript, support subsequent cross-host read-only resume.

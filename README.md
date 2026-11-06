@@ -3,7 +3,8 @@
 `factory` is a local plugin for Codex and Claude Code. The current source provides
 `factory-setup`, `factory-status`, `factory-run`, `factory-watch`,
 `factory-route`, `factory-investigate`, `factory-plan`, `factory-design` and
-`factory-implement` and `factory-review`, backed by shared typed helpers. The orchestrator collects bounded read-only Slack
+`factory-implement`, `factory-review` and `factory-follow-pr`, backed by shared
+typed helpers. The orchestrator collects bounded read-only Slack
 intake, saves and routes source threads, and resumes legacy work.
 It investigates scoped bug/feature reports with durable local evidence and no
 product changes. Product planning saves actionable behavior/checks or a decisive
@@ -13,7 +14,9 @@ handoff. Explicitly authorized local implementation uses one dedicated code
 worktree and saves exact diff/content and verification evidence. Independent
 review uses two fresh complementary reviewers, a fresh adjudicator and three
 fresh panelists only for unresolved disputes. Accepted corrections share two total
-fix rounds with future PR follow-up. PR follow-up and later roles are not implemented.
+fix rounds with PR follow-up. Draft PR publication requires scoped authorization,
+uncertain-action reconciliation and exact reviewed content; follow-up investigates
+fresh CI/review activity. Reporting and scheduling remain unimplemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -100,8 +103,11 @@ prescribed successful checks hand off to independent review. Supported findings
 are adjudicated into one saved pending fix batch. One changed-code return for
 verification consumes one shared round, including failed checks; interruptions
 resume the same attempt. Exact content is reviewed again after changes. Two
-unsuccessful rounds ask Brian for help. A pass stops at unavailable PR follow-up.
-No push, PR or other external write follows.
+unsuccessful rounds ask Brian for help. A pass hands off to draft PR follow-up,
+which verifies exact content and applicable
+scoped authorization before publication. It reuses existing PRs, reconciles
+uncertain writes and investigates fresh current-head CI/review activity. The same
+two rounds cover internal and PR fixes; nothing merges or deploys automatically.
 
 For offline demonstrations select `--source <path>` under `fixtures/sources/`,
 legacy `--fixture <path>`, or `--collection <synthetic-json>` under `fixtures/watch/`.
@@ -181,6 +187,14 @@ verified-owner collection atomically migrates to schema 3. Schema 1/2 inspect
 writes nothing; begin migrates 1 to 2 preserving history/handoff metadata.
 Both hosts need this phase's plugin to resume schema 3. Corruption requests repair,
 never reset. Immutable captures preserve earlier evidence and unrouted intake.
+
+Phase 11 source adds `factory-follow-pr`. Its
+[shared contract](plugins/factory/skills/factory-follow-pr/references/follow-pr.md)
+defines exact draft requests, authorization, pending-action reconciliation and
+fresh remote coverage. Synthetic saved observations live in `fixtures/follow-pr/`
+under the plugin; the [evaluator guide](docs/follow-pr-evaluation.md) keeps acceptance
+criteria outside role context. Installation and actual both-host/live acceptance
+are recorded separately in phase results; source capability is not live proof.
 
 ## Verify
 

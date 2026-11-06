@@ -235,6 +235,34 @@ class RouteTests(unittest.TestCase):
         self.store.path.write_text(json.dumps(legacy))
         return legacy
 
+    def test_reconciliation_after_legacy_migration_preserves_prefix_and_ids(self):
+        initial = self.begin()
+        self.store.save(
+            "run-one",
+            "codex",
+            12345,
+            initial["revision"],
+            work_tests.WorkTests.operation(self, initial, "legacy-decision"),
+        )
+        finished = self.store.finish("run-one", "codex", 12345, "blocked")
+        legacy = self.legacy_from_snapshot(finished)
+        self.store.path.write_text(json.dumps(legacy))
+        resumed = self.store.begin("claude-code", 12345, "new-owner", None)
+        op = work_tests.WorkTests.reconciliation(self, resumed)
+        op["id"] = next(
+            e["decision"]["id"] for e in legacy["events"] if e["decision"] is not None
+        )
+        with self.assertRaisesRegex(fw.WorkError, "domain"):
+            self.store.reconcile(
+                "new-owner", "claude-code", 12345, resumed["revision"], op
+            )
+        op["id"] = "reconcile-migrated"
+        saved = self.store.reconcile(
+            "new-owner", "claude-code", 12345, resumed["revision"], op
+        )
+        self.assertEqual(saved["events"][: len(legacy["events"])], legacy["events"])
+        self.assertEqual(self.store.read(), saved)
+
     def test_legacy_inspect_no_write_and_owner_begin_migration_preserves_history(self):
         legacy = self.legacy_state()
         original = self.store.path.read_bytes()

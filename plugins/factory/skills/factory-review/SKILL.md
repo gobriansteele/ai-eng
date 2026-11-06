@@ -39,5 +39,6 @@ hashes; `reviewed_commit` remains unset for it.
 Return immutable reports and a concrete recommendation: fix batch, precise
 block/human wait, or pass for the exact reviewed content. After two unsuccessful
 rounds, return the remaining issues, attempted fixes and concrete question for
-Brian. A pass only hands off to the still-unavailable `factory-follow-pr`; no push,
+Brian. A pass hands off to available `factory-follow-pr` for exact-content and
+authorization checks; no push,
 PR, external messages, merge or cleanup follows from this skill.

@@ -1,0 +1,98 @@
+{
+  "synthetic": true,
+  "provenance": "Controlled saved PR/CI/review snapshot. Not an actual remote read, executed check, model report, approval or passed factory review.",
+  "observed_at": "2026-11-05T12:00:00Z",
+  "repository": "synthetic-owner/taskboard",
+  "pr": {
+    "id": 17,
+    "url": "https://example.invalid/synthetic-owner/taskboard/pull/17",
+    "state": "open",
+    "draft": true,
+    "base_ref": "trial-base",
+    "base_sha": "0000000000000000000000000000000000000000",
+    "head_ref": "trial-head",
+    "head_sha": "1111111111111111111111111111111111111111"
+  },
+  "coverage": {
+    "pull_requests": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "checks": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "statuses": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "reviews": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "comments": {
+      "pages": [
+        1
+      ],
+      "next_cursor": null,
+      "complete": true
+    },
+    "logs": "Included excerpts are synthetic raw input; no real check was executed."
+  },
+  "checks": [
+    {
+      "id": "check-selector",
+      "name": "selector",
+      "head_sha": "1111111111111111111111111111111111111111",
+      "status": "completed",
+      "conclusion": "failure",
+      "attempt": 1,
+      "log": "$ python -m unittest -v\nFAIL: test_done_selection\nExpected done IDs: [2]; observed IDs: [1, 3]."
+    },
+    {
+      "id": "check-docs",
+      "name": "unrelated docs service",
+      "head_sha": "1111111111111111111111111111111111111111",
+      "status": "completed",
+      "conclusion": "failure",
+      "attempt": 1,
+      "log": "Before checkout: dependency status endpoint returned HTTP 503; no repository code or tests executed."
+    }
+  ],
+  "statuses": [],
+  "reviews": [
+    {
+      "id": "review-17",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-05T11:58:00Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": "comment-selector",
+      "review_id": "review-17",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "path": "tasks.py",
+      "body": "The done selection returned open tasks in the saved selector check. Please investigate against the declared CLI behavior."
+    },
+    {
+      "id": "comment-telemetry",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "path": "tasks.py",
+      "body": "I suspect this sends task contents to a network service. Can you check the evidence?"
+    }
+  ]
+}

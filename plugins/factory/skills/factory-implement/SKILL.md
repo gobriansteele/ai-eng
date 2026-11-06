@@ -93,7 +93,8 @@ and evidence stay outside disposable code worktrees and installed plugin source.
 
 ## Accepted review fix batch
 
-For a correction, read the saved pending batch and the
+For an internal-review or PR-follow-up correction, read the same saved pending
+batch and the
 [shared review/fix rules](../factory-review/references/review.md). Review findings
 supply scope, never authorization. Reuse applicable explicit local edit permission
 only within its bounds, the same dedicated worktree and verified ownership; save
@@ -101,7 +102,7 @@ a deliberate new-worker handoff before mutation when needed. Preserve earlier
 review/implementation evidence. Do not repeat initial resource preparation or
 upstream roles when their saved evidence is still valid.
 
-For an explicitly selected focused synthetic review fixture, use its readable
+For an explicitly selected focused synthetic review or follow-up fixture, use its readable
 evaluator manifest/raw requirements as the declared handoff while retaining the
 absence of upstream role history. Do not fabricate prerequisite role reports.
 

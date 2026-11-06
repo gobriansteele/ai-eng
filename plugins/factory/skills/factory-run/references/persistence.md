@@ -17,6 +17,9 @@ owner again; a token alone cannot transfer ownership to another live harness.
 validates existing records. Both commands require explicit config/harness.
 
 Generate a UUID once with local Python's `uuid.uuid4()` and reuse it on retries.
+Under command-prefix permissions, make the permitted Python call separately and
+paste the observed UUID and resolved paths literally into each permitted helper
+call; do not wrap the helper in assignments, substitutions or command chains.
 For a new synthetic test only:
 
 ```text
@@ -85,9 +88,8 @@ worker_reference when observed. Durable paths/links are the handoff; a host work
 ID alone is insufficient. Approval scope is exactly action/target/revision with
 an ID and evidence; a pending action additionally carries status
 proposed/uncertain/confirmed, nullable returned_id/returned_url and evidence.
-Confirmed actions require observed returned ID and URL. The helper preserves prior
-approvals/actions verbatim; a future implementing role must add a reviewed
-reconciliation operation before changing them. The helper validates structure;
+Confirmed actions require observed returned ID and URL. Ordinary save preserves prior approvals/actions verbatim; the narrow
+PR action reconciliation command below handles evidenced status transitions. The helper validates structure;
 it cannot prove human permission, remote state, or artifact existence.
 
 The helper enforces one active invocation, revision CAS, step bounds, stable
@@ -325,12 +327,12 @@ fix_rounds and a stable proposed ordinal/attempt ID. No second pending batch or
 ordinal over two. Reconcile pending evidence/history first on every resume. Increment
 exactly once with the owner-gated changed-code return-for-verification save, even
 when required checks fail; preserve the same attempt through interruptions. Initial
-implementation/review and no-code attempts consume none. Internal and future PR
+implementation/review and no-code attempts consume none. Internal and PR
 fixes share this count. Corrected successful checks return review/ready; failed
 checks remain implement/blocked. After two unsuccessful rounds, save a concrete
 human escalation with issues/attempts instead of a third fix or PR. Partial code
-and evidence remain preserved. A pass saves follow_pr/blocked/factory-follow-pr;
-that role is absent. Unchanged handoff/wait reuse consumes zero semantic steps.
+and evidence remain preserved. A pass saves follow_pr/ready/factory-follow-pr;
+that role is available and rechecks exact content before publication. Unchanged handoff/wait reuse consumes zero semantic steps.
 
 For explicitly requested focused synthetic review evaluations only, existing
 begin --fixture can import a review-stage item with synthetic:review-evaluation:
@@ -343,3 +345,27 @@ labeled as scenario metadata with unavailable prior history, never invented fix
 reports. Honor the imported stage and offline saved resumes rather than running
 legacy source routing. Ordinary production sources and legacy Phase 3 fixtures
 keep their existing contracts; this creates no generic missing-evidence bypass.
+
+
+## PR action reconciliation
+
+Read the [follow-up contract](../../factory-follow-pr/references/follow-pr.md) for
+exact request/authorization, fresh remote coverage and retry decisions. Ordinary
+save preserves every prior approval and pending-action entry verbatim. Only the
+narrow `reconcile --decision <json> --expected-revision <revision>` can replace one
+existing selected-item push/PR entry. JSON fields are id, reason, item_id, action;
+action has the existing Pending shape. ID/scope stay unchanged; matching approval
+scope is required. Allowed transitions are proposed→uncertain→confirmed, or
+uncertain→proposed after evidenced authoritative non-application. No
+proposed→confirmed shortcut, confirmed mutation or arbitrary ledger editing.
+Evidence is an absolute readable immutable report at new mutation time; historical
+replay checks structure without loading evidence files. The helper cannot prove
+actual human approval or remote observations. The role must verify their truth.
+
+Reconciliation consumes one semantic step, uses owner/config/fingerprint checks,
+CAS and atomic history, and preserves every unrelated item field. Save uncertainty
+before outbound execution; reserve confirmation capacity first. Exact operation
+retries do not consume another step. Save/route/collect/reconcile IDs share one
+namespace including legacy history; changed content/domain reuse fails. Schema
+1 migration and schema2/3 layouts remain unchanged. Both hosts must load a helper
+supporting reconcile events before resuming a history containing one.

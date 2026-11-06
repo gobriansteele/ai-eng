@@ -1536,3 +1536,138 @@ target used a native Codex worktree after the desktop call failed to return and
 actual resources were reconciled. Native Claude creation, indefinite retention and
 cleanup are not established by these tests. No live Honor product changes, external
 messages, PRs, scheduling or cleanup occurred. Phase 10 is accepted; Phase 11 follows.
+
+
+## Phase 11 source candidate (2026-11-05)
+
+Added shared factory-follow-pr skill/reference, synthetic saved PR/check/review
+snapshots and a separate evaluator guide. The run/review/implement/status contracts
+now hand off to available follow-up, retain exact reviewed content and the same
+two-round allowance, and require scoped authorization before publication. New
+publication is distinguished from observing/reusing an existing controlled PR;
+focused follow-up imports label missing upstream history and grant no pass or
+external permission. Harness notes record the parent's actual read-only probe
+paths/limits, not live follow-up acceptance.
+
+The helper adds one owner-gated reconcile operation/event over an existing push/PR
+pending entry. It preserves ID/scope and unrelated state, requires a matching saved
+approval scope, enforces allowed status transitions/CAS/step bounds, records
+uncertainty before a write, and leaves ordinary-save ledger preservation intact.
+New reconciliation evidence must be readable/absolute; historical replay validates
+its structure without loading old files. Save/route/collect/reconcile share strict
+operation IDs, including legacy migration. The helper does not prove actual human
+approval or remote-observation truth. No schema 4, integration layer or scheduler.
+
+Source verification used UV_CACHE_DIR=/private/tmp/ai-eng-checks/uv-cache:
+
+- `uv run --isolated --frozen --project plugins/factory ruff check --no-cache --config plugins/factory/pyproject.toml plugins/factory/scripts tests`: all checks passed.
+- `uv run --isolated --frozen --project plugins/factory ruff format --check --no-cache plugins/factory/scripts tests`: all 8 files already formatted at the full-suite check; the final capability-text-only edit in factory_config.py also passed Ruff lint/format and strict typing; touched Python was formatted first.
+- `uv run --isolated --frozen --project plugins/factory mypy --cache-dir /private/tmp/ai-eng-checks/mypy --config-file plugins/factory/pyproject.toml plugins/factory/scripts`: success, no issues in 4 source files.
+- `PYTHONDONTWRITEBYTECODE=1 uv run --isolated --frozen --project plugins/factory python -m unittest discover -s tests -v`: 73 tests passed, including real process identity/lock checks, immutable old history, reconciliation lost reply and cross-host ownership, schema1 duplicate rejection/migration, schema3 collection+reconciliation reload, scope/evidence/transition/CAS/bounds rejection, and cross-domain IDs. An intermediate run failed because a new test expected a decision in a begin/finish-only legacy fixture; the test now seeds a real saved decision before conversion. No product/helper failure was masked.
+- The skill-creator quick validator accepted all 11 skills; JSON parsing accepted 36 package/repository JSON files, including all 5 new synthetic snapshots. These are static checks, not model behavior evidence.
+
+This is a source candidate on the accepted Phase 10 v0.10.0 package baseline;
+version/lock/manifests, installation, fresh actual Codex/Claude model fixture and
+resume evaluations, and the specifically approved live failing-check/review-comment
+trial remain parent-owned and pending. Phase 11 is not accepted from static checks.
+No runtime, product repository, commit/push, installation or external operation
+was performed by the source implementer. The separate live-pr-trial.md proposal
+is parent-owned and is not authorization by itself.
+
+### Phase 11 offline validation — 0.11.2; live acceptance pending (2026-11-05)
+
+Parent reviewed the source and actual behavior. The offline tranche is validated;
+Phase 11 as a whole is not complete until its specifically approved live trial
+runs. No live test branch, PR, comment, check run, product fix or push was executed.
+The reviewable proposal is docs/live-pr-trial.md. Later phases have not been
+advanced past this live acceptance gate.
+
+Source implementation used Sol/high for reconciliation/history invariants.
+Independent fixture preparation and evidence audit used Sol/medium. Bounded actual
+host observations used Codex Sol/medium and Claude Sonnet/medium. Parent ran Ruff
+lint, format (8 files), strict mypy (4 files), and all 73 tests on the helper change;
+all passed. The subsequent 0.11.1/0.11.2 changes were limited to instructions and
+fixtures; changed skills/JSON/diff checks passed without repeating unchanged helper
+tests. Normal Codex add and Claude update installed each candidate after all prior
+CLIs exited. Final installed version is 0.11.2 in both hosts.
+
+Twelve independent offline cases completed, six per host:
+
+| Case | Observed result in both hosts |
+| --- | --- |
+| Current failure/comment activity | Accepted the reproduced selector defect; distinguished pre-checkout service failure and limited same-SHA retry evidence; dismissed unsupported telemetry; saved a concrete local-authorization wait at count zero. |
+| Exhausted allowance | Remaining defect led to a human wait, count two retained, no third batch or reset. Two is imported metadata with absent prior attempt history, not two executed failed fixes. |
+| Stale activity | Old-SHA green CI/review did not verify the current head; stopped for current evidence. |
+| Existing PR, incomplete payload | Reused the observed PR URL, but missing title/body kept the exact request-scoped action uncertain; no retry or replacement action. |
+| Existing PR, complete payload | Compared the full prepared request, confirmed the synthetic postcondition with ID/URL, and retained missing CI/readiness limits. Confirmation does not assert creator or earlier tool execution. |
+| Incomplete remote listing | Partial pagination did not establish absence; uncertainty remained and no publication retry occurred. |
+
+Every initial case used one semantic step except complete-payload reconciliation,
+which used two. No candidate code changed. Parent checked actual clean Git HEADs,
+input bytes, artifact paths, scopes/actions and counters. Codex activity saved a
+pending batch and implement authorization wait. Claude activity stopped earlier
+at a readable follow_pr authorization question with exact scope/checks and accepted
+findings. This is a valid pre-handoff wait, not a demonstrated engineer handoff;
+a stable batch and verified ownership/content must precede later dispatch/edits.
+Parent corrected an initially over-specific stage assertion accordingly.
+
+Both fresh hosts then ran three sequential resumes: the other host's confirmed
+ledger handoff, an unchanged uncertain wait, and an exhausted wait. All six spent
+zero semantic steps, released ownership, preserved item/source/cursor fields,
+action IDs/scopes/returned IDs and counts, and preserved old history and artifact
+bytes. The final 0.11.2 startup handling was exercised in actual runs and resumes.
+No new review workers, role artifacts, code ownership or external action was
+invented to fill the bound.
+
+Failed probes and corrective evidence remain available:
+
+- Original 0.11.0 Claude activity and uncertainty probes treated a denied ls/cat
+  command as all Bash being unavailable and stopped before begin. The 0.11.1
+  startup guidance distinguishes command-pattern denial from denial of underlying
+  access/action, using separately permitted native reads and literal helpers.
+- A 0.11.1 Claude retry successfully ran literal uv owners, then wrapped begin in
+  shell assignments/substitution/chaining. That compound command was rejected,
+  not a literal mutator. The final 0.11.2 guidance requires separate permitted
+  commands with literal paths/values and a separately observed UUID. Original
+  requests were retested with only version/diagnostic destinations changed; tool
+  permissions were never broadened. Corrected runs and resumes passed.
+- Original 0.11.0 Codex uncertainty safely reused an existing PR but confirmed a
+  request whose title/body were unobserved. Mechanical reconciliation succeeded,
+  but parent rejected that stronger semantic claim. The revised contract and
+  fresh negative/positive fixtures now distinguish observation from exact-request
+  confirmation. The original 107 files were preserved, not rewritten into a pass.
+- One Codex exhausted probe omitted `/home/` from the explicitly supplied config
+  path and incorrectly reported it missing. A fresh correction used the original
+  exact path, passed the exhaustion case and preserved all 26 earlier input and
+  failed-probe artifacts. No helper or source change was needed for that error.
+
+Evidence limits remain explicit. Several Claude direct Git probes were denied;
+those reports attribute checkout/check facts to evaluator results and available
+file reads rather than claiming fresh Git or test execution. Parent independently
+checked the actual current Git state and immutable inputs. Codex generally ran
+fresh supported-runtime tests; one negative-payload run additionally used Python
+3.9.6 and explicitly excluded it from supported-runtime validation, relying on
+unchanged bytes and the saved evaluator Python 3.12.8 evidence. Synthetic snapshot
+coverage is not live API coverage. Empty checks do not prove success, fork/history
+coverage is limited where absent, and no seeded candidate is called reviewed.
+
+The Sol/medium read-only audit confirmed dispositions and attribution for five
+completed stale/unknown/exhausted/missing-payload cases. Parent read the remaining
+reports, including both exact-payload confirmations and actual resumed history.
+Evidence is under `/private/tmp/ai-eng-phase11/`: active homes/prompts are indexed
+in homes.json; original versions remain in homes-0.11.0.json and historical paths.
+verification.json, resume-verification.json and parent-case-audit.md record parent
+assertions and review. Each host/case diagnostic directory retains command, prompt,
+raw events, result and permission diagnostics. Resume checkpoints and byte manifests
+are under each host's resume directory. No canonical JSON was edited directly.
+
+Live read capability was separately observed: Codex used its GitHub connector;
+Claude used existing authenticated paginated gh GET commands. Both saw the same
+private repository/main commit and exposed permission metadata, with Codex search
+coverage limits recorded. No write capability was claimed exercised. The exact
+local trial candidate, PR body, COMMENT review, correction and test results are
+prepared; the specific approval question remains pending. Actual live PR follow-up,
+publication/retry behavior against GitHub and a PR-driven code-fix round are not
+established by these offline cases. No Honor product changes, Slack/Jira sends,
+schedules or cleanup occurred. `.idea` remains ignored and project files contain
+no references to the unrelated workspace.

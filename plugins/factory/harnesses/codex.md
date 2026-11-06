@@ -205,3 +205,17 @@ available raw dispatch evidence without claiming hidden-context inspection.
 [Official subagent guidance](https://learn.chatgpt.com/docs/agent-configuration/subagents)
 is capability documentation; the probe establishes only its observed file-read
 and independent-dispatch behavior, not factory review correctness.
+
+
+## PR follow-up capabilities
+
+Use the shared [follow-up contract](../skills/factory-follow-pr/references/follow-pr.md)
+for required capabilities, current permissions, coverage and external-action rules.
+
+The Phase 11 read-only fresh-session probe observed private repository metadata,
+main ref and branch search through the connected GitHub service. Prefer that
+connector when sufficient; discover its actual tools in the current session.
+Its PR search did not prove complete all-state PR coverage. Supplement that gap
+through an actually available authorized paginated API/CLI before an absence or
+retry claim. The probe did not establish checks/log/review coverage or execute
+any PR/push; write exposure and reported repository permission were observations.

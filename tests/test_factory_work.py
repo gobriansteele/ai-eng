@@ -399,6 +399,188 @@ class WorkTests(unittest.TestCase):
         self.assertEqual(current(resumed)["fix_rounds"], 2)
         self.assertEqual(current(saved), current(resumed))
 
+    def test_legacy_schema_one_rejects_duplicate_decision_ids(self):
+        state = self.save(self.begin(), "first")
+        state = self.save(state, "second")
+        legacy = {
+            k: deepcopy(state[k])
+            for k in (
+                "config_path",
+                "factory_id",
+                "revision",
+                "active_run",
+                "synthetic_cursors",
+                "invocations",
+                "events",
+            )
+        }
+        legacy.update(schema_version=1, item=deepcopy(current(state)))
+        for event in legacy["events"]:
+            event.pop("change")
+        self.assertEqual(fw.snapshot(legacy)["schema_version"], 1)
+        legacy["events"][-1]["decision"]["id"] = "first"
+        with self.assertRaisesRegex(fw.WorkError, "identity/history"):
+            fw.snapshot(legacy)
+
+    def reconciliation(self, state, status="uncertain", name="attempt-pr"):
+        action = deepcopy(current(state)["pending_actions"][0])
+        report = self.root / (name + ".md")
+        report.write_text("Synthetic observed evidence; no actual external action.")
+        action.update(status=status, evidence=str(report))
+        if status == "confirmed":
+            action.update(
+                returned_id="17", returned_url="https://example.invalid/pr/17"
+            )
+        return {
+            "id": name,
+            "reason": "Synthetic reconciliation",
+            "item_id": current(state)["id"],
+            "action": action,
+        }
+
+    def reconcile(
+        self,
+        state,
+        status="uncertain",
+        name="attempt-pr",
+        token="run-one",
+        harness="codex",
+    ):
+        return self.store.reconcile(
+            token,
+            harness,
+            12345,
+            state["revision"],
+            self.reconciliation(state, status, name),
+        )
+
+    def test_reconciliation_retry_handoff_and_immutable_history(self):
+        initial = self.begin()
+        prefix = deepcopy(initial["events"])
+        uncertain = self.reconcile(initial)
+        self.assertEqual(uncertain["events"][: len(prefix)], prefix)
+        op = self.reconciliation(initial)
+        self.assertEqual(
+            self.store.reconcile("run-one", "codex", 12345, 0, op), uncertain
+        )
+        self.assertEqual(uncertain["invocations"][0]["steps"], 1)
+        self.store.finish("run-one", "codex", 12345, "stopped")
+        resumed = self.begin("run-two", "claude-code", fixture=False)
+        confirmed = self.reconcile(
+            resumed, "confirmed", "confirm-pr", "run-two", "claude-code"
+        )
+        self.assertEqual(current(confirmed)["fix_rounds"], 1)
+        self.assertEqual(current(confirmed)["pending_actions"][0]["returned_id"], "17")
+        self.assertEqual(current(confirmed)["approvals"], current(initial)["approvals"])
+        self.assertEqual(confirmed["events"][: len(prefix)], prefix)
+        self.assertEqual(self.store.read(), confirmed)
+        for report in self.root.glob("*.md"):
+            report.unlink()
+        self.assertEqual(self.store.read(), confirmed)
+        with self.assertRaisesRegex(fw.WorkError, "transition"):
+            self.reconcile(
+                confirmed, "proposed", "retry-confirmed", "run-two", "claude-code"
+            )
+
+    def test_reconciliation_scope_missing_approval_evidence_and_ordinary_save(self):
+        initial = self.begin()
+        for change in (
+            {
+                "status": "confirmed",
+                "returned_id": "1",
+                "returned_url": "https://example.invalid/1",
+            },
+            {"id": "unknown"},
+            {"evidence": "relative.md"},
+            {"evidence": str(self.root / "missing.md")},
+            {
+                "scope": {
+                    "action": "pull_requests",
+                    "target": "other",
+                    "revision": "other",
+                }
+            },
+        ):
+            op = self.reconciliation(initial)
+            op["action"].update(change)
+            with self.assertRaises(fw.WorkError):
+                self.store.reconcile("run-one", "codex", 12345, initial["revision"], op)
+        operation = self.operation(initial)
+        operation["item"]["pending_actions"][0]["status"] = "uncertain"
+        with self.assertRaisesRegex(fw.WorkError, "Preserve scoped"):
+            self.store.save("run-one", "codex", 12345, initial["revision"], operation)
+        items = deepcopy(initial["items"])
+        items[current(initial)["id"]]["approvals"] = []
+        with self.assertRaisesRegex(fw.WorkError, "approval scope"):
+            fw.apply_reconciliation(
+                items, initial["active_item_id"], self.reconciliation(initial)
+            )
+        self.assertEqual(self.store.read(), initial)
+
+    def test_reconciliation_absence_reset_bounds_cas_and_lost_reply(self):
+        initial = self.begin(limit=2)
+        with self.assertRaisesRegex(fw.WorkError, "Revision"):
+            self.store.reconcile(
+                "run-one", "codex", 12345, 0, self.reconciliation(initial)
+            )
+        with patch.object(
+            fw, "verify_owner", return_value={**self.identity, "pid": 54321}
+        ):
+            with self.assertRaisesRegex(fw.WorkError, "different owner"):
+                self.reconcile(initial)
+        uncertain = self.reconcile(initial)
+        reset_op = self.reconciliation(uncertain, "proposed", "authoritative-absence")
+        real_sync = os.fsync
+        calls = 0
+
+        def lost_reply(fd):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                raise OSError("lost reply after replace")
+            real_sync(fd)
+
+        with patch.object(fw.os, "fsync", side_effect=lost_reply):
+            with self.assertRaises(OSError):
+                self.store.reconcile(
+                    "run-one", "codex", 12345, uncertain["revision"], reset_op
+                )
+        reset = self.store.read()
+        self.assertEqual(
+            self.store.reconcile("run-one", "codex", 12345, 0, reset_op), reset
+        )
+        self.assertEqual(current(reset)["pending_actions"][0]["status"], "proposed")
+        self.assertEqual(reset["invocations"][0]["steps"], 2)
+        with self.assertRaisesRegex(fw.WorkError, "step limit"):
+            self.reconcile(reset, name="attempt-again")
+
+    def test_reconciliation_replay_rejects_tampered_scope_and_operation_collision(self):
+        initial = self.begin()
+        saved = self.reconcile(initial)
+        for mutate in (
+            lambda s: s["events"][-1]["change"]["action"]["scope"].update(
+                revision="other"
+            ),
+            lambda s: s["events"][-1]["change"]["action"].update(
+                evidence="relative.md"
+            ),
+            lambda s: s["events"][-1]["change"]["action"].update(
+                status="confirmed",
+                returned_id="9",
+                returned_url="https://example.invalid/9",
+            ),
+        ):
+            bad = deepcopy(saved)
+            mutate(bad)
+            with self.assertRaises((fw.WorkError, fw.ConfigError)):
+                fw.snapshot(bad)
+        with self.assertRaisesRegex(fw.WorkError, "domain"):
+            self.save(saved, "attempt-pr")
+        saved = self.save(saved, "save-domain")
+        with self.assertRaisesRegex(fw.WorkError, "domain"):
+            self.reconcile(saved, "confirmed", "save-domain")
+        self.assertEqual(self.store.read(), saved)
+
     def test_fingerprint_includes_local_content_changes(self):
         self.fingerprint.stop()
         package = self.root / "package"

@@ -162,6 +162,81 @@ class Snapshot(TypedDict):
     collection: NotRequired[Collection]
 
 
+class Reconciliation(TypedDict):
+    id: str
+    reason: str
+    item_id: str
+    action: Pending
+
+
+def reconciliation(value: object) -> Reconciliation:
+    data = mapping(value, set(Reconciliation.__annotations__), "reconciliation")
+    action = pending(data["action"])
+    if not Path(action["evidence"]).is_absolute():
+        raise WorkError("Reconciliation evidence must be an absolute report path")
+    return {
+        "id": string(data["id"], "reconciliation.id"),
+        "reason": string(data["reason"], "reconciliation.reason"),
+        "item_id": string(data["item_id"], "reconciliation.item_id"),
+        "action": action,
+    }
+
+
+def apply_reconciliation(
+    items: dict[str, Item], selected: str | None, op: Reconciliation
+) -> None:
+    if op["item_id"] != selected or selected not in items:
+        raise WorkError("Only the selected active item may reconcile actions")
+    saved = item(read_copy(items[selected]))
+    updated = op["action"]
+    matches = [
+        i for i, a in enumerate(saved["pending_actions"]) if a["id"] == updated["id"]
+    ]
+    if len(matches) != 1:
+        raise WorkError("Reconciliation requires one existing pending action")
+    previous = saved["pending_actions"][matches[0]]
+    if previous["scope"] != updated["scope"] or updated["scope"]["action"] not in (
+        "pushes",
+        "pull_requests",
+    ):
+        raise WorkError("Reconciliation must preserve a push or PR action scope")
+    if not any(a["scope"] == updated["scope"] for a in saved["approvals"]):
+        raise WorkError("Reconciliation requires a matching saved approval scope")
+    if (previous["status"], updated["status"]) not in {
+        ("proposed", "uncertain"),
+        ("uncertain", "confirmed"),
+        ("uncertain", "proposed"),
+    }:
+        raise WorkError("Invalid pending action transition")
+    if updated["status"] != "confirmed" and (
+        updated["returned_id"] is not None or updated["returned_url"] is not None
+    ):
+        raise WorkError("Unconfirmed reconciliation cannot claim returned identity")
+    saved["pending_actions"][matches[0]] = updated
+    items[selected] = saved
+
+
+def operation_identity(event: Event) -> tuple[str, str, object] | None:
+    if event["decision"] is not None:
+        return event["decision"]["id"], "decision", event["decision"]
+    if event["kind"] in ("route", "collect", "reconcile"):
+        change = event.get("change", {})
+        return string(change.get("id"), "operation.id"), event["kind"], change
+    return None
+
+
+def operation_retry(
+    events: list[Event], identity: str, kind: str, value: object
+) -> bool:
+    for event in events:
+        previous = operation_identity(event)
+        if previous is not None and previous[0] == identity:
+            if previous[1:] != (kind, value):
+                raise WorkError("Operation ID reused with different content or domain")
+            return True
+    return False
+
+
 class RouteDecision(TypedDict):
     id: str
     reason: str
@@ -451,7 +526,7 @@ def event(value: object) -> Event:
     data = mapping(raw, keys | ({"change"} if modern else set()), "event")
     kind = string(data["kind"], "event.kind")
     if kind not in (
-        ("begin", "decision", "finish", "route", "migrate", "collect")
+        ("begin", "decision", "finish", "route", "migrate", "collect", "reconcile")
         if modern
         else ("begin", "decision", "finish")
     ):
@@ -716,6 +791,11 @@ def snapshot(value: object) -> Snapshot:
     for e in events:
         if e["run_id"] not in {r["id"] for r in runs}:
             raise WorkError("History run identity mismatch")
+        identity = operation_identity(e)
+        if identity is not None:
+            if identity[0] in decisions:
+                raise WorkError("Duplicate operation identity")
+            decisions.add(identity[0])
         if "change" not in e:
             if modern_seen or e["item"] is None:
                 raise WorkError("Invalid legacy history prefix")
@@ -747,19 +827,17 @@ def snapshot(value: object) -> Snapshot:
                         }
             elif e["kind"] == "collect":
                 op_collection = observation(change)
-                if op_collection["id"] in decisions:
-                    raise WorkError("Duplicate collection identity")
-                decisions.add(op_collection["id"])
                 replay_collection = apply_collection(
                     replay_collection, replay_sources, op_collection
                 )
                 collected = True
             elif e["kind"] == "route":
                 op = route_decision(change, replay_sources)
-                if op["id"] in decisions:
-                    raise WorkError("Duplicate decision identity")
-                decisions.add(op["id"])
                 replay_active = apply_route(replay_items, replay_sources, op)
+            elif e["kind"] == "reconcile":
+                apply_reconciliation(
+                    replay_items, replay_active, reconciliation(change)
+                )
             else:
                 mapping(change, set(), "event change")
             if e["kind"] == "decision":
@@ -774,9 +852,8 @@ def snapshot(value: object) -> Snapshot:
                 raise WorkError("Event active item differs from saved inventory")
         d = e["decision"]
         if d is not None:
-            if d["id"] in decisions or d["item"] != e["item"]:
+            if d["item"] != e["item"]:
                 raise WorkError("Decision identity/history mismatch")
-            decisions.add(d["id"])
     if items != replay_items or receipts != replay_sources or selected != replay_active:
         raise WorkError("Current inventory differs from committed history")
     if (schema == 3) != collected or (
@@ -785,7 +862,7 @@ def snapshot(value: object) -> Snapshot:
         raise WorkError("Collection state differs from committed history")
     for r in runs:
         if r["steps"] != sum(
-            e["kind"] in ("decision", "route") and e["run_id"] == r["id"]
+            e["kind"] in ("decision", "route", "reconcile") and e["run_id"] == r["id"]
             for e in events
         ):
             raise WorkError("Invocation step count differs from history")
@@ -1305,11 +1382,8 @@ class Store:
             if state is None:
                 raise WorkError("Begin an invocation before collecting")
             self.owned(state, token, harness, pid)
-            for e in state["events"]:
-                if e["kind"] == "collect" and e.get("change", {}).get("id") == op["id"]:
-                    if e["change"] != op:
-                        raise WorkError("Collection ID reused with different content")
-                    return state
+            if operation_retry(state["events"], op["id"], "collect", op):
+                return state
             if state["revision"] != expected_revision:
                 raise WorkError("Revision conflict; reread and reconsider")
             if op["workspace_id"] != self.config["slack"]["workspace_id"] or op[
@@ -1346,16 +1420,8 @@ class Store:
             if state is None:
                 raise WorkError("No saved work; repair without resetting")
             run = self.owned(state, token, harness, pid)
-            for e in state["events"]:
-                if (
-                    e["kind"] == "route"
-                    and e.get("change", {}).get("id") == operation["id"]
-                ):
-                    raise WorkError("Decision ID reused with different content")
-                if e["decision"] is not None and e["decision"]["id"] == operation["id"]:
-                    if e["decision"] != operation:
-                        raise WorkError("Decision ID reused with different content")
-                    return state
+            if operation_retry(state["events"], operation["id"], "decision", operation):
+                return state
             if state["revision"] != expected_revision:
                 raise WorkError("Revision changed; reread before deciding")
             if run["steps"] >= run["max_steps"]:
@@ -1386,16 +1452,8 @@ class Store:
                 raise WorkError("No saved source")
             run = self.owned(state, token, harness, pid)
             operation = route_decision(value, state["sources"])
-            for e in state["events"]:
-                if (
-                    e["kind"] == "route"
-                    and e.get("change", {}).get("id") == operation["id"]
-                ):
-                    if e["change"] != operation:
-                        raise WorkError("Decision ID reused with different content")
-                    return state
-                if e["decision"] is not None and e["decision"]["id"] == operation["id"]:
-                    raise WorkError("Decision ID reused with different content")
+            if operation_retry(state["events"], operation["id"], "route", operation):
+                return state
             if state["revision"] != expected_revision:
                 raise WorkError("Revision changed; reread before deciding")
             if run["steps"] >= run["max_steps"]:
@@ -1407,6 +1465,40 @@ class Store:
             )
             run["steps"] += 1
             self.append(state, token, "route", change=dict(operation))
+            atomic_snapshot(self.path, state)
+            return state
+
+    def reconcile(
+        self,
+        token: str,
+        harness: Harness,
+        pid: int,
+        expected_revision: int,
+        value: object,
+    ) -> Snapshot:
+        op = reconciliation(value)
+        with self.mutation():
+            state = self.read()
+            if state is None:
+                raise WorkError("No saved work")
+            run = self.owned(state, token, harness, pid)
+            if operation_retry(state["events"], op["id"], "reconcile", op):
+                return state
+            if state["revision"] != expected_revision:
+                raise WorkError("Revision changed; reread before reconciling")
+            if run["steps"] >= run["max_steps"]:
+                raise WorkError(
+                    "Invocation step limit reached; finish and resume later"
+                )
+            try:
+                Path(op["action"]["evidence"]).read_text()
+            except (OSError, UnicodeError) as exc:
+                raise WorkError(
+                    "New reconciliation requires a readable evidence report"
+                ) from exc
+            apply_reconciliation(state["items"], state["active_item_id"], op)
+            run["steps"] += 1
+            self.append(state, token, "reconcile", change=dict(op))
             atomic_snapshot(self.path, state)
             return state
 
@@ -1462,7 +1554,15 @@ def load_fixture(path: Path) -> tuple[Item, dict[str, str]]:
 @dataclass
 class Arguments:
     command: Literal[
-        "owners", "inspect", "watch-plan", "begin", "save", "route", "collect", "finish"
+        "owners",
+        "inspect",
+        "watch-plan",
+        "begin",
+        "save",
+        "route",
+        "collect",
+        "reconcile",
+        "finish",
     ]
     config: Path
     local: Path | None
@@ -1490,6 +1590,7 @@ def parse_arguments() -> Arguments:
             "save",
             "route",
             "collect",
+            "reconcile",
             "finish",
         ),
     )
@@ -1518,6 +1619,7 @@ def parse_arguments() -> Arguments:
                 "save",
                 "route",
                 "collect",
+                "reconcile",
                 "finish",
             ],
             raw["command"],
@@ -1569,6 +1671,18 @@ def main() -> int:
                         "collect requires --decision and --expected-revision"
                     )
                 result = store.collect(
+                    args.run_id,
+                    harness,
+                    args.owner_pid,
+                    args.expected_revision,
+                    read_json(args.decision),
+                )
+            elif args.command == "reconcile":
+                if args.decision is None or args.expected_revision is None:
+                    raise WorkError(
+                        "reconcile requires --decision and --expected-revision"
+                    )
+                result = store.reconcile(
                     args.run_id,
                     harness,
                     args.owner_pid,

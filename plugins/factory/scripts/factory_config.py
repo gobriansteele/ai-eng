@@ -588,8 +588,9 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             "technical design with justified skips and durable architectural choices",
             "explicitly authorized local implementation with dedicated worktrees and durable evidence",
             "independent review, adjudication and two shared fix rounds",
+            "scoped draft PR publication, uncertain-action reconciliation and fresh CI/review follow-up",
         ],
-        "workflow": "bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation and independent review with bounded fixes; coverage limits reported; PR follow-up not implemented",
+        "workflow": "bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation, independent review and authorized draft PR follow-up with two shared fix rounds; remote coverage and permission limits reported; reporting and scheduling not implemented",
     }
 
 

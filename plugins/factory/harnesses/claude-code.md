@@ -56,6 +56,22 @@ References: installed CLI help,
 
 ## Run and resume
 
+In the Phase 11 evaluation launcher, native Read/Glob and literal Bash commands
+beginning with uv or python3 were separately permitted; ls/cat were not. These
+are observed launcher-specific permissions, not defaults for Claude sessions.
+Use allowed Read/Glob for startup files, then the loaded package's prescribed
+literal uv helper command when its actual permission allows it. A denied ls/cat
+is not evidence that all Bash or uv execution is unavailable. Preserve the denial
+and distinguish any separately successful helper execution. Do not bypass a
+denial of the underlying access/action or change the allowlist; command-pattern
+permissions do not revoke separately granted Read/Glob or helper commands.
+With that prefix allowlist, issue each command separately using literal paths and
+values. A separate permitted `python3 -c 'import uuid; print(uuid.uuid4())'` returns
+the run ID; paste the observed UUID into the literal uv helper call. Do not prefix
+that call with RID/P assignments, command substitution or a compound command chain.
+The observed rejected compound begin command did not test the literal uv mutator;
+report it denied only if an actual literal permitted-form helper call fails.
+
 In a fresh CLI session:
 
 ```text
@@ -207,3 +223,16 @@ settings. `--forward-subagent-text` was supported by the tested CLI and surfaced
 child evidence in stream output; preserve that when available. Native
 [Claude subagents](https://code.claude.com/docs/en/sub-agents) provide separate
 contexts. The probe establishes actual dispatch/file reads, not review quality.
+
+
+## PR follow-up capabilities
+
+Use the shared [follow-up contract](../skills/factory-follow-pr/references/follow-pr.md)
+for required capabilities, current permissions, coverage and external-action rules.
+
+The Phase 11 read-only fresh-session probe without GitHub MCP used the existing
+authenticated `gh api --method GET` with pagination for branch/all-state PR
+listings. This is the demonstrated fallback when this host lacks a sufficient
+connector, not a connection inherited from Codex. Discover actual current access
+before use. The probe did not establish checks/log/review coverage or execute
+any external write; CLI authentication alone grants no push/draft authorization.
