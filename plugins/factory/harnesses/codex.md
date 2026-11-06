@@ -229,3 +229,14 @@ Discover the connected Slack and Jira tools in the current Codex session. The
 previous Slack intake/Jira read probes do not establish thread-reply or issue-
 comment execution, complete destination history or attributable send results.
 Report actual supported operations/limits; no live message delivery is claimed.
+
+
+## Native scheduling and maintenance
+
+Read the bundled [scheduling runbook](../skills/factory-run/references/scheduling.md)
+when the user requests a native schedule. No schedule/fire is established by CLI
+acceptance. factory-maintain uses this host's actually available lifecycle and
+recorded resource identity; preview or archive copy grants no removal permission.
+Discover native automation management only when requested; the local app/project
+must be available. Managed worktree archive/restore capabilities do not establish
+ownership of an arbitrary path. Preserve canonical runtime/evidence separately.

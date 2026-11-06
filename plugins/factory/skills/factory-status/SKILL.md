@@ -34,7 +34,10 @@ two-round allowance. Remote coverage/permissions remain host-specific.
 factory-report prepares/reuses truthful local Slack thread/Jira comment drafts
 without erasing engineering state; exact authorized sends use uncertain-action
 reconciliation. Live message delivery remains untested until explicitly exercised.
-Scheduling is not implemented. With an
+factory-retro provides evidence-based local retrospectives; factory-maintain
+provides ownership-aware cleanup previews and explicitly requested additive
+archive/restore copies. Native scheduling is documented, not activated or exercised;
+actual native deletion remains untested. With an
 established config, optionally use
 `factory_work.py inspect` read-only to report the selected active item stage/status/next
 action and pending item IDs and snapshot path; never acquire an invocation or change work for status.

@@ -246,3 +246,15 @@ Discover this Claude session's own Slack/Jira MCP connections and operation
 schemas. The documented Slack reads do not establish reply/comment writes or
 complete destination history, and Codex connections are not inherited. Report
 actual missing operations; no live message delivery is claimed.
+
+
+## Native scheduling and maintenance
+
+Read the bundled [scheduling runbook](../skills/factory-run/references/scheduling.md)
+when the user requests a native schedule. No schedule/fire is established by CLI
+acceptance. factory-maintain uses this host's actually available lifecycle and
+recorded resource identity; preview or archive copy grants no removal permission.
+CLI /loop and Desktop persistent schedules have different lifetimes; verify this
+machine's Desktop capability rather than inferring it from the CLI version.
+Worktree retention/cleanup differs between interactive and -p sessions; an absent
+native removal mechanism remains a block, never a shell-delete fallback.

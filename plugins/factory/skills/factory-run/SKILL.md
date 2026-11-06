@@ -29,8 +29,9 @@ containing directory; use its scripts and fixtures, not an authoring checkout.
 Use the explicitly supplied or established `--config` and optional user-supplied
 `--local`. Default to at most three saved steps per invocation. Honor a requested
 single step (`--single-step`, one saved decision), or an explicit `--max-steps`
-from 1 through 10. These invocation options do not change YAML. A schedule may later invoke this
-skill with configuration. An explicit config
+from 1 through 10. These invocation options do not change YAML. For explicitly requested native
+scheduling, read the [runbook](references/scheduling.md); use this same explicit
+config/bounded saved-state workflow, with no account schedule activation implied. An explicit config
 with no synthetic input is the production entry point: watch, then route/resume
 saved work. `--source`, `--fixture`, `--collection` or an explicit offline/synthetic
 request selects an offline demonstration; never call live integrations in that mode.
@@ -434,3 +435,11 @@ valid. Never mark completed work for an unsaved decision. Report the routed
 source/dispositions, affected item IDs (or zero work), selected
 item stage/status/next action, snapshot path, revision, step count/bound and blockers.
 The invocation ends when this CLI worker stops; another fresh harness can resume.
+
+
+For native recurring invocations, meaningful progress/completion/failure or a
+needed human action merits notification; unchanged checks stay quiet through the
+host's separate native notification policy. Do not generate duplicate drafts or
+extra work merely to report a tick. Direct factory-retro/factory-maintain requests
+are read-only operational activities with their own contracts, not engineering
+stage transitions or permission for cleanup/schedule activation.

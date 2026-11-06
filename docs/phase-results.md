@@ -1772,3 +1772,121 @@ and unchanged handoffs; wording-0.12.2/verification.json plus actual payloads re
 the final correction. No canonical JSON was directly edited. Live message delivery,
 connector retry behavior and workflow transitions remain untested/deferred. Under
 Brian's release direction, proceed to the final offline operational tranche.
+
+
+
+## Phases 13–15 staged source candidate (2026-11-06)
+
+Prepared only under /private/tmp/ai-eng-release/operational-candidate while reporter
+model invocations used the unchanged live plugin. Byte-exact original/staged trees,
+original-sha256.json, changed-files.json and operational.patch identify the proposed
+source scope. Parent must apply only after reporter acceptance/all CLI owners stop.
+No live source, runtime, installed cache, version/lock/manifest, Git commit/push,
+account schedule or external resource was changed by this source implementer.
+
+The candidate adds bundled native scheduling guidance and one bounded explicit-
+config shared factory-run prompt; no cron/daemon or schedule activation. Host
+requirements, pause versus active invocation, one host per home and documented
+Claude loop limits are distinguished from actual scheduler testing. It adds
+factory-retro for evidence-grounded useful/failed outcomes and one proposed
+improvement/verification, separating observed wall time, invocation lifetime, human
+wait and unavailable compute/token/cost. factory-maintain defaults to ownership-
+aware preview, retains active/unknown/blocked/human-wait/dirty/unmerged/unrelated
+resources and protected audit evidence, and supports only explicitly requested
+additive archive/inspection restore copies without canonical mutation. Future
+concrete native removal remains separately gated and untested; nothing is deleted
+on a schedule. No new helper/schema/framework was needed.
+
+README quickstart uses manual configured Slack thread import (not a source URL
+flag); Jira is described as existing linked-issue context/comments, not unsupported
+generic direct-ticket intake. Raw maintenance inventory and an evaluator-only guide
+support positive completed/clean/merged/stopped declarations, retained unsafe/
+unknown resources, repeated previews and actual earlier Phase11 retro outcomes.
+Fixture declarations are not claimed actual allocations/probes or model outputs.
+
+In the staged copy, Ruff lint and formatting passed, strict mypy passed for all 4
+helper source files, and all 76 existing unit tests passed including actual process
+identity/lock checks. UV_OFFLINE=1 and the existing /private/tmp/ai-eng-checks/uv-cache
+were used; exact commands/results are in validation.json. Static validation
+accepted 14 skills, parsed 41 JSON files present in the copied/staged scope and
+resolved 36 local links; the raw maintenance inventory has 8 unique resource cases
+and explicit protected-evidence provenance. Actual both-host models, copy/restore
+roundtrip and package refresh remain parent-owned/pending. Live trial/sends, native
+scheduling execution and deletion are user-owned/deferred and do not block manual
+offline shipping; no unexecuted capability is called tested.
+
+### Phases 13–15 — manual-trial release accepted (0.15.0)
+
+Brian's revised release scope is complete: finish offline, ship the plugin and let
+him select real work for his own trial. Sol/high prepared the final operational
+tranche in an isolated copy while reporter acceptance ran; parent applied its
+12 reviewed paths only after that tranche passed. A separate Sol/medium source
+review found no blocker. No helper/schema/framework was added: new skills are
+factory-retro and factory-maintain, plus native scheduling guidance and a practical
+manual Slack-thread quickstart. Jira context/comments are supported; direct
+Jira-ticket intake is not advertised as implemented.
+
+Parent final checks passed: 76 unit tests, Ruff lint, formatting of eight files,
+strict mypy of four scripts, all 14 skill/frontmatter checks and all 44 JSON files.
+The first validation-directory loop encountered ignored .DS_Store metadata; filtering
+actual SKILL.md directories completed the intended check. Final diff checks passed.
+Both normal installers refreshed 0.15.0, and actual fresh native sessions loaded
+that version. Existing Honor configuration validated ready in both host records,
+with the selected home/runtime and repository-root scope preserved. Those saved
+capability observations are dated evidence, not fresh integration access tests.
+
+Phase 13 delivers the local native scheduling runbook, small explicit-config
+bounded prompt, preflight, existing-task inspection, pause and host-switch procedure.
+It cites fetched current official documentation for both hosts and distinguishes
+persistent Desktop scheduling from session loops. No task was created or activated;
+no scheduled fire, unattended integration access, pause/no-new-start or scheduled
+host switch is claimed. Prior manual ownership/overlap/recovery tests remain
+separate evidence. Activation/cadence and the real-work trial belong to Brian.
+
+Phase 14 actual Codex gpt-6.1-sol/medium and Claude Sonnet/medium retros read original
+Phase 11 successful observation and failed-launch evidence. Both distinguished a
+useful authorization handoff from completed engineering, assessed the denied shell
+chain without claiming all commands unavailable, and proposed verifying existing
+narrow-command guidance. No skills/config were automatically changed. Codex extracted
+actual exposed usage and invocation intervals, separating reported list-basis cost,
+wall time and unmeasured compute/human waits. Claude attributed its narrower reads
+and left unread usage/timing unavailable after a denied compound extraction command.
+Independent semantic review checked the original evidence and supported conclusions.
+
+Phase 15 actual previews in both hosts retained all eight resource directories.
+Dirty, active, blocked, human-wait, unmerged, unrelated and unknown-owner scenarios
+were retained; only the selected completed record/evidence was an archive-copy
+candidate. These were explicitly declared resource/Git/owner scenarios mapped to
+ordinary disposable directories, not actual native worktree allocations. Both
+hosts distinguished real file observations from unavailable lifecycle/ancestry/
+process proof. No real removal eligibility was established and nothing was deleted.
+Claude's initial preview had a minor count-summary typo; its table and final output
+retained all eight, and the original artifact remains preserved.
+
+Both hosts completed explicitly scoped additive archive and restore copies of six
+selected synthetic files into new destinations, with readable path/hash indexes.
+Parent independently compared all original/archive/restored bytes and SHA256 values,
+verified exactly the six files plus index per destination, and inspected that
+restoration read the indexed archive. Claude's first inline Python command was
+denied before any destination existed; the original block report is retained.
+A fresh invocation used an explicitly permitted literal Python script command with
+the same permission mode/allowlist and completed the copies. No overwrite, move,
+canonical edit, ownership reattachment or real cleanup was performed.
+
+Fresh same-host repeats reused the existing previews; both cross-host directions
+also reused them. Parent snapshots show old reports, all scoped inputs/resources
+and earlier evidence byte-identical; neither cross-host check wrote files or created
+a duplicate preview. Claude's own repeat covered a narrower manifest-listed set;
+the parent checked all frozen inputs independently. No repeated copy was requested.
+Evidence is under /private/tmp/ai-eng-operations/: raw native executions, exact
+input manifests, snapshots, parent-semantic-audit.md, parent-copy-verification.json
+and parent-preservation-verification.json. The preserved launcher denials and
+limited reads remain operational caveats; these tests are not proof of unattended
+reliability or arbitrary native cleanup.
+
+The manual-trial release keeps external updates local by default, exact action
+approvals, two shared fix rounds, disabled merge/deployment and preview-only cleanup.
+Live PR/message delivery and native scheduling/deletion remain explicitly untested.
+No trial PR, messages, Honor product changes, active schedule or resource deletion
+was created to satisfy release checks. Plugin source remains standalone; .idea is
+ignored, and the unrelated workspace is not referenced by project instructions.

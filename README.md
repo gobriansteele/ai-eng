@@ -3,7 +3,8 @@
 `factory` is a local plugin for Codex and Claude Code. The current source provides
 `factory-setup`, `factory-status`, `factory-run`, `factory-watch`,
 `factory-route`, `factory-investigate`, `factory-plan`, `factory-design` and
-`factory-implement`, `factory-review`, `factory-follow-pr` and `factory-report`,
+`factory-implement`, `factory-review`, `factory-follow-pr`, `factory-report`,
+`factory-retro` and `factory-maintain`,
 backed by shared
 typed helpers. The orchestrator collects bounded read-only Slack
 intake, saves and routes source threads, and resumes legacy work.
@@ -20,7 +21,38 @@ uncertain-action reconciliation and exact reviewed content; follow-up investigat
 fresh CI/review activity. Reporting prepares/reuses local originating-thread Slack
 and Jira comment drafts without replacing engineering state; exact sends require
 scoped authorization and uncertain-post reconciliation. Live delivery is untested;
-scheduling remains unimplemented.
+native scheduling is documented without activation. Retrospectives propose
+evidence-based improvements; maintenance defaults to preview, with explicitly
+requested additive archive/restore copies. Native deletion is untested.
+
+## Start a manual piece of work
+
+1. In a fresh installed host, ask factory-setup to use your Slack connection and
+   choose a factory home, channels and repository roots. Keep its absolute config
+   path; the same home resumes across hosts after the previous invocation stops.
+2. Select a thread from a configured Slack channel and ask:
+
+   ```text
+   Use factory-run with configuration /absolute/factory-home/config.yaml and --max-steps 3. Import this historical thread with --import-thread from configured channel <channel-id>, root/link <thread-root-or-link>. Read the available context, save the work and stop at the actual wait or bounded handoff. Do not implement or publish without applicable authorization.
+   ```
+
+   Import preserves the live intake cursor. `--source` is for local synthetic JSON
+   files. Jira support enriches linked existing issues and drafts issue comments;
+   direct Jira-ticket intake is not an implemented entry point.
+3. Read the saved findings/question and answer or authorize the concrete selected
+   local implementation when ready. Continue with the SAME config and no fixture.
+   Local code permission does not grant commit, push, PR, message, merge or deploy
+   permission. Default external updates remain local drafts.
+4. Ask factory-report with that config for report-only local drafts; use
+   factory-status to inspect the actual stage/wait without advancing work.
+   factory-retro reviews evidence and proposes improvements. factory-maintain
+   previews recorded resources; no cleanup runs from this quickstart.
+
+Brian owns the real-work trial. Live sends/PR retries, native scheduled execution
+and resource deletion remain untested until explicitly exercised. The
+[bundled native scheduling runbook](plugins/factory/skills/factory-run/references/scheduling.md)
+explains later activation/pause; this release activates none. The
+[operational evaluator guide](docs/operational-evaluation.md) records offline checks.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows

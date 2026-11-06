@@ -590,8 +590,10 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             "independent review, adjudication and two shared fix rounds",
             "scoped draft PR publication, uncertain-action reconciliation and fresh CI/review follow-up",
             "deduplicated local Slack/Jira report drafts and scoped post reconciliation preserving engineering state",
+            "evidence-based local retrospectives and ownership-aware maintenance previews/additive archive copies",
+            "native scheduling runbook without schedule activation",
         ],
-        "workflow": "bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation, independent review and authorized draft PR follow-up with two shared fix rounds; remote coverage and permission limits reported; local report drafts preserve engineering state; exact authorized message delivery untested; scheduling not implemented",
+        "workflow": "bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation, independent review and authorized draft PR follow-up with two shared fix rounds; remote coverage and permission limits reported; local report drafts preserve engineering state; exact authorized message delivery untested; native scheduling documented but not activated/tested; maintenance defaults preview-only",
     }
 
 
