@@ -60,6 +60,7 @@ prompt so a test measures behavior rather than repetition of an answer.
 
 | Area | Evaluation guides |
 | --- | --- |
+| Agent selection | [Dispatch, capability limits and resume](docs/agent-selection-evaluation.md) |
 | Intake | [Watcher](docs/watcher-evaluation.md), [router](docs/router-evaluation.md) |
 | Understanding the request | [Investigator](docs/investigator-evaluation.md), [planner](docs/planner-evaluation.md), [designer](docs/designer-evaluation.md) |
 | Code and review | [Implementer](docs/implementer-evaluation.md), [reviewer](docs/reviewer-evaluation.md) |

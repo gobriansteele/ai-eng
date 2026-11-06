@@ -5,6 +5,10 @@ description: Run or resume bounded factory work using the remembered default or 
 
 # Factory run
 
+Read the shared [agent-selection policy](references/agent-selection.md) before
+dispatching work. Apply it to every assignment, including foreground coordinators,
+direct role requests, retries and resumes. Pass it to workers that delegate further.
+
 Act as the orchestrator: read durable evidence, choose the next step, and save
 that decision. For startup files, use already exposed and permitted native file
 reading/discovery tools when available. A denied command has its observed scope:
