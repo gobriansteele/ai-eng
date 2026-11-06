@@ -12,6 +12,14 @@ to ask again before ordinary implementation. This does not authorize external
 messages, product changes, schedule activation, destructive cleanup or other
 actions that still need their own concrete approval.
 
+**Release direction (2026-11-05):** Brian has deferred the prepared live PR trial
+and will test the finished plugin himself with real work. Continue the remaining
+implementation and offline validation, then ship the private plugin for that
+manual trial. Unexecuted live-send, hosted-CI, scheduling and cleanup demonstrations
+are explicit verification limits, not gates that hold up the offline release.
+This does not authorize those external actions, schedule activation or deletion.
+Keep validated offline behavior distinct from live behavior Brian has yet to test.
+
 ## What we are building
 
 One locally installed plugin, provisionally named `factory`, with a setup skill and an orchestrator as its entry point. No separate `brian-mode` dispatcher. The orchestrator uses role skills as the work requires them.

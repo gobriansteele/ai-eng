@@ -1,8 +1,9 @@
 # Phase 11 live trial preparation
 
-The local candidate is ready; live execution awaits Brian's specific approval
-and completion of the offline Phase 11 checks. This document is a proposal,
-not authorization or a claim that GitHub CI ran.
+Brian deferred this live trial and chose to test the shipped plugin himself.
+The offline Phase 11 checks are complete. The prepared candidate remains available
+for a separately authorized future trial; this proposal grants no permission and
+does not claim that hosted GitHub CI ran.
 
 Destination: private `gobriansteele/ai-eng`. The evaluator prepared two isolated
 branches from accepted source `f018d454e92bfeea8fd0c77d110e9250cf28c695`:

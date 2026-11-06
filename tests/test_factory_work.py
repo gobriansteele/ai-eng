@@ -454,6 +454,87 @@ class WorkTests(unittest.TestCase):
             self.reconciliation(state, status, name),
         )
 
+    def post_fixture(self, target):
+        raw = json.loads(self.fixture.read_text())
+        post_scope = {
+            "action": "posts",
+            "target": target,
+            "revision": "payload-sha256=synthetic-content status-sha256=synthetic-observation",
+        }
+        raw["item"]["approvals"][0]["scope"] = post_scope
+        raw["item"]["pending_actions"][0]["scope"] = post_scope
+        raw["item"].update(
+            stage="investigate",
+            status="blocked",
+            required_role="factory-investigate",
+            next_action="Supply the missing supported environment",
+        )
+        self.fixture = self.root / "post-fixture.json"
+        self.fixture.write_text(json.dumps(raw))
+        return self.begin()
+
+    def test_post_reconciliation_preserves_engineering_state_and_cross_host_history(
+        self,
+    ):
+        initial = self.post_fixture(
+            "slack:T_SYNTHETIC/C_ORIGIN/1700000000.000000:thread_reply"
+        )
+        before = deepcopy(current(initial))
+        uncertain = self.reconcile(initial)
+        self.store.finish("run-one", "codex", 12345, "stopped")
+        resumed = self.begin("run-two", "claude-code", fixture=False)
+        confirmed = self.reconcile(
+            resumed, "confirmed", "confirm-post", "run-two", "claude-code"
+        )
+        after = deepcopy(current(confirmed))
+        after["pending_actions"] = before["pending_actions"]
+        self.assertEqual(after, before)
+        self.assertEqual(
+            confirmed["events"][: len(initial["events"])], initial["events"]
+        )
+        self.assertEqual(uncertain["invocations"][0]["steps"], 1)
+        self.assertEqual(confirmed["invocations"][-1]["steps"], 1)
+        self.assertEqual(self.store.read(), confirmed)
+
+    def test_jira_post_scope_cannot_change_operation_destination_or_payload(self):
+        initial = self.post_fixture("jira:https://example.invalid/jira/SYN-12:comment")
+        for target, revision in (
+            (
+                "jira:https://example.invalid/jira/SYN-12:transition",
+                current(initial)["pending_actions"][0]["scope"]["revision"],
+            ),
+            (
+                "jira:https://example.invalid/jira/SYN-13:comment",
+                current(initial)["pending_actions"][0]["scope"]["revision"],
+            ),
+            (
+                current(initial)["pending_actions"][0]["scope"]["target"],
+                "payload-sha256=changed status-sha256=synthetic-observation",
+            ),
+        ):
+            op = self.reconciliation(initial)
+            op["action"]["scope"].update(target=target, revision=revision)
+            with self.assertRaisesRegex(fw.WorkError, "scope"):
+                self.store.reconcile("run-one", "codex", 12345, initial["revision"], op)
+        uncertain = self.reconcile(initial)
+        confirmed = self.reconcile(uncertain, "confirmed", "confirm-jira-comment")
+        self.assertEqual(
+            current(confirmed)["pending_actions"][0]["scope"]["action"], "posts"
+        )
+        self.assertEqual(self.store.read(), confirmed)
+
+    def test_ticket_work_is_not_enabled_by_post_reconciliation(self):
+        initial = self.begin()
+        items = deepcopy(initial["items"])
+        saved = items[current(initial)["id"]]
+        for entry in (saved["approvals"][0], saved["pending_actions"][0]):
+            entry["scope"]["action"] = "tickets"
+        op = self.reconciliation(initial)
+        op["action"]["scope"]["action"] = "tickets"
+        with self.assertRaisesRegex(fw.WorkError, "scope"):
+            fw.apply_reconciliation(items, initial["active_item_id"], op)
+        self.assertEqual(self.store.read(), initial)
+
     def test_reconciliation_retry_handoff_and_immutable_history(self):
         initial = self.begin()
         prefix = deepcopy(initial["events"])

@@ -89,7 +89,7 @@ ID alone is insufficient. Approval scope is exactly action/target/revision with
 an ID and evidence; a pending action additionally carries status
 proposed/uncertain/confirmed, nullable returned_id/returned_url and evidence.
 Confirmed actions require observed returned ID and URL. Ordinary save preserves prior approvals/actions verbatim; the narrow
-PR action reconciliation command below handles evidenced status transitions. The helper validates structure;
+external-action reconciliation command below handles evidenced status transitions. The helper validates structure;
 it cannot prove human permission, remote state, or artifact existence.
 
 The helper enforces one active invocation, revision CAS, step bounds, stable
@@ -347,25 +347,72 @@ legacy source routing. Ordinary production sources and legacy Phase 3 fixtures
 keep their existing contracts; this creates no generic missing-evidence bypass.
 
 
-## PR action reconciliation
+## External action reconciliation
 
-Read the [follow-up contract](../../factory-follow-pr/references/follow-pr.md) for
-exact request/authorization, fresh remote coverage and retry decisions. Ordinary
-save preserves every prior approval and pending-action entry verbatim. Only the
-narrow `reconcile --decision <json> --expected-revision <revision>` can replace one
-existing selected-item push/PR entry. JSON fields are id, reason, item_id, action;
-action has the existing Pending shape. ID/scope stay unchanged; matching approval
-scope is required. Allowed transitions are proposed→uncertain→confirmed, or
-uncertain→proposed after evidenced authoritative non-application. No
+Role-specific truth/authorization checks are in the
+[PR contract](../../factory-follow-pr/references/follow-pr.md) and
+[reporting contract](../../factory-report/references/reporting.md). `posts` includes
+Slack thread replies and Jira comments; tickets policy is unchanged, and ticket
+creation/workflow changes are outside these roles. No new config enum is added.
+Ordinary save preserves every prior approval and pending-action entry verbatim.
+
+For a genuinely authorized outbound request, ordinary owner-gated save appends a
+stable approval and proposed action with exact matching action/target/revision
+scope and immutable request/permission evidence. Save the readable payload and
+actual direct-user authorization/provenance first. Scope identifies the exact
+operation/destination, content and relevant revision/status. Exposed tools and
+configuration are not permission. Do not reuse an action ID for changed scope or
+replace unresolved uncertainty with a new action. Reserve at least two semantic
+steps for uncertainty and confirmation AFTER proposal; otherwise stop before
+execution. A later save may record additional observed references.
+
+`reconcile --decision <absolute-json> --expected-revision <revision>` uses normal
+verified owner/run/config/harness flags and exactly this shape:
+
+```json
+{"id":"stable-reconciliation-operation-id","reason":"Observed evidence and decision","item_id":"selected-stable-item-id","action":{"id":"existing-action-id","scope":{"action":"posts","target":"exact-destination-and-operation","revision":"exact-payload-and-status-digest"},"status":"uncertain","returned_id":null,"returned_url":null,"evidence":"/absolute/immutable-attempt-report.md"}}
+```
+
+Only one EXISTING selected-item pushes/pull_requests/posts entry changes. ID/scope
+stay unchanged; a matching saved approval scope is required. Allowed transitions
+are proposed→uncertain, uncertain→confirmed or uncertain→proposed. No
 proposed→confirmed shortcut, confirmed mutation or arbitrary ledger editing.
-Evidence is an absolute readable immutable report at new mutation time; historical
-replay checks structure without loading evidence files. The helper cannot prove
-actual human approval or remote observations. The role must verify their truth.
+Confirmed requires actual observed returned ID+URL; other transitions carry null
+returned identity. New evidence must be an absolute readable immutable report;
+historical replay checks structure without loading old files. The helper cannot
+prove human permission, platform semantics, payload/author match or remote truth.
+
+Persist uncertain BEFORE remote execution, then verify the successful checkpoint,
+current applicable authorization and exact request before invoking the write once.
+Confirmation needs the observed exact authorized postcondition and attributable
+identity/destination/content under the role's contract, not merely a plausible
+similar object. Record observations separately when they support reuse/duplicate
+avoidance but cannot confirm all scope-bound fields. A crash/timeout/unknown result
+stays uncertain. Inspect fresh relevant remote state with actual coverage before
+retry. Only durable fresh authoritative NON-application evidence can restore
+proposed; then recheck current scope/permission before another uncertainty checkpoint.
+Ambiguity stays uncertain and asks for help, never blind replay or elapsed-time
+reset. A ledger supports retries; it is not an exactly-once remote guarantee.
 
 Reconciliation consumes one semantic step, uses owner/config/fingerprint checks,
-CAS and atomic history, and preserves every unrelated item field. Save uncertainty
-before outbound execution; reserve confirmation capacity first. Exact operation
-retries do not consume another step. Save/route/collect/reconcile IDs share one
-namespace including legacy history; changed content/domain reuse fails. Schema
-1 migration and schema2/3 layouts remain unchanged. Both hosts must load a helper
-supporting reconcile events before resuming a history containing one.
+CAS and atomic history, and preserves every unrelated item field, including
+engineering stage/status/role/next action and fix count. Save/route/collect/reconcile
+IDs share one namespace including legacy history. Exact same-domain/content retries
+return committed state without another step, even after a lost response; changed
+content/domain reuse fails. Reread/reconsider revision conflicts. Keep immutable
+request/report bytes and prior ledger states in event history. Schema1 migration
+and schema2/3 layouts remain unchanged; both hosts need the supporting helper.
+
+## Reporting artifacts
+
+Reporting is an additive activity, not an item-stage transition. Read factory-report
+and its reference for stable observation/request identities, unchanged draft reuse,
+exact message permission and destination reconciliation. Ordinary report saves
+append absolute immutable report/manifests while preserving the engineering
+stage/status/required_role/next_action, code refs, shared fix count and unrelated
+history/ledgers. Drafts themselves create no external pending action. Explicit
+report-only requests skip intake/engineering and unchanged requests consume zero
+semantic steps. Focused synthetic:report-evaluation: fixture imports label raw
+status/destination observations and absent prior model roles; they grant no real
+permission or completed upstream work. Legacy missing-source and review/follow-up
+imports retain their existing boundaries.

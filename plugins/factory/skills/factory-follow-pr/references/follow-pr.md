@@ -57,58 +57,24 @@ PR because an earlier local record is missing. Save its observed URL in
 `code.pr_url` with the report and actual full remote head. This observational
 reuse creates no confirmed creation action or retrospective approval.
 
-For a genuinely new authorized action, ordinary owner-gated save appends a unique
-stable approval and proposed pending action (IDs are never reused for changed
-scope/payload). Evidence points to the request/authorization report. Retain old
-ledger entries verbatim. Ensure at least two semantic steps remain for uncertainty
-and confirmation; preparation itself may require an earlier invocation. Never
-start a write on the last step or merely promise to save its result later.
+Use the shared [external-action reconciliation contract](../../factory-run/references/persistence.md#external-action-reconciliation)
+for proposal/approval, command shape, uncertainty checkpoint, reserved steps,
+owner/CAS/history and exact retries. This role uses pushes/pull_requests; reporting
+posts have their own destination contract. The shared helper protects mechanical
+state, not the truth of authorization or observed remote evidence.
 
-Use the loaded helper's `reconcile --decision <absolute-json>
---expected-revision <read-revision>` with normal verified owner/run/config flags.
-Its JSON is exactly:
-
-```json
-{"id":"stable-reconciliation-operation-id","reason":"Observed evidence and decision","item_id":"selected-stable-item-id","action":{"id":"existing-action-id","scope":{"action":"pull_requests","target":"exact-repository/base/head","revision":"full-commit-and-request-digest"},"status":"uncertain","returned_id":null,"returned_url":null,"evidence":"/absolute/immutable-attempt-report.md"}}
-```
-
-Only one EXISTING push/PR entry changes. ID/scope and every other item field stay
-unchanged; a matching saved approval scope is required. The command consumes one
-step and accepts proposed→uncertain, uncertain→confirmed or uncertain→proposed.
-Confirmed requires actual observed returned ID+URL; other transitions carry null
-returned identity. Confirmed entries cannot be changed. New transitions require a
-readable absolute evidence report; replay structurally validates old paths without
-requiring old files to remain present. This protects mechanical history, not the
-truth of an agent's approval or remote-observation claims.
-
-Persist uncertain BEFORE remote execution, then reread exact request/content,
-authorization and checkpoint success before invoking the write once. Reconcile
-confirmed with the actual returned/refetched ID+URL and raw evidence, then save
-observed code/PR references separately if needed. A crash/timeout/unknown response
-leaves uncertainty; inspect remote state first on every resume. For a push, verify
-the exact destination ref SHA; for PR creation, inspect exact branch PRs. If the
-exact authorized postcondition is observed, confirm/reuse it without another
-call. Confirmation means that postcondition is observed, not proof of who created
-the PR or which earlier call executed. Repository/base/head/full-SHA identity
-alone permits observational reuse and prevents duplicate creation. If scope also
-binds draft/title/body or other request fields, missing or mismatched observations
-of those fields leave the action uncertain; record the observed PR URL and exact
-limits separately, and obtain fresh metadata or human reconciliation rather than
-claiming full payload confirmation or retrying creation. A fresh comprehensive
-authoritative observation showing NON-application may restore
-proposed with its own immutable evidence, observed time/coverage/exact identity
-and rationale. Then recheck current request/scope/authorization before another
-uncertainty checkpoint and the same stable action retry. Ambiguity, inaccessible
-remote state or changed content keeps uncertain and waits for help; elapsed time
-is no proof. Never create a replacement action to bypass unresolved uncertainty.
-
-Operation IDs share one namespace across save, route, collect and reconcile,
-including migrated legacy history. An exact same-domain/content retry returns
-committed state without another step even after a lost response; changed content
-or cross-domain reuse fails. After a revision conflict reread/reconsider rather
-than overwrite. Current owner/fingerprint checks still apply to retries. Preserve
-immutable request/report bytes and original ledger states in events. This is not
-an exactly-once remote guarantee or an integration engine.
+For an uncertain push, verify the exact destination ref SHA; for PR creation,
+inspect exact branch PRs. The observed exact authorized postcondition permits
+confirmation/reuse without another call; it does not prove who created the PR or
+which earlier call executed. Repository/base/head/full-SHA identity alone permits
+observational reuse and prevents duplicate creation. If scope also binds
+draft/title/body or other request fields, missing or mismatched observations keep
+the action uncertain. Record the observed PR URL and exact limits separately;
+obtain fresh metadata or human reconciliation instead of claiming full payload
+confirmation or retrying creation. Authoritative non-application needs fresh
+comprehensive exact-branch/ref coverage and immutable rationale. Recheck current
+request/scope/permission before any retry. Never create a replacement action to
+bypass unresolved uncertainty.
 
 ## Fresh activity and fixes
 
@@ -149,7 +115,7 @@ follow_pr/ready with a concrete later recheck for pending remote checks, or
 follow_pr/waiting_for_human for authorization, ambiguity or a ready draft for
 Brian. Stop/release after the observed handoff; identical unchanged outcomes need
 no repeated semantic save. Never call a PR merged/deployed/verified from open or
-green status alone. Reporter and scheduling remain unavailable.
+green status alone. Local reporting is available separately; scheduling is not enabled.
 
 Focused synthetic follow-up evaluation may explicitly import
 `synthetic:follow-pr-evaluation:` via existing begin --fixture. A readable evaluator

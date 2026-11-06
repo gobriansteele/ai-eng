@@ -236,3 +236,13 @@ listings. This is the demonstrated fallback when this host lacks a sufficient
 connector, not a connection inherited from Codex. Discover actual current access
 before use. The probe did not establish checks/log/review coverage or execute
 any external write; CLI authentication alone grants no push/draft authorization.
+
+
+## Reporting capabilities
+
+Use the shared [reporting contract](../skills/factory-report/references/reporting.md)
+for report-only invocation, draft reuse, exact destination/permission and retries.
+Discover this Claude session's own Slack/Jira MCP connections and operation
+schemas. The documented Slack reads do not establish reply/comment writes or
+complete destination history, and Codex connections are not inherited. Report
+actual missing operations; no live message delivery is claimed.

@@ -1671,3 +1671,104 @@ publication/retry behavior against GitHub and a PR-driven code-fix round are not
 established by these offline cases. No Honor product changes, Slack/Jira sends,
 schedules or cleanup occurred. `.idea` remains ignored and project files contain
 no references to the unrelated workspace.
+
+
+### Release direction after Phase 11 offline validation (2026-11-05)
+
+Brian deferred the prepared live PR trial, asked to continue offline, and then
+asked to finish and ship the plugin so he can try a real work item himself.
+Proceed with later offline tranches after parent review and tests. Phase 11 live
+follow-up remains untested, but is no longer a release gate under this direction.
+No trial branches, PRs, comments, hosted jobs or live product fixes were created.
+The proposal is retained for reference, not queued for execution.
+
+
+## Phase 12 source candidate (2026-11-06)
+
+Added factory-report with local originating-thread Slack/Jira comment drafts,
+truthful recorded/refreshed status attribution, stable semantic observation/request
+identity and unchanged draft reuse. Reporting artifacts/dispositions stay separate
+from engineering stage/status/required_role/next_action, code refs and fix count.
+Explicit report-only invocations skip intake/routing/code progression; normal runs
+can draft at meaningful saved outcomes before owner release when capacity remains,
+including a first report deferred by an earlier bound. Drafting grants no send
+permission and creates no external pending action by itself. Missing destinations
+stay unaddressed locally; no root-message fallback or Jira transition is invented.
+
+The existing reconcile command now also accepts action=posts for Slack thread
+replies/Jira comments, with unchanged matching-scope/owner/CAS/step/immutable-history
+rules. tickets/config policy is unchanged. Shared mechanics are documented once in
+persistence and linked by PR/reporting contracts. Exact post confirmation requires
+observed ID/permalink/destination/payload and attributable request evidence;
+same-text candidates, wrong/old authorship or incomplete history retain uncertainty.
+The helper verifies mechanical invariants, not permission/remote truth or
+exactly-once delivery. No integration framework/schema/API layer was added.
+
+Source checks used UV_CACHE_DIR=/private/tmp/ai-eng-checks/uv-cache:
+
+- `uv run --isolated --frozen --project plugins/factory ruff check --no-cache --config plugins/factory/pyproject.toml plugins/factory/scripts tests`: all checks passed.
+- `uv run --isolated --frozen --project plugins/factory ruff format --check --no-cache plugins/factory/scripts tests`: all 8 files already formatted after formatting touched Python.
+- `uv run --isolated --frozen --project plugins/factory mypy --cache-dir /private/tmp/ai-eng-checks/mypy --config-file plugins/factory/pyproject.toml plugins/factory/scripts`: success, no issues in 4 source files.
+- `PYTHONDONTWRITEBYTECODE=1 uv run --isolated --frozen --project plugins/factory python -m unittest discover -s tests -v`: 76 tests passed, retaining all 73 earlier tests and adding post reconciliation/cross-host engineering-state preservation, Jira operation/destination/payload scope rejection and unchanged ticket-work exclusion. Actual process identity/lock tests ran.
+- All 12 skill frontmatters/structures validated with skill-creator; 43 JSON files parsed; 40 local Markdown links resolved. The six new report fixtures were checked for synthetic provenance and internally consistent destination IDs/permalinks/pagination totals/partial-response references. Parent caught inconsistent metadata in preflight negatives; final source corrects it and preserves positive response correlation. Evaluator preflight inputs are retained separately before refreshed copies; no model run is claimed for preflight.
+
+New raw status/destination observations and reporter-evaluation.md support actual
+both-host models, unchanged repeats and cross-host saved reporting/action tests;
+those runs and package version/install/refresh remain parent-owned and pending.
+This is source evidence, not completed behavioral acceptance. As Brian explicitly
+requested, live trial/sends remain user-owned and do not gate offline/manual
+shipping. Live Slack/Jira delivery and real uncertain-send retries are untested.
+No runtime/canonical record, external send, product change, schedule, cleanup,
+version/lock/manifest, installation or commit/push was performed by this source
+implementer. Historical Phase 11 failed-probe and offline evidence is retained.
+
+### Phase 12 — offline reporter accepted (0.12.2)
+
+Delegated source to Sol/high; parent and a separate Sol/medium reviewer examined
+contracts, helper changes and actual outputs. Parent Ruff lint/format, strict
+mypy (four scripts) and all 76 unit tests passed. The three new tests cover post
+reconciliation/history and immutable Slack/Jira destination/payload scopes. JSON,
+skill/frontmatter, local links and diff checks passed. Both normal plugin refreshes
+were exercised through versions 0.12.0, 0.12.1 and 0.12.2.
+
+Actual Codex gpt-6.1-sol/medium and Claude Sonnet/medium sessions exercised six
+independent synthetic homes each: investigation blocked, draft PR ready, merged
+but unverified, attributable uncertain sends, missing request attribution and
+incomplete destination history. Both hosts preserved engineering state/scopes/
+counts. Positive local reconciliations confirmed the exact synthetic Slack/Jira
+objects; ambiguous cases stayed uncertain without another action or send. These
+were raw evaluator imports, not actual upstream roles, remote reads or approvals.
+All 12 primary state/input checks passed. Sixteen fresh unchanged resumptions,
+including three records in each cross-host direction, used zero semantic steps
+and preserved old item/history/artifact bytes. Actual payloads were read separately
+from mechanical state assertions.
+
+That semantic review rejected Claude's blocked drafts in 0.12.0: unknown deployment
+was incorrectly called absent. A reference-only correction in 0.12.1 did not fix
+the outgoing text, despite a truthful final summary. The final entrypoint explicitly
+limits blocked updates to supported facts and checks the actual outgoing payload.
+Fresh 0.12.2 blocked cases passed in BOTH hosts: unperformed reproduction, missing
+Python 3.11+ and unknown deployment/verification were stated accurately. Earlier
+failed drafts remain untouched; no messages were sent. Unchanged dedupe does not
+suppress a substantive correction of a draft that contradicts its evidence.
+
+Execution limits are retained rather than hidden. Initial bundled prompts placed
+isolation instructions in nested files: Codex refreshed already-current personal
+context first; Claude stopped on the global pull. Direct top-level scope corrected
+the harness. Some Claude runs overgeneralized an unsupported shell-chain denial
+or treated a legitimate readFromFolder install as uninstalled; explicit existing
+allowlist/native-read clarification resumed the unstarted cases without widening
+permissions. Codex interpreted the repeat harness's prior-owner-exit wording too
+broadly; sequential independent-home clarification completed the remaining repeats.
+One later Codex probe stopped before begin on process inspection; explicit normal
+narrow helper escalation completed it. Claude attributed declared payload digests
+when its hash command was denied; parent independently verified the exact bytes.
+These restricted launcher observations do not establish unattended reliability.
+
+Evidence: /private/tmp/ai-eng-phase12/ contains raw prompts/commands/events/results,
+original blocked attempts, source and semantic audits, fixture hashes and snapshots.
+mechanical-audit/final-0.12.1/audit.json verifies 12 original homes, both fresh cases
+and unchanged handoffs; wording-0.12.2/verification.json plus actual payloads records
+the final correction. No canonical JSON was directly edited. Live message delivery,
+connector retry behavior and workflow transitions remain untested/deferred. Under
+Brian's release direction, proceed to the final offline operational tranche.

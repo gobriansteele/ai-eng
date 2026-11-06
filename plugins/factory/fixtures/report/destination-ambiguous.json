@@ -1,0 +1,91 @@
+{
+  "synthetic": true,
+  "provenance": "Controlled synthetic raw observations/scenario metadata only. Not a live read, model report, completed upstream role, real authorization or actual send.",
+  "observed_at": "2026-11-06T12:05:00Z",
+  "request_context": {
+    "id": "controlled-report-request",
+    "payload": "The draft PR is ready for review: https://example.invalid/synthetic-owner/taskboard/pull/17. Current-head selector checks passed. Deployment and production verification remain unknown.",
+    "semantic_status": "existing-draft-ready-for-human-review",
+    "head_sha": "1111111111111111111111111111111111111111",
+    "attempted_at": "2026-11-06T12:02:00Z",
+    "scope_note": "Evaluator supplies exact serialized payload/status digests in the imported synthetic approval/action; no real send permission."
+  },
+  "destinations": [
+    {
+      "operation": "thread_reply",
+      "workspace_id": "T_SYNTHETIC",
+      "channel_id": "C_ORIGIN",
+      "thread_ts": "1700000000.000000",
+      "expected_author": "U_SYNTHETIC_FACTORY",
+      "prior_partial_response": null,
+      "history": {
+        "pages": [
+          {
+            "cursor": null,
+            "next_cursor": "unavailable-next-page"
+          }
+        ],
+        "complete": false,
+        "messages": [
+          {
+            "id": "1793966530.000001",
+            "author": "someone-else",
+            "workspace_id": "T_SYNTHETIC",
+            "channel_id": "C_ORIGIN",
+            "thread_ts": "1700000000.000000",
+            "text": "The draft PR is ready for review: https://example.invalid/synthetic-owner/taskboard/pull/17. Current-head selector checks passed. Deployment and production verification remain unknown.",
+            "permalink": "https://example.invalid/slack/message/1793966530.000001",
+            "created_at": "2026-11-06T12:02:10Z"
+          },
+          {
+            "id": "1793534400.000001",
+            "author": "U_SYNTHETIC_FACTORY",
+            "workspace_id": "T_SYNTHETIC",
+            "channel_id": "C_ORIGIN",
+            "thread_ts": "1700000000.000000",
+            "text": "The draft PR is ready for review: https://example.invalid/synthetic-owner/taskboard/pull/17. Current-head selector checks passed. Deployment and production verification remain unknown.",
+            "permalink": "https://example.invalid/slack/message/1793534400.000001",
+            "created_at": "2026-11-01T12:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "comment",
+      "site": "https://example.invalid/jira",
+      "issue_key": "SYN-12",
+      "expected_author": "synthetic-factory-account",
+      "prior_partial_response": null,
+      "history": {
+        "pages": [
+          {
+            "start_at": 0,
+            "total": 3,
+            "next_cursor": "unavailable-next-page"
+          }
+        ],
+        "complete": false,
+        "comments": [
+          {
+            "id": "unattributed-same-text",
+            "author": "someone-else",
+            "site": "https://example.invalid/jira",
+            "issue_key": "SYN-12",
+            "body": "The draft PR is ready for review: https://example.invalid/synthetic-owner/taskboard/pull/17. Current-head selector checks passed. Deployment and production verification remain unknown.",
+            "permalink": "https://example.invalid/jira/browse/SYN-12?focusedCommentId=unattributed-same-text",
+            "created_at": "2026-11-06T12:02:10Z"
+          },
+          {
+            "id": "older-request",
+            "author": "synthetic-factory-account",
+            "site": "https://example.invalid/jira",
+            "issue_key": "SYN-12",
+            "body": "The draft PR is ready for review: https://example.invalid/synthetic-owner/taskboard/pull/17. Current-head selector checks passed. Deployment and production verification remain unknown.",
+            "permalink": "https://example.invalid/jira/browse/SYN-12?focusedCommentId=older-request",
+            "created_at": "2026-11-01T12:00:00Z"
+          }
+        ]
+      }
+    }
+  ]
+}

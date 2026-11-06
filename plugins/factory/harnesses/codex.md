@@ -219,3 +219,13 @@ Its PR search did not prove complete all-state PR coverage. Supplement that gap
 through an actually available authorized paginated API/CLI before an absence or
 retry claim. The probe did not establish checks/log/review coverage or execute
 any PR/push; write exposure and reported repository permission were observations.
+
+
+## Reporting capabilities
+
+Use the shared [reporting contract](../skills/factory-report/references/reporting.md)
+for report-only invocation, draft reuse, exact destination/permission and retries.
+Discover the connected Slack and Jira tools in the current Codex session. The
+previous Slack intake/Jira read probes do not establish thread-reply or issue-
+comment execution, complete destination history or attributable send results.
+Report actual supported operations/limits; no live message delivery is claimed.

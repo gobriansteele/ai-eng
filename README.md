@@ -3,7 +3,8 @@
 `factory` is a local plugin for Codex and Claude Code. The current source provides
 `factory-setup`, `factory-status`, `factory-run`, `factory-watch`,
 `factory-route`, `factory-investigate`, `factory-plan`, `factory-design` and
-`factory-implement`, `factory-review` and `factory-follow-pr`, backed by shared
+`factory-implement`, `factory-review`, `factory-follow-pr` and `factory-report`,
+backed by shared
 typed helpers. The orchestrator collects bounded read-only Slack
 intake, saves and routes source threads, and resumes legacy work.
 It investigates scoped bug/feature reports with durable local evidence and no
@@ -16,7 +17,10 @@ review uses two fresh complementary reviewers, a fresh adjudicator and three
 fresh panelists only for unresolved disputes. Accepted corrections share two total
 fix rounds with PR follow-up. Draft PR publication requires scoped authorization,
 uncertain-action reconciliation and exact reviewed content; follow-up investigates
-fresh CI/review activity. Reporting and scheduling remain unimplemented.
+fresh CI/review activity. Reporting prepares/reuses local originating-thread Slack
+and Jira comment drafts without replacing engineering state; exact sends require
+scoped authorization and uncertain-post reconciliation. Live delivery is untested;
+scheduling remains unimplemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -195,6 +199,14 @@ fresh remote coverage. Synthetic saved observations live in `fixtures/follow-pr/
 under the plugin; the [evaluator guide](docs/follow-pr-evaluation.md) keeps acceptance
 criteria outside role context. Installation and actual both-host/live acceptance
 are recorded separately in phase results; source capability is not live proof.
+
+Reporting can be requested without advancing engineering: “Use factory-report with
+configuration <factory-home>/config.yaml; report-only, local drafts.” Normal runs
+also draft at meaningful saved progress/waits when capacity remains, and reuse an
+unchanged request instead of proposing duplicates. Read the
+[reporting contract](plugins/factory/skills/factory-report/references/reporting.md)
+and [offline evaluator guide](docs/reporter-evaluation.md) for actual evidence and
+limits. No invocation itself grants Slack/Jira send or workflow-transition permission.
 
 ## Verify
 

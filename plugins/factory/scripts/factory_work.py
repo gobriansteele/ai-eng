@@ -198,8 +198,9 @@ def apply_reconciliation(
     if previous["scope"] != updated["scope"] or updated["scope"]["action"] not in (
         "pushes",
         "pull_requests",
+        "posts",
     ):
-        raise WorkError("Reconciliation must preserve a push or PR action scope")
+        raise WorkError("Reconciliation must preserve a push, PR or post action scope")
     if not any(a["scope"] == updated["scope"] for a in saved["approvals"]):
         raise WorkError("Reconciliation requires a matching saved approval scope")
     if (previous["status"], updated["status"]) not in {
@@ -641,7 +642,7 @@ def preserve(previous: Item, updated: Item) -> None:
         entry not in updated["pending_actions"] for entry in previous["pending_actions"]
     ):
         raise WorkError(
-            "Preserve scoped approvals and pending actions; reconcile explicitly in a future role"
+            "Preserve scoped approvals and pending actions; use supported owner-gated reconciliation"
         )
 
 

@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements authorized local changes, independently reviews exact content, adjudicates findings and applies at most two shared fix rounds; follows authorized draft PRs and fresh CI/review activity; stops truthfully at unavailable later roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements authorized local changes, independently reviews exact content, adjudicates findings and applies at most two shared fix rounds; follows authorized draft PRs and fresh CI/review activity; drafts evidenced Slack/Jira updates without erasing engineering state; stops truthfully at unavailable later roles.
 ---
 
 # Factory run
@@ -52,8 +52,9 @@ resumes without input. For saved-source demonstrations, use the explicitly selec
 synthetic JSON as `--source`; it is saved under the invocation owner before routing.
 A supplied new source must be considered even when another saved item is blocked.
 For legacy post-intake demonstrations `--fixture` remains supported. A new
-production workspace needs no synthetic seed. After begin and before handling an
-active block, invoke shared `factory-watch` under this same owner/token. In live
+production workspace needs no synthetic seed. Unless explicitly report-only as
+described below, after begin and before handling an active block, invoke shared
+`factory-watch` under this same owner/token. In live
 mode it checks current host access, collects every ready configured channel and
 reports coverage/blockers; `--import-thread` is an explicit historical import. In
 offline mode skip live watch; an explicit `--collection <synthetic-json>` passes
@@ -62,6 +63,16 @@ work is blocked and does not consume semantic steps. Retain other channels'
 successful captures when one is blocked. Do not run a repository workflow or
 invent intake evidence. Helper failure blocks work; corruption needs repair preserving the original files. A
 live or unknown prior owner blocks takeover regardless of age.
+
+For an explicit report-only request (including direct factory-report use), read
+[factory-report](../factory-report/SKILL.md) and its reference after begin, skip
+watch/collection/routing/code progression, and report on the selected saved item.
+Pass actual source/evidence, engineering state, prior report manifests/ledgers,
+config/runtime, owner and offline/live mode. No selected item means no work to
+report, not a new synthetic item. This is natural-language invocation scope, not
+a new helper flag. Do not reinterpret it as permission to send. Finish/release
+after reporting; subsequent engineering-role instructions do not apply to this
+report-only invocation.
 
 Read canonical `items`, `active_item_id`, source receipts, relevant history,
 bounds, scoped approvals and pending actions. There is only one selected active
@@ -335,9 +346,40 @@ Re-review corrected content before any separately authorized fix push; verify it
 new remote SHA, not old CI. Append unique follow-pr report paths, preserving old
 artifacts/bytes, history, sources/cursors, approval scopes and counts. Save actual
 follow_pr blocked/ready/waiting_for_human outcomes with concrete next action;
-unchanged observed waits need no repeated step. Stop/release after one follow-up
-observation/handoff; no automatic poll, merge, deployment or messages. A ready
+unchanged observed waits need no repeated step. Allow at most one follow-up
+observation/handoff, then prepare any due local report below before finish/release
+while ownership and capacity remain; no automatic poll, merge or deployment. A ready
 draft waits for Brian, with remote checks and coverage stated precisely.
+
+When saved work makes meaningful progress/completes or reaches a new block/human
+question, invoke available factory-report for local drafts if a semantic step
+remains. Also honor explicit report requests without forcing another engineering
+step. Compare stable meaningful observation/destination identity with saved report
+manifests first: unchanged status with an existing corresponding report returns
+the same payload/request/artifact with zero duplicate save/action. A meaningful
+saved outcome without a corresponding report remains eligible for its first draft,
+even if engineering was unchanged this invocation because a prior bound deferred
+reporting. Read its reporting contract before accepting any
+draft or send recommendation. Append only readable unique reporting artifacts
+and justified approval/action additions; preserve actual engineering stage/status,
+required_role, next_action, code refs, fix_rounds and all unrelated state. A missing
+reporting target/refresh/permission stays in the reporting report and invocation
+summary, not a replacement engineering wait/role. If the bound is exhausted,
+reporting can wait for the next invocation; never exceed it to draft.
+
+Default reporting is local-only, even during a live engineering run. Future sending
+needs actual exact-draft/destination authorization, current facts/host access and
+the shared uncertainty checkpoints; invoking a run or approving code does not
+permit messages. At a report-only outcome, save new reporting evidence within the
+bound and finish/release truthfully without advancing engineering. Do not create
+a report stage, poll destinations or invent workflow transitions.
+
+A focused report evaluation may explicitly import synthetic:report-evaluation:
+via begin --fixture with readable raw status/destination observations and declared
+engineering stage/wait/count as scenario metadata. Label absent upstream model
+roles, preserve that state, and run only reporting. This grants no completed
+investigation/review/deployment, production evidence bypass or real send permission.
+Explicit offline resumes remain offline and reuse saved reporting identity.
 
 A focused follow-up evaluation may import synthetic:follow-pr-evaluation: through
 begin --fixture with a readable raw snapshot/actual-checkout manifest. It labels

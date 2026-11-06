@@ -1,0 +1,57 @@
+{
+  "synthetic": true,
+  "provenance": "Controlled synthetic raw observations/scenario metadata only. Not a live read, model report, completed upstream role, real authorization or actual send.",
+  "observed_at": "2026-11-06T12:00:00Z",
+  "targets": {
+    "slack": {
+      "workspace_id": "T_SYNTHETIC",
+      "channel_id": "C_ORIGIN",
+      "thread_ts": "1700000000.000000",
+      "source_url": "https://example.invalid/slack/origin",
+      "root_text": "The taskboard done view returns open tasks."
+    },
+    "jira": {
+      "site": "https://example.invalid/jira",
+      "issue_key": "SYN-12",
+      "issue_url": "https://example.invalid/jira/browse/SYN-12",
+      "status": "In Progress"
+    }
+  },
+  "engineering_state": {
+    "stage": "follow_pr",
+    "status": "waiting_for_human",
+    "required_role": "factory-follow-pr",
+    "next_action": "Brian: review the existing draft PR; no merge or deployment is authorized.",
+    "fix_rounds": 1
+  },
+  "pr": {
+    "repository": "synthetic-owner/taskboard",
+    "id": 17,
+    "url": "https://example.invalid/synthetic-owner/taskboard/pull/17",
+    "state": "open",
+    "draft": true,
+    "head_sha": "1111111111111111111111111111111111111111",
+    "merged": false
+  },
+  "checks": {
+    "head_sha": "1111111111111111111111111111111111111111",
+    "required": [
+      "selector"
+    ],
+    "runs": [
+      {
+        "name": "selector",
+        "conclusion": "success",
+        "head_sha": "1111111111111111111111111111111111111111"
+      }
+    ],
+    "statuses": [],
+    "complete": true
+  },
+  "reviews": {
+    "complete": true,
+    "blocking_findings": []
+  },
+  "deployment": "unknown",
+  "production_verification": "unknown"
+}
