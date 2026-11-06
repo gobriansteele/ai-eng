@@ -11,7 +11,6 @@ codex plugin add factory@ai-eng-local
 
 Start a fresh Codex session, then follow [setup in the README](../README.md#how-to-set-it-up).
 The registered marketplace name is `ai-eng-local` even when its source is GitHub.
-This private repository requires Git credentials with access to it.
 
 The commands require a Codex CLI with plugin management. Check `codex plugin --help`
 if your installed version does not recognize them. See the official
@@ -67,7 +66,7 @@ saved work.
 | Problem | Check |
 | --- | --- |
 | Factory skills are missing | Confirm the plugin is installed and enabled, then start a fresh session. |
-| GitHub installation fails | Check that your Git credentials can access this private repository. |
+| Marketplace authentication fails | Check the Git credentials configured on your machine. |
 | Setup cannot read a channel or repository | Check this session's connections and permissions for the selected resource. |
 | Dependency download fails | Check that `uv` and Python 3.11+ are available and that the required download is permitted. |
 | The run reports a permission or worker block | Use `factory-status` to read the missing capability. Resolve it through normal permissions, then resume with the same configuration. |

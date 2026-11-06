@@ -19,8 +19,6 @@ claude plugin marketplace add gobriansteele/ai-eng --scope user
 claude plugin install factory@ai-eng-local --scope user
 ```
 
-This is a private repository. Your machine needs Git credentials with access to
-it. If adding the marketplace fails, verify repository access before retrying.
 For an SSH-based setup, the source can be `git@github.com:gobriansteele/ai-eng.git`.
 See Claude Code's [installation documentation](https://code.claude.com/docs/en/discover-plugins)
 for authentication and scope details.
@@ -63,6 +61,7 @@ and reuse its configuration; do not rerun setup with a new home to recover work.
 
 | Problem | Check |
 | --- | --- |
+| Marketplace authentication fails | Check the Git credentials configured on your machine. |
 | Factory commands are missing | Confirm Factory is enabled in `/plugin`, then start a fresh session. |
 | Installation exists only in one project | Inspect its scope. User scope makes it available across projects. |
 | Setup cannot read Slack | Connect Slack in Claude Code and verify access to the selected channel. |

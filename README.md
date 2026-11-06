@@ -8,10 +8,9 @@ request. It saves progress locally so you can stop and resume across sessions.
 
 ## How to install it
 
-You need Claude Code or Codex with plugin support, **Python 3.11+**,
-**[uv](https://docs.astral.sh/uv/getting-started/installation/)** and access to this
-private repository. Connect Slack in the host you choose; setup checks access to
-Slack, GitHub and any linked Jira issues.
+You need Claude Code or Codex with plugin support, **Python 3.11+** and
+**[uv](https://docs.astral.sh/uv/getting-started/installation/)**. Connect Slack in
+the host you choose; setup checks access to Slack, GitHub and any linked Jira issues.
 
 ### Claude Code
 
@@ -120,9 +119,8 @@ offline checks; live PR publishing and scheduled execution still need validation
 
 - **Skill missing:** start a fresh session and check installation in the
   [Claude Code guide](docs/claude-code.md) or [Codex guide](docs/codex.md).
-- **Authentication or setup incomplete:** check private GitHub repository access
-  and the current host's Slack connection. Rerun setup with your existing config;
-  it reports missing capabilities and preserves saved work.
+- **Setup incomplete:** rerun setup with your existing configuration. It identifies
+  missing connections or permissions and preserves saved work.
 - **No new work:** confirm the channel was selected during setup. Use
   `--import-thread` with its channel ID and thread link for an older request.
 - **Resume is blocked:** inspect `factory-status` with the same config. Answer the
