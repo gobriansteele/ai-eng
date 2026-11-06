@@ -1,0 +1,12 @@
+{
+  "synthetic": true,
+  "kind": "competing_unverified_product_claims",
+  "provenance": "Controlled evaluator input, not prior reviewer reports, votes or completed adjudication",
+  "id": "candidate-all-ordering",
+  "question": "Must --status all list newest/highest-ID tasks first?",
+  "claims": [
+    {"label": "A", "claim": "Newest-first order is required for users to find recent tasks; current insertion order is a defect.", "evidence": "No accepted ordering requirement supplied."},
+    {"label": "B", "claim": "Existing file order must be retained; reordering would change current behavior.", "evidence": "Current output can be observed, but no accepted ordering requirement supplied."}
+  ],
+  "request": "Assess both claims independently against raw requirements and code. If genuinely unresolved, use the normal dispute panel and preserve any human-needed product question. Do not invent a requirement, force a vote, predeclare a winner or edit code merely to satisfy this scenario."
+}

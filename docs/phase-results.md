@@ -1395,3 +1395,144 @@ No live Honor product edits, external messages, PRs, schedules or cleanup occurr
 Native Claude worktree creation, indefinite checkout retention, cleanup/restoration,
 deliberate interruption injection and further-edit ownership transfer remain
 untested. Cross-host read-only use of the actual dirty checkout was tested.
+
+
+### Phase 10 source candidate — independent review and bounded fixes (2026-11-05)
+
+Source tranche adds factory-review with two actual fresh complementary reviewers,
+a separate fresh adjudicator and three further independent fresh panelists only
+for unresolved disputes, as selected by Brian. Raw reports, evidence, duplicate
+mapping, dismissal reasons and exact target fingerprints remain durable. A
+reproducible serious defect cannot be dismissed solely by tally. Missing dispatch
+or raw role evidence blocks review rather than simulating roles in one context.
+
+The existing owner-gated save/artifact contract remains the canonical store; no
+schema, persistence helper, framework or dependency was added. A pending accepted
+fix batch is saved before edits with unchanged completed count. A changed-code
+return for verification increments once, including failed-check returns; a pending
+interrupted attempt resumes with the same ID. Initial code/review and no-code
+attempts consume none. Internal review and future PR follow-up share two rounds.
+Corrected bytes invalidate affected verdicts; dirty accepted code retains exact
+diff/file hashes and no reviewed_commit. A pass stops at absent factory-follow-pr.
+
+Reviewer-only evaluation adds controlled raw requirement/unsupported/dispute inputs
+and an explicit existing begin --fixture focused-stage import contract. Imported
+manifests label actual contents/checks and absent upstream role history; neither
+fake model outputs nor direct canonical edits are allowed. A count-two imported
+scenario tests exhaustion honestly without claiming two real executed attempts.
+Legacy Phase 3 missing-source behavior remains unchanged. The evaluator guide
+requires actual fresh-host role/fix/re-review/stop and cross-host resume evidence;
+this source candidate does not claim those future executions passed.
+
+Parent separately observed native fresh worker dispatch/read capability in both
+hosts before these behavioral runs. Harness guides record scoped capabilities and
+limits, not successful factory review. No version bump, installation/refresh,
+live CLI invocation, runtime mutation, commit or push was done by this source
+tranche. Source verification results follow after the frozen candidate checks.
+
+
+Phase 10 candidate source checks (before parent packaging/behavioral acceptance):
+
+- `uv run --isolated --frozen --project plugins/factory ruff check --no-cache
+  --config plugins/factory/pyproject.toml plugins/factory/scripts tests`:
+  All checks passed.
+- `uv run --isolated --frozen --project plugins/factory ruff format --check
+  --no-cache plugins/factory/scripts tests`: 8 files already formatted.
+- `uv run --isolated --frozen --project plugins/factory mypy --cache-dir
+  /private/tmp/ai-eng-phase10-mypy --config-file plugins/factory/pyproject.toml
+  plugins/factory/scripts`: no issues in 4 source files.
+- `PYTHONDONTWRITEBYTECODE=1 uv run --isolated --frozen --project plugins/factory
+  python -m unittest discover -s tests -v`: all 66 tests passed.
+
+All four commands initially hit sandbox denial opening the existing uv cache;
+the same narrowly escalated commands passed using the frozen project. This did
+not change package dependencies. The capability helper change is descriptive
+output only. The changed factory-review, factory-run, factory-implement and
+factory-status skills passed skill-creator quick_validate through the frozen
+isolated no-dev runtime; all 28 package JSON files parsed, new local reference
+links resolved, and git diff --check passed. No new unit test was added for prose
+or capability text. Actual fresh-host semantic review/fix/panel/exhaustion tests
+are pending parent execution, not substituted by these static checks.
+
+### Phase 10 parent acceptance — 0.10.0 (2026-11-05)
+
+Parent reviewed the source, actual reports, dispatch evidence and state changes.
+Normal Codex plugin add and Claude plugin update installed 0.10.0; fresh sessions
+loaded that version. Parent also ran Ruff lint, Ruff format (8 files), strict
+mypy (4 source files), and all 66 tests including actual process inspection; all
+passed. The source tranche's four changed-skill validations, 28 JSON parses and
+reference checks passed. No dependency or canonical schema change was introduced.
+
+Six independent focused synthetic cases ran: fix, dispute and exhausted allowance
+in each host. Inputs were evaluator-created requirements, code and observations,
+not fabricated role outputs. Initial fix reviews used two actual fresh reviewers
+and a fresh adjudicator, accepted the seeded selector defect, dismissed the
+unsupported network-write claim with evidence, and saved a readable authorization
+wait at count zero. After separate bounded local edit authorization, both saved
+an ownership checkpoint before changing the single selector expression. Parent
+checked actual event order and the atomic changed-code return: count zero became
+one exactly once, then remained one through fresh re-review. Both completed in
+three semantic steps and stopped at follow_pr/blocked because that role was absent.
+Parent independently ran all three sample tests and four CLI selections in both
+actual worktrees; all passed. Earlier evidence bytes remained intact. The fix
+restored existing baseline bytes, so Codex truthfully recorded the existing clean
+HEAD as reviewed; Claude conservatively left reviewed_commit unset and recorded
+exact clean HEAD/file hashes in its pass report. Neither made a new code commit.
+
+Both dispute cases used the user-approved three fresh panelists after two reviewers
+and adjudication. All three found the requested ordering rule unresolved; both
+hosts waited for a product decision with count zero and unchanged code. Claude's
+orchestrator corrected an initial adjudicator recommendation to bypass the panel.
+Codex's original adjudicator was unavailable for the final synthesis, so it used
+one additional actual fresh adjudicator (seven workers total), preserving the
+original report and all three real panel returns. No worker or vote was invented.
+Reproducible serious defects remain blockers by contract; this evaluation did not
+manufacture a malicious majority to test that safeguard.
+
+Both exhausted cases independently reproduced the selector failure and retained
+count two without edits, a third batch, pass or PR. Count two was explicitly
+imported scenario metadata: these tests establish the exhaustion boundary, not two
+actually executed unsuccessful fixes. Deliberate interruption between a saved
+pending batch and changed-code return remains untested in this phase.
+
+Actual native dispatch identities/prompts, raw reports and bundle fingerprints
+support independent role execution. Hidden context isolation and realized reasoning
+effort are not claimed as observable telemetry. Parent's independent audit matched
+all three Claude re-review reports exactly to raw Agent returns after outer trim,
+verified all 58 bundle hashes and distinct fresh IDs. Claude's report-writing hook
+required the orchestrator to persist returned text; this was audited rather than
+assumed. The initial Claude reviewer copy had only disclosed whitespace differences.
+Some immutable Claude aggregate prose was imprecise: highest ID is not necessarily
+recency, and lack of runtime probes does not mean no read commands. Another worker's
+Python version was secondhand. Parent acceptance relies on the actual raw evidence
+and unresolved product decision, not those broader claims; no ordering rule was
+implemented and no missing runtime probe was counted as executed.
+
+Fresh resume sessions exercised each host's unanswered dispute and exhausted wait,
+then the other host's completed fixed handoff. Each invocation spent zero semantic
+steps, released ownership, retained counters 0/2/1, and preserved all prior item,
+source, history and artifact bytes. Actual opposite-host checkouts were inspected.
+Claude's first resume probe stopped before begin after interpreting a denied ls as
+all Bash being unavailable. A retry clarified already-allowed Read/Glob and literal
+python3/uv commands; permissions were unchanged and all three invocations passed.
+Codex's first resume probe borrowed an existing Python/PyYAML after an ambiguous
+"no installs" evaluator instruction conflicted with the prescribed isolated helper
+bootstrap. Its state-preservation assertions passed, but it did not establish the
+required locked runtime. A fresh repeat explicitly authorized the locked helper's
+cached bootstrap while prohibiting target/global dependency installation.
+The corrected Codex repeat passed all three zero-step resumes and all helper calls
+used the prescribed frozen isolated launcher. Original failed/limited probes are
+retained, not reclassified as successful validation.
+
+Evidence and parent assertions are under `/private/tmp/ai-eng-phase10/`:
+`verification.json`, `resume-verification.json`, `parent-order-verification.json`,
+`parent-panel-audit.md`, `parent-rereview-audit.md`, each host's
+`fix/parent-code-verification.json`, and actual initial/authorized/resume streams.
+Codex's final repeat is `codex/resume-locked`; Claude's is `claude/resume-retry`.
+Evaluation prompts and full resulting records remain beside those streams.
+
+Native desktop worktree creation succeeded for the Codex fix checkout. The Claude
+target used a native Codex worktree after the desktop call failed to return and
+actual resources were reconciled. Native Claude creation, indefinite retention and
+cleanup are not established by these tests. No live Honor product changes, external
+messages, PRs, scheduling or cleanup occurred. Phase 10 is accepted; Phase 11 follows.

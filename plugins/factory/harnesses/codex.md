@@ -178,3 +178,30 @@ permission if needed. Before editing, the orchestrator saves authorization,
 preparation and observed code references. Cross-host handoff uses those durable
 paths after the old CLI stops, not a Codex chat identifier. Recheck permissions in
 the destination; no new branch or worktree is needed to read completed evidence.
+
+
+## Independent review workers
+
+Keep the factory CLI as the single invocation owner. Dispatch review roles through
+actual available native worker tools; role workers never run factory-run or its
+canonical mutators. Each gets the same explicit read-only bundle, one role/focus,
+a unique runtime output directory and permission limits. No product edits,
+integrations, installs or external writes. In isolated synthetic evaluations,
+explicitly skip global personal-context refresh and unrelated repository context;
+read only scoped evidence and applicable sample instructions. Preserve actual
+prompts, returned IDs/reports and observable dispatch provenance. A tool name or
+worker's claim alone does not prove it read the bundle; require real input-derived
+findings/evidence and report limits of observable isolation.
+
+The 2026-11-05 CLI probe observed `collaboration.spawn_agent` with
+`fork_turns: "none"`, two distinct fresh worker IDs and actual read-only shell
+reads of an unsupplied file. Discover current tool schemas; use fresh contexts
+rather than inherited parent turns. Ambient system/repository instructions may
+still apply. Send only the bounded role packet and explicitly permit needed
+read-only file/check commands; prohibit nested model CLI substitutes. Wait for
+actual returned reports before dispatching adjudication. Native tools may not
+appear fully in CLI JSON output, so preserve returned reports/identities and
+available raw dispatch evidence without claiming hidden-context inspection.
+[Official subagent guidance](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+is capability documentation; the probe establishes only its observed file-read
+and independent-dispatch behavior, not factory review correctness.

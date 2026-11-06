@@ -1,6 +1,6 @@
 ---
 name: factory-implement
-description: Implement an explicitly authorized saved factory item in one dedicated code worktree, follow its investigation/plan/design and repository checks, and return durable diff and execution evidence to factory-run. Save concrete authorization waits or environment blocks; no push, PR or independent review.
+description: Implement an explicitly authorized saved factory item in one dedicated code worktree, follow its investigation/plan/design and repository checks, and return durable diff and execution evidence to factory-run. Save concrete authorization waits or environment blocks; bounded review fix batches; no push, PR or independent review verdict.
 ---
 
 # Factory implement
@@ -87,9 +87,35 @@ Git state, and rechecks destination permissions. Unknown/live prior ownership
 blocks takeover. Reuse the same branch/worktree; append an ownership handoff
 report and save the new observed worker reference before further edits. Never
 replace missing resources silently. If a saved implementation already awaits
-review, read/report it without taking branch write ownership, repeating code work
-or consuming another step. Canonical runtime and evidence stay outside disposable
-code worktrees and installed plugin source.
+review without a new accepted fix batch, read/report it without taking branch
+write ownership, repeating code work or consuming another step. Canonical runtime
+and evidence stay outside disposable code worktrees and installed plugin source.
+
+## Accepted review fix batch
+
+For a correction, read the saved pending batch and the
+[shared review/fix rules](../factory-review/references/review.md). Review findings
+supply scope, never authorization. Reuse applicable explicit local edit permission
+only within its bounds, the same dedicated worktree and verified ownership; save
+a deliberate new-worker handoff before mutation when needed. Preserve earlier
+review/implementation evidence. Do not repeat initial resource preparation or
+upstream roles when their saved evidence is still valid.
+
+For an explicitly selected focused synthetic review fixture, use its readable
+evaluator manifest/raw requirements as the declared handoff while retaining the
+absence of upstream role history. Do not fabricate prerequisite role reports.
+
+One pending batch has one stable attempt ID and proposed ordinal at most two.
+The orchestrator saves it before code changes without incrementing the completed
+fix count. Resume that same attempt after interruption; never dispatch another
+batch while it is pending. Return exact before/after content, changes per accepted
+finding, commands/results and remaining issues in a new immutable fix report. A
+changed implementation returned for verification consumes one round, including a
+return with failed checks. The orchestrator increments exactly once with the result
+save; the worker never updates counters/state. No-code attempts do not count and
+remain unresolved. At two completed rounds, return remaining issues/attempted fixes
+for human help; no third correction. Clear any stale reviewed-commit claim in the
+recommended item update and require independent review of affected new content.
 
 ## Implementation and evidence
 
@@ -132,10 +158,10 @@ orchestrator and reconcile interrupted saves before repeating work. A completed
 unsaved report is reusable only after verifying inputs, authorization, current
 history and unchanged result bytes.
 
-Successful implementation and required checks return `review` / `blocked` /
-`factory-review`, pointing to the self-contained report and exact evidence. That
-role is absent: implementation is ready for independent review, not approved or
-shipped. An environment/capability failure stays `implement` / `blocked` /
+Successful implementation and required checks return `review` / `ready` /
+`factory-review`, pointing to the self-contained report and exact evidence. The
+independent role is available; implementation evidence alone is not its verdict.
+An environment/capability failure stays `implement` / `blocked` /
 `factory-implement` with its precise missing prerequisite and retained evidence.
 Preserve source captures/cursors, prior artifacts, fix counts, approvals,
 pending actions and history. Stop/release at the saved handoff or actual block;

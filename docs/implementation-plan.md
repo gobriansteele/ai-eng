@@ -221,6 +221,15 @@ Investigation may use temporary probes and reproduction tests in an isolated che
 
 Proposed first experiment: two reviewers with complementary concerns, then one adjudicator. For genuinely disputed findings, try the small voting panel discussed with Brian. Agree on its size during this phase; do not pay for a second full team on every clean review. A reproducible serious defect must not disappear solely because it lost a majority vote.
 
+Approved experiment addendum (2026-11-05): Brian selected three fresh independent
+panelists for unresolved disputes only. The two initial reviewers and separate
+adjudicator are actual independent fresh agents, not orchestrator personas. Keep
+raw reports and exact target fingerprints durable, with the orchestrator as sole
+canonical state writer. Dirty accepted implementations retain base/HEAD plus full
+diff/file hashes and leave reviewed_commit unset. A narrowly explicit focused
+synthetic review fixture may import raw evaluation inputs at review with absent
+upstream history clearly labeled; it must not fabricate role completion/verdicts.
+
 Use one shared allowance of two fix rounds for the item, including later PR follow-up. A round means an engineer receives a batch of accepted findings, changes the implementation, and returns it for verification. The initial implementation and initial review do not consume a fix round. Changing the commit invalidates verdicts for affected code; record which revision was reviewed.
 
 **Run:** Review a sample with a seeded defect, an unsupported finding, and a disputed finding. Apply a correction and review again. Separately exercise the exhausted-round case.

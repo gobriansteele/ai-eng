@@ -289,12 +289,57 @@ of implemented code. Validate actual result bytes against evidence before save;
 keep that evidence outside disposable code checkouts for fresh review. Local
 commit is optional and requires explicit authorization; never push/open a PR.
 
-Successful code and prescribed checks save `review` / `blocked` / `factory-review`
-with the report and exact result evidence. Review is absent, so an unchanged
-resume consumes zero steps, reuses resources/evidence and performs no code work.
+Successful code and prescribed checks save `review` / `ready` / `factory-review`
+with the report and exact result evidence. Resume older missing-reviewer blocks
+through the now-available role, reusing resources/evidence without repeating code
+work.
 `reviewed_commit` stays unset; initial implementation consumes no fix round.
 Preserve sources/cursors, ledgers, counters and history. Required missing/failed
 checks keep the item at implement/blocked, retaining any code and partial evidence.
 Reconcile unsaved completed reports from current history and exact result bytes
 rather than repeating implementation. Finish releases the canonical owner at the
 actual wait/block; no cleanup or later external action is implied.
+
+
+## Independent review and fixes
+
+Read `factory-review` and its [review/fix contract](../../factory-review/references/review.md).
+Review uses existing artifact paths, code refs, counters and ordinary owner-gated
+save; no schema, command or role-owned state API is added. Only the invocation
+orchestrator writes state. Save immutable raw worker reports, prompts, target
+fingerprint, evidence, adjudication/dispositions and any panel responses under
+unique review attempt paths. Directly changing canonical JSON to simulate a
+verdict, review role, pending fix or exhausted counter is forbidden.
+
+Two actual fresh independent reviewers precede a separate fresh adjudicator.
+Three further independent fresh panelists consider only unresolved disputes.
+Check host dispatch capabilities; no orchestrator persona simulation. No worker
+starts another factory invocation. A reproducible serious defect cannot be dismissed
+solely by votes. Missing raw reports/evidence are an incomplete review. Recheck
+full base/HEAD plus diff/file hashes before accepting a verdict; a dirty HEAD is
+not an exact result identity. Content changes invalidate affected verdicts. Dirty
+accepted code keeps reviewed_commit unset; clean exact reviewed commits may set it.
+
+Save one pending accepted batch before engineering changes with unchanged completed
+fix_rounds and a stable proposed ordinal/attempt ID. No second pending batch or
+ordinal over two. Reconcile pending evidence/history first on every resume. Increment
+exactly once with the owner-gated changed-code return-for-verification save, even
+when required checks fail; preserve the same attempt through interruptions. Initial
+implementation/review and no-code attempts consume none. Internal and future PR
+fixes share this count. Corrected successful checks return review/ready; failed
+checks remain implement/blocked. After two unsuccessful rounds, save a concrete
+human escalation with issues/attempts instead of a third fix or PR. Partial code
+and evidence remain preserved. A pass saves follow_pr/blocked/factory-follow-pr;
+that role is absent. Unchanged handoff/wait reuse consumes zero semantic steps.
+
+For explicitly requested focused synthetic review evaluations only, existing
+begin --fixture can import a review-stage item with synthetic:review-evaluation:
+source identity and readable input manifest in artifact_paths. The manifest labels
+controlled raw requirements, actual checkout/base/HEAD/diff/file hashes, observed
+command outputs, direct evaluation scope and missing upstream role history. Neither
+it nor the fixture can claim model-completed implementation/review or grant actual
+permission. A reviewer-only exhausted scenario may import fix_rounds=2, clearly
+labeled as scenario metadata with unavailable prior history, never invented fix
+reports. Honor the imported stage and offline saved resumes rather than running
+legacy source routing. Ordinary production sources and legacy Phase 3 fixtures
+keep their existing contracts; this creates no generic missing-evidence bypass.

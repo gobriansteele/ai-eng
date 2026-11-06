@@ -182,3 +182,28 @@ mutation. After the old CLI finishes, a fresh Codex or Claude session can read
 those durable paths and exact diff/content/check evidence. Further edits require
 a verified deliberate owner handoff saved before mutation; explaining a completed
 review-stage result does not require new branch ownership or new resources.
+
+
+## Independent review workers
+
+Keep the factory CLI as the single invocation owner. Dispatch review roles through
+actual available native worker tools; role workers never run factory-run or its
+canonical mutators. Each gets the same explicit read-only bundle, one role/focus,
+a unique runtime output directory and permission limits. No product edits,
+integrations, installs or external writes. In isolated synthetic evaluations,
+explicitly skip global personal-context refresh and unrelated repository context;
+read only scoped evidence and applicable sample instructions. Preserve actual
+prompts, returned IDs/reports and observable dispatch provenance. A tool name or
+worker's claim alone does not prove it read the bundle; require real input-derived
+findings/evidence and report limits of observable isolation.
+
+The 2026-11-05 CLI probe observed native `Agent` with
+`subagent_type: "general-purpose"`, two distinct fresh agent IDs and real `Read`
+calls on an unsupplied file. Discover the current schema and omit any context-fork
+option; provide the explicit packet rather than a prior transcript. Normal CLI
+test permissions must include `Agent` alongside required local read/check tools;
+missing permission is a capability block, not grounds to bypass checks or change
+settings. `--forward-subagent-text` was supported by the tested CLI and surfaced
+child evidence in stream output; preserve that when available. Native
+[Claude subagents](https://code.claude.com/docs/en/sub-agents) provide separate
+contexts. The probe establishes actual dispatch/file reads, not review quality.

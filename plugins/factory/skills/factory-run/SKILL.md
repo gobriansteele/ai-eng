@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements explicitly authorized local changes in dedicated worktrees and resumes human questions; stops truthfully at unavailable later roles.
+description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements authorized local changes, independently reviews exact content, adjudicates findings and applies at most two shared fix rounds; stops truthfully at unavailable later roles.
 ---
 
 # Factory run
@@ -240,12 +240,70 @@ separately explicit local-commit authorization lives in immutable report context
 the external-action ledger is unchanged. Initial implementation consumes no fix
 round. Leave `reviewed_commit` unset: code has not been independently reviewed.
 
-Successful implementation/checks save `review` / `blocked` / `factory-review`,
+Successful implementation/checks save `review` / `ready` / `factory-review`,
 pointing to the self-contained report, actual branch/worktree and exact diff/HEAD
-plus dirty-content evidence or authorized commit. Independent review is absent;
-no push/PR or external action follows. Fresh resumes reuse the saved implementation
-without another code change, worktree, branch or semantic step while that role is
-still absent. Finish and release at the actual wait/block.
+plus dirty-content evidence or authorized commit. Independent review is available;
+reuse the saved implementation and resume older missing-reviewer blocks when a
+step remains. Do not repeat code work or claim a verdict from checks alone.
+
+At review, read the loaded [review contract](../factory-review/SKILL.md) and its
+linked reference before deciding any outcome, including capability blocks. Invoke
+`factory-review` with the full preserved item, sources/requirements, plan/design,
+repository instructions, implementation/preparation/authorization, exact result
+and command evidence, prior review/fix attempts, config/runtime and mode. The
+orchestrator retains the only invocation owner/token. Dispatch two actual fresh
+independent reviewers, a separate fresh adjudicator, and only for unresolved
+disputes three fresh independent panelists. Host guidance maps available native
+workers; missing dispatch is review/blocked, never simulated role completion.
+Keep reviewer findings isolated until both return. Validate readable raw worker
+reports, identity/focus, exact reviewed fingerprint and evidence before accepting
+adjudication. Recheck actual code content after review. Changed bytes invalidate
+affected verdicts even with unchanged HEAD; preserve the old evidence and review
+the new result instead of accepting stale approval.
+
+Append immutable review artifacts under unique `review-<attempt-id>` keys, with
+stable decision JSON/operation IDs beside them; reconcile partial/uncertain saves
+before reuse. Accepted findings become one pending fix batch with exact target,
+IDs, scope, checks and proposed ordinal. Save implement/ready/factory-implement
+with that readable batch before edits, retaining the current fix count until
+changed code returns for verification. Authorization/ownership still follow the
+implementation contract. Do not create another batch while one is pending.
+On changed-code return, verify its before/after evidence and complete that same
+batch with exactly one increment in the same owner-gated result save. Failed
+required checks count too and close that batch at implement/blocked. On a later
+authorized resume below two, save a new batch from the concrete remaining accepted
+findings/check failures before another edit; a completed batch cannot authorize
+further changes. Interrupted partial edits
+resume the same pending batch; unchanged/no-code attempts consume no round and
+cannot pass. Initial implementation/review consume zero. Internal review and
+future PR follow-up share the same two total rounds; never reset it. Re-review
+corrected code with fresh independent workers under the review contract.
+
+After two unsuccessful rounds, save a readable escalation report and the actual
+review/implement waiting_for_human with remaining supported issues, both attempts,
+current exact content and a concrete question for Brian. Imported exhausted
+scenario metadata must be labeled; never invent missing prior attempts. Do not
+start a third fix or create a PR. A disputed human question retains review /
+waiting_for_human / factory-review; a dispatch/evidence gap retains review /
+blocked / factory-review. Unchanged real waits consume zero steps and role
+availability alone does not resolve them.
+
+A pass needs the complete disposition audit and exact current fingerprint in a
+readable final report. Only a clean exact reviewed commit can populate
+`code.reviewed_commit`; for dirty accepted code keep it unset and use full
+base/HEAD, diff and file/hash evidence. Save follow_pr/blocked/factory-follow-pr
+with the report and precise missing-role next action. Follow-up is unavailable:
+finish/release with no push, PR or other external action. A fresh read-only resume
+reuses this handoff without another review or code ownership transfer.
+
+A focused review evaluation may explicitly import a synthetic stage fixture with
+`begin --fixture`: its `synthetic:review-evaluation:` source identity, readable
+`artifact_paths` input manifest and direct request must clearly identify controlled
+raw requirements, checkout/content and observed checks, not completed model roles
+or review verdicts. Honor that review-stage entry and its saved offline resumes;
+keep imported provenance/absent upstream history visible. This exception grants
+no production source bypass or edit permission. Never infer a focused-stage request
+from a legacy fixture or manufacture upstream decisions.
 
 Legacy Phase 3 fixtures contain no original message body or duplicate/ownership
 observations. Router availability does not create that evidence. Preserve the
@@ -269,9 +327,10 @@ limit. Otherwise reread saved state and choose another available step within the
 remaining bound. A completed route can proceed to investigation within that
 bound; completed investigation can proceed to planning and actionable planning to
 design, then authorized implementation within the remaining bound. Completed
-implementation stops at the absent reviewer. Respect genuine waits, no-action
-and invocation bounds. An old investigator, planner, designer or implementer
-missing-role block alone must not stop a now-available role. Explicit offline/synthetic resume stays
+implementation can proceed to independent review and bounded fixes, then stops
+at absent PR follow-up. Respect genuine waits, no-action and invocation bounds.
+An old investigator, planner, designer, implementer or reviewer missing-role block
+alone must not stop a now-available role. Explicit offline/synthetic resume stays
 offline; never invoke live watch merely because no new fixture is supplied. Call `finish` with the observed stop reason;
 on an error, preserve
 the saved transition and attempt a truthful `stopped` finish if ownership remains

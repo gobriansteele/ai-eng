@@ -3,7 +3,7 @@
 `factory` is a local plugin for Codex and Claude Code. The current source provides
 `factory-setup`, `factory-status`, `factory-run`, `factory-watch`,
 `factory-route`, `factory-investigate`, `factory-plan`, `factory-design` and
-`factory-implement`, backed by shared typed helpers. The orchestrator collects bounded read-only Slack
+`factory-implement` and `factory-review`, backed by shared typed helpers. The orchestrator collects bounded read-only Slack
 intake, saves and routes source threads, and resumes legacy work.
 It investigates scoped bug/feature reports with durable local evidence and no
 product changes. Product planning saves actionable behavior/checks or a decisive
@@ -11,7 +11,9 @@ human question. Technical design records justified skips for small clear changes
 resolves consequential architectural questions and produces an implementation
 handoff. Explicitly authorized local implementation uses one dedicated code
 worktree and saves exact diff/content and verification evidence. Independent
-review and later roles are not implemented.
+review uses two fresh complementary reviewers, a fresh adjudicator and three
+fresh panelists only for unresolved disputes. Accepted corrections share two total
+fix rounds with future PR follow-up. PR follow-up and later roles are not implemented.
 
 Setup asks for one factory home (suggested: `~/factories/<factory-id>`) and derives
 `<home>/config.yaml` and `<home>/runtime/` with `runtime_path: ./runtime`. It shows
@@ -94,7 +96,11 @@ It requires applicable explicit selected-item local implementation authorization
 saves authorization/resource ownership before code edits and follows repository
 checks in a dedicated worktree. Missing authorization saves a concrete human
 request; missing environment/tool capability saves a precise block. Code and
-prescribed successful checks hand off to the absent independent reviewer.
+prescribed successful checks hand off to independent review. Supported findings
+are adjudicated into one saved pending fix batch. One changed-code return for
+verification consumes one shared round, including failed checks; interruptions
+resume the same attempt. Exact content is reviewed again after changes. Two
+unsuccessful rounds ask Brian for help. A pass stops at unavailable PR follow-up.
 No push, PR or other external write follows.
 
 For offline demonstrations select `--source <path>` under `fixtures/sources/`,
@@ -124,8 +130,8 @@ selected item's sole pending question); no helper answer flag or new fixture is
 needed. New plan/design artifacts save the exact answer/provenance and retain the
 earlier question. Product or architectural answers grant no implementation or
 external-action permission. Completed design is reused on fresh resume, including
-older missing-implementer blocks. An unchanged authorization wait or still-missing reviewer consumes no
-semantic step. Explicit offline resume must remain offline.
+older missing-implementer blocks. An unchanged authorization wait or missing PR-follow-up handoff consumes no
+semantic step. Older missing-reviewer blocks resume the available reviewer. Explicit offline resume must remain offline.
 
 For investigation evaluation, copy the tiny deliberately broken local sample
 outside plugin source into a disposable Git checkout. Use the raw reports under
@@ -140,7 +146,11 @@ setup, human-answer resume and preservation checks. Implementation acceptance
 reuses the accepted bug homes and actual saved handoffs; see reviewer-only
 [implementer evaluation](docs/implementer-evaluation.md) for authorization waits,
 worktree preparation, before/after checks and cross-host preservation. Do not
-give reviewer oracles to workers.
+give reviewer oracles to workers. Independent review acceptance uses separate
+controlled stage fixtures and the reviewer-only [reviewer evaluation](docs/reviewer-evaluation.md).
+Imported raw requirements/content and scenario bounds are explicitly synthetic;
+upstream role completion and review verdicts are never fabricated. Legacy Phase 3
+fixtures retain their missing-source wait behavior.
 
 Local edit authorization is saved with exact direct-user provenance in immutable
 implementation reports; product/design answers alone do not grant it. Local
@@ -151,7 +161,10 @@ creation/adoption and lifecycle through the current harness guide. After an
 interruption or deliberate owner handoff, reconcile the same checkout, branch
 and result bytes instead of creating replacements. Final evidence lives outside
 the disposable code checkout, including the full diff and changed file bytes and
-hashes when HEAD is dirty. `reviewed_commit` stays unset until independent review.
+hashes when HEAD is dirty. `reviewed_commit` stays unset for dirty code even after
+independent review; the accepted artifact identifies full base/HEAD plus exact
+diff/file hashes. Only
+a clean exact reviewed commit may populate that field.
 Initial implementation consumes no fix round; approvals and external-action
 ledgers remain unchanged.
 

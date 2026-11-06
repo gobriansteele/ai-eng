@@ -1,6 +1,6 @@
 {
   "name": "factory",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Configure, inspect, and resume a local software factory.",
   "skills": "./skills/",
   "interface": {

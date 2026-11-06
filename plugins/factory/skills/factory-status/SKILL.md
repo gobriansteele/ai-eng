@@ -24,8 +24,11 @@ questions and direct-answer resume. Technical design through factory-design is
 available, including justified small-change skips, durable architectural questions
 and self-contained implementation handoffs. Local implementation through
 factory-implement is available with explicit selected-item authorization, one
-dedicated code worktree, saved ownership and durable diff/check evidence. Review,
-PR follow-up and later work roles, and scheduling are not implemented. With an
+dedicated code worktree, saved ownership and durable diff/check evidence.
+Independent review through factory-review uses two fresh complementary reviewers,
+a fresh adjudicator and three fresh panelists only for unresolved disputes, with
+exact content evidence and two shared fix rounds. PR follow-up, later work roles
+and scheduling are not implemented. With an
 established config, optionally use
 `factory_work.py inspect` read-only to report the selected active item stage/status/next
 action and pending item IDs and snapshot path; never acquire an invocation or change work for status.
