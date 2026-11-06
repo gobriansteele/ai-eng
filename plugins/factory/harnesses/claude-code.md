@@ -1,62 +1,12 @@
-# Claude Code
+# Claude Code harness reference
 
-Verified with Claude Code `2.1.310`. From the local checkout:
-
-```sh
-claude plugin marketplace add "$PWD" --scope local --json
-claude plugin install factory@ai-eng-local --scope user --json
-claude plugin list --json
-claude
-```
-
-The marketplace declaration remains in this project's ignored local settings.
-In a fresh session:
-
-```text
-/factory:factory-setup Set up a factory using my Slack MCP connection. Let me choose a factory home and the channels. Show the resolved config.yaml and runtime/ paths before writing.
-```
-
-To inspect it later:
-
-```text
-/factory:factory-status Use configuration <factory-home>/config.yaml. Show the loaded version and setup readiness.
-```
-
-For this local marketplace, the installed plugin reports `readFromFolder` pointing
-to the checkout's `plugins/factory` directory. It also records a versioned cache.
-Fresh installed sessions read that source folder; the acceptance runs did not use
-`--plugin-dir`.
-
-Change both host manifests and the helper project version together, refresh the
-lockfile, then run:
-
-```sh
-claude plugin marketplace update ai-eng-local
-claude plugin update factory@ai-eng-local --scope user --json
-claude plugin list --json
-claude
-```
-
-Verify the version and loaded root in a fresh session. Updates were exercised
-through `0.2.3`; do not edit installed caches manually. For separate source-only
-development, `claude --plugin-dir ./plugins/factory` and `/reload-plugins` are
-supported, but should not mask an installed-plugin test.
-
-Setup checks this harness's actual connections and permissions. The tested
-GitHub MCP connection was unavailable; the existing authenticated `gh` CLI
-provided read-only repository checks. No replacement integration was installed.
-For noninteractive tests, read tools and local helper execution must be permitted
-explicitly. Missing permissions must produce unverified capability evidence,
-not an inferred success or an automatic permission change.
-
-See [phase results](../../../docs/phase-results.md) for observations and limits.
-References: installed CLI help,
-[plugin creation](https://code.claude.com/docs/en/plugins/create), and
-[local marketplaces](https://code.claude.com/docs/en/plugins/create-marketplace).
+This document contains host-specific instructions for agents running Factory.
+For installation, updates and troubleshooting, see the
+[Claude Code user guide](https://github.com/gobriansteele/ai-eng/blob/main/docs/claude-code.md).
 
 ## Run and resume
 
-In the Phase 11 evaluation launcher, native Read/Glob and literal Bash commands
+In restricted evaluation launchers, native Read/Glob and literal Bash commands
 beginning with uv or python3 were separately permitted; ls/cat were not. These
 are observed launcher-specific permissions, not defaults for Claude sessions.
 Use allowed Read/Glob for startup files, then the loaded package's prescribed
@@ -93,7 +43,7 @@ claude -p '/factory:factory-run Use configuration <factory-home>/config.yaml. Re
 ```
 
 Use the actual config path. Include a selected synthetic fixture only for a new
-Phase 3 test. Preserve the CLI's normal reviewed tool permissions; noninteractive
+synthetic test. Preserve the CLI's normal reviewed tool permissions; noninteractive
 permission denial must be reported rather than bypassed. If the current desktop
 cannot launch/authorize this foreground invocation, report the gap. Its CLI owns
 the entire bounded run; desktop service and transient shell PIDs do not. This is
@@ -230,7 +180,7 @@ contexts. The probe establishes actual dispatch/file reads, not review quality.
 Use the shared [follow-up contract](../skills/factory-follow-pr/references/follow-pr.md)
 for required capabilities, current permissions, coverage and external-action rules.
 
-The Phase 11 read-only fresh-session probe without GitHub MCP used the existing
+A read-only fresh-session probe without GitHub MCP used the existing
 authenticated `gh api --method GET` with pagination for branch/all-state PR
 listings. This is the demonstrated fallback when this host lacks a sufficient
 connector, not a connection inherited from Codex. Discover actual current access

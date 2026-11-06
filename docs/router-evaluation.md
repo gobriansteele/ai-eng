@@ -26,11 +26,11 @@ local ticket proposal and truthful stop. A root-only reader fails feature and
 three-item cases. Actual model behavior must be checked in fresh installed Codex
 and Claude sessions; scripted persistence outputs cannot establish semantic pass.
 
-Separately resume a real schema-1 synthetic snapshot from Phase 3 in the other
+Separately resume a preserved schema-1 synthetic snapshot from an actual earlier run in the other
 host. Preserve all history, counters, scopes/actions and cursor metadata. Its
 missing original message produces an honest request for saved source evidence.
 Inspect read-only before migration, test live/unknown owner exclusion and corrupt
-snapshot refusal. Never use the real Honor runtime for these demonstrations.
+snapshot refusal. Never use a production runtime for these demonstrations.
 
 
 Review the actual `required_role`, not only the prose: investigate and

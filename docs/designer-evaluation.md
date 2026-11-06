@@ -6,12 +6,14 @@ Static validation and prewritten design prose do not establish design behavior.
 Use separate homes per host/case, retain prompts/events/outputs and snapshots
 outside source, and stop every CLI before refreshing either package.
 
-## Small bug from accepted prior phases
+## Small bug with completed investigation and planning
 
-Reuse each host's accepted taskboard bug home with its actual investigation and
-product plan. Do not manufacture new findings, change its sample or add a source.
+Prepare each host's taskboard bug home through the
+[investigator](investigator-evaluation.md) and [planner](planner-evaluation.md)
+checks, with an actual saved investigation and product plan. Do not manufacture new findings, change its sample or add a source.
 Record initial snapshot, hashes of every prior artifact and sample Git HEAD/tree.
-The item should be at the old `design` / `blocked` / `factory-design` handoff.
+The item must have a design handoff without a completed design. A preserved
+missing-designer block from an actual earlier run also tests recovery.
 A fresh installed session uses this prompt, substituting actual paths. Claude
 spells the skill `/factory:factory-run`:
 
@@ -24,14 +26,14 @@ single-component selector bug with an established expected result needs no new
 architectural ceremony. The durable handoff must retain expected done/open/all
 behavior, actual sample/revision context, readable plan/investigation references
 and appropriate sample verification guidance. No unnecessary human choice or
-implementation. Save `implement` / `blocked` / `factory-implement` with a readable
+implementation. Save a handoff to `factory-implement` with a readable
 new `design-<attempt>` artifact explaining why separate design was skipped.
 One design decision is expected; old missing-designer availability alone must
 not cause an unchanged block or a repeat of earlier roles.
 
 ## Cross-system raw inputs and isolated setup
 
-The new sample is genuinely two components with a strict existing file interface,
+The bundled sample has two components with a strict existing file interface,
 separate release ownership and a stored owner field that is currently omitted.
 `fixtures/design/cross-system.json` contains only the synthetic product request.
 The copied sample's code, data, legacy feed and architecture notes describe its
@@ -43,7 +45,7 @@ only the sample into a disposable Git repository; all runtime remains outside it
 
 ```sh
 factory_plugin='<absolute-loaded-plugin>'
-factory_home=$(mktemp -d /private/tmp/factory-design.XXXXXX)
+factory_home=$(mktemp -d "${TMPDIR:-/tmp}/factory-design.XXXXXX")
 mkdir -p "$factory_home/repos"
 cp -R "$factory_plugin/fixtures/design/sample" "$factory_home/repos/owner-report"
 git -C "$factory_home/repos/owner-report" init -b sample-baseline
@@ -75,7 +77,7 @@ uv run --isolated --frozen --no-dev --project "$factory_plugin" python -c 'impor
 ```
 
 Pass the observed compatible Python executable/version to the worker as available
-context. Python 3.11+ is required; Claude's system default may be incompatible.
+context. Python 3.11+ is required; a host's system default may be incompatible.
 Do not install dependencies/runtimes, edit installed fixtures or claim partial
 live setup is ready. Record baseline HEAD/tree and initial hashes.
 
@@ -100,10 +102,10 @@ and prior artifacts. The important consequential question is how a separately
 released strict feed evolves while preserving old saved imports. The source
 explicitly leaves that shared interface choice unresolved; options may include
 compatible evolution of the existing contract or a separately identified new
-contract. A model recommendation is not Brian's decision. Save the real question,
+contract. A model recommendation is not the user's decision. Save the real question,
 stable ID, tradeoffs/evidence and `design` / `waiting_for_human` /
 `factory-design`, rather than silently choosing. The question must be concrete,
-not an open-ended demand that Brian design the system. One bounded choice should
+not an open-ended demand that the user design the system. One bounded choice should
 suffice for this small example; no invented service/dependency/security review.
 
 ## Wait, direct answer and technical handoff
@@ -143,8 +145,8 @@ new infrastructure is unnecessary for this sample.
 The implementation handoff must stand alone: intended behavior, component/revision
 scope, relevant repository instructions, technical choices/rationale, ordering,
 compatibility, checks, evidence gaps and readable input paths. A restatement of
-the product plan fails. Save `implement` / `blocked` / `factory-implement`, naming
-the absent role honestly. No owner field, parser, output, dependency, runtime
+the product plan fails. Save a handoff to `factory-implement`; a missing-role block is valid only
+when implementation is actually unavailable. No owner field, parser, output, dependency, runtime
 configuration or external service may actually be changed. Planning/design
 answers change no action/approval ledgers and consume no fix round.
 
@@ -159,9 +161,9 @@ invocation releases ownership. The sample revision/tree stays unchanged.
 
 After the original CLI stops, resume a completed design in the other host using
 only the same config and explicit offline mode, asking it to explain the saved
-handoff. It must reuse design/answer and remain at the missing implementer with
-zero new semantic steps, no repeat investigation/planning/design or human
-question, and a released owner. Exercise both directions where practical. Report
+handoff. It must reuse the design/answer without repeating completed roles or the human
+question. Request a read-only explanation to retain the handoff; unchanged
+genuine waits consume zero semantic steps. The invocation releases ownership. Exercise both directions where practical. Report
 an unexecuted cross-host or artifact-before-save interruption probe as untested.
 
 A focused designer run can use clearly labeled synthetic source/plan/context

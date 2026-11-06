@@ -27,8 +27,9 @@ After each capture, the semantic router owns item separation/disposition, using
 only synthetic saved evidence. Old context cannot create new work by itself.
 A later capture should attach to evidenced existing work and preserve execution
 state; additional unrouted captures can remain pending at a bounded stop. All
-investigation/verification handoffs name `factory-investigate`, which remains
-unimplemented. An active block must not prevent collecting another channel.
+investigation/verification handoffs name `factory-investigate`. A genuine
+missing-role block must name the unavailable role; available roles may continue
+within the requested bound. An active block must not prevent collecting another channel.
 
 Verify canonical state directly: one selected active item, immutable source
 receipts, no reset fix counts/scopes/actions, exact trigger IDs, independent

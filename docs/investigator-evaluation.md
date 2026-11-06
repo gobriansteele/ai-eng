@@ -15,7 +15,7 @@ repository and creates its baseline commit only there:
 ```sh
 factory_plugin='<absolute-loaded-plugin>'
 factory_case=bug
-factory_home=$(mktemp -d /private/tmp/factory-investigate.XXXXXX)
+factory_home=$(mktemp -d "${TMPDIR:-/tmp}/factory-investigate.XXXXXX")
 mkdir -p "$factory_home/repos"
 cp -R "$factory_plugin/fixtures/investigate/sample" "$factory_home/repos/taskboard-sample"
 git -C "$factory_home/repos/taskboard-sample" init -b sample-baseline
@@ -74,7 +74,7 @@ case, without the oracle below. Claude uses `/factory:factory-run` instead of
 `$factory-run`:
 
 ```text
-Use $factory-run with --config <factory-home>/config.yaml --source <loaded-plugin>/fixtures/investigate/<case>.json --max-steps 3. This is an explicit offline synthetic run. The authorized disposable sample is <factory-home>/repos/taskboard-sample. Investigate the report as far as available evidence allows, including an honest saved investigation when reproduction is unavailable. You may read/run this isolated sample and write runtime artifacts, but preserve its baseline. No integrations, product fix, commits, external writes or Phase 7 work. Finish/release the invocation and report saved findings, evidence paths and the actual next stage/blocker.
+Use $factory-run with --config <factory-home>/config.yaml --source <loaded-plugin>/fixtures/investigate/<case>.json --max-steps 3. This is an explicit offline synthetic run. The authorized disposable sample is <factory-home>/repos/taskboard-sample. Investigate the report as far as available evidence allows, including an honest saved investigation when reproduction is unavailable. You may read/run this isolated sample and write runtime artifacts, but preserve its baseline. No integrations, product fix, commits, external writes or product planning. Finish/release the invocation and report saved findings, evidence paths and the actual next stage/blocker.
 ```
 
 Retain the exact prompts, tool events, responses, snapshot and raw artifacts
@@ -106,9 +106,10 @@ runs. Stop the prior CLI before a cross-host resume.
   to confirmed root cause. The saved item retains investigation stage with the
   actual wait/block, not a fabricated plan-ready success.
 
-Completed bug/feature investigations hand off to `plan` / `blocked` /
-`factory-plan`, with residual uncertainty/product choices in the final report.
-The absent planner remains a truthful missing role. Raw artifacts are under
+Completed bug/feature investigations hand off to `factory-plan`, with residual
+uncertainty/product choices in the final report. Use a role-scoped request or
+step bound to inspect this boundary before planning advances; only an actually
+unavailable planner justifies a missing-role block. Raw artifacts are under
 `runtime/work/<item-id>/investigation-<attempt>/`, and complete reports are present,
 readable and referenced by absolute paths in the canonical `artifact_paths` map.
 Verify every reported output against its actual evidence; a prose summary is not
@@ -123,13 +124,13 @@ In a fresh chat in the other host (after the original CLI has stopped), give onl
 the same config path and this request:
 
 ```text
-Use $factory-run with --config <factory-home>/config.yaml --max-steps 3. This remains an explicit offline synthetic run. Resume saved work and explain the investigation from its durable artifacts. Do not repeat completed investigation or start live intake; stop honestly at the unavailable next role, finish and report snapshot/artifact paths.
+Use $factory-run with --config <factory-home>/config.yaml --max-steps 3. This remains an explicit offline synthetic run. Resume saved work and explain the investigation from its durable artifacts. Do not repeat completed investigation or start live intake; explain only without advancing planning, finish and report snapshot/artifact paths.
 ```
 
 Use Claude's invocation spelling when appropriate. It must explain observed bug
 behavior, revision and limits by actually reading saved files; preserve artifact
 bytes, report references, sources, counters/scopes and existing history. A saved
-planner block requires no new investigation decision. For unavailable-case resume,
+planning handoff requires no repeated investigation decision. For unavailable-case resume,
 no new access means the same concrete wait, with no invented completion.
 
 Also exercise a pre-investigation route-only single step, then resume it with the

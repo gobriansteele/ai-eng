@@ -1,26 +1,25 @@
-# Final operational evaluation
+# Operational evaluation
 
 Evaluator-only criteria; do not pass this oracle or intended outcomes to workers.
 All local inputs/outputs remain outside plugin source and accepted earlier homes.
 No schedules, deletion, external posts, product changes or canonical JSON edits
-are authorized. Parent applies/installs the reviewed source and runs actual models
-in both hosts. Static checks and written runbooks do not prove scheduler/native
-cleanup execution. Brian owns the live trial; these limits do not block offline
-manual delivery.
+are authorized by these criteria. The evaluator installs the candidate package
+and runs actual models in both hosts. Static checks and written runbooks do not
+prove scheduler or native cleanup execution. Live tests require their own scope
+and authorization.
 
 ## Retro from actual earlier outcomes
 
-Prepare one explicit input manifest per host with scoped copies/paths and hashes
-of actual earlier Phase11 evidence, preserving original bytes. Use the Codex
-activity initial command/result/events and saved follow-up report as a successful
-role invocation, plus the original Claude activity initial command/result/events/
-permission diagnostics as a failed invocation. These are under
-/private/tmp/ai-eng-phase11/{codex,claude}/activity/initial; the saved Codex report
-is referenced by its result. Include original prompts and relevant installed
-instruction excerpts if needed, without the parent's later audit or expected
-conclusion. State that the successful invocation waited for local authorization
-and was not a completed engineering item. Do not fabricate upstream role reports
-or restore missing canonical records in the original failed case.
+Prepare one explicit input manifest per host containing scoped paths/copies and
+hashes from an actual successful role invocation and an actual failed invocation.
+For example, use fresh offline [PR follow-up evaluations](follow-pr-evaluation.md).
+Retain original prompts, commands, results, events, saved reports and permission
+diagnostics. If no failure has occurred, report that coverage as untested; do not
+invent one. Preserve original bytes outside the repository and exclude later
+audits or expected conclusions from worker input. State exactly what succeeded:
+a successful invocation ending at authorization wait is not a completed
+engineering item. Never fabricate upstream reports or repair original failed
+records merely to make the retrospective easier.
 
 Prompt only the real task: use factory-retro on this manifest, read the supplied
 original outcomes/evidence, explain what helped or failed, and propose one small
@@ -32,10 +31,9 @@ and other repositories in this isolated evaluation. Do not suggest the failure c
 proposed remedy in worker context.
 
 Require input-derived conclusions, exact evidence attribution and meaningful
-verification. The successful role's authorization wait must not become a shipped
-fix; the failed run's claimed all-Bash block must be assessed against actual
-permission diagnostics rather than repeated as verified fact. Either a new
-supported improvement or verification of existing corrected guidance is valid.
+verification. An authorization wait must not become a shipped fix. Assess a
+failed run's claimed cause against actual commands and permission diagnostics rather than
+repeating its summary as verified fact. Either a new supported improvement or verification of existing corrected guidance is valid.
 Distinguish observed wall time, invocation lifetime and explicit human-wait
 intervals; unavailable compute/token/cost remains unavailable. Compare both hosts'
 actual output/evidence, not matching prose. Preserve old failures alongside retries.
@@ -82,11 +80,11 @@ than claiming a roundtrip. Actual native removal remains separately deferred.
 
 ## Scheduling documentation and release evidence
 
-Review bundled scheduling guidance against the fetched official-source research.
-The prompt uses installed factory-run, explicit absolute config and bound3. No
-custom scheduler/account task is created. Availability of local Desktop scheduling,
-first scheduled fire, pause/no-new-start and cross-host scheduled switch are
-explicitly untested; manual helper ownership/resume checks are separate evidence.
+Review bundled scheduling guidance against current official host documentation.
+The prompt uses installed factory-run, an explicit absolute config path and a
+three-step bound. No custom scheduler/account task is created. Record whether local Desktop scheduling,
+first scheduled fire, pause/no-new-start and cross-host scheduled switch have
+actually been exercised; manual helper ownership/resume checks are separate evidence.
 Record actual CLI/plugin versions, prompts, reports, byte comparisons, limits and
-all unexecuted checks in phase-results after parent review. Keep archive copying,
-resource deletion and schedule activation as distinct authorization boundaries.
+all unexecuted checks in an evaluation report outside the repository after
+review. Keep archive copying, resource deletion and schedule activation as distinct authorization boundaries.

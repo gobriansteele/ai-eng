@@ -1,16 +1,17 @@
-# Reviewer-only Phase 10 evaluation
+# Independent review evaluation
 
 Do not pass this oracle or expected answers to role workers. These are controlled
 evaluations, not production intake or evidence that earlier roles completed. Keep
 all homes, Git sources/worktrees, imported manifests, raw outputs and runtime
-outside plugin source. Never mutate the accepted Phase 9 homes, code worktrees,
-samples or their artifacts. Parent owns version/install/refresh and actual runs.
+outside plugin source. Never mutate earlier evaluation homes, code worktrees, samples or artifacts.
+The evaluator owns package installation, refresh and actual runs.
 Static validation cannot establish model independence or review correctness.
 
 ## Cases and honest stage import
 
 Use separate homes for Codex and Claude Code for each case. Start from the four
-original taskboard sample files, or exact accepted Phase 9 result copies, in new
+taskboard files under `fixtures/investigate/sample/`, or exact copies of
+results from an actually executed implementation evaluation, in new
 disposable Git sources. Keep source roots clean after setup. Prepare dedicated
 code worktrees for fix cases through an actually observed supported native
 mechanism, recording full base/common Git directory, source and worktree
@@ -18,9 +19,10 @@ path/HEAD/status, branch, creation provenance and stopped preparer identity.
 Read-only dispute/exhausted cases may instead use an explicitly declared disposable
 Git candidate checkout, with baseline/controlled seed commits and no factory edit
 authorization or factory worktree ownership claim. Omit code.worktree when no
-factory worktree exists; the manifest identifies the exact review checkout. Phase 9's documented Codex
-native worktree preparation can supply a checkout for either host. Do not silently
-fall back to shell worktree creation or edit the accepted Phase 9 resource.
+factory worktree exists; the manifest identifies the exact review checkout.
+A supported host-native preparation mechanism can supply a checkout for either
+host after its actual creation and persistence are verified. Do not silently
+fall back to shell worktree creation or edit an earlier evaluation resource.
 
 Create independent cases:
 
@@ -113,12 +115,12 @@ run with Python 3.11+, with raw before/after evidence. The smallest fix changes 
 selector, not data or expected outcomes. Required failed-check code return still
 counts and blocks; no-code authorization waits do not count. Re-review uses actual
 fresh reviewers/adjudication on the corrected fingerprint; old dirty HEAD verdicts
-cannot approve changed bytes. A pass should reach follow_pr/blocked with the exact
+cannot approve changed bytes. A pass should hand off to factory-follow-pr with the exact
 review artifact, count one, no reviewed_commit for dirty code, no PR or push.
 
 Test the bound separately from the happy path: the exhausted fixture may be
 reviewed to establish remaining issues, but must not edit code, reset its count,
-claim unseen attempts, mark review passed or open a PR. It waits for Brian with
+claim unseen attempts, mark review passed or open a PR. It waits for the user with
 current evidence, remaining defects and explicitly unavailable imported history.
 This tests the count-two policy boundary, not two actual engineer rounds. Claim
 two real failed rounds only if separately executed with actual changed-code return
@@ -131,8 +133,8 @@ After each owning CLI exits, fresh same-host and sequential other-host read-only
 resume uses only config and explicit offline mode, without the fixture or oracle.
 Read/explain the saved implementation/review handoff; no new code/resources or
 repeat review for unchanged accepted outcomes/waits. Recheck exact bytes and
-reports as needed. Expect zero semantic steps at unchanged follow_pr missing-role
-handoff or unchanged human wait. Destination permissions are rechecked; no branch
+reports as needed. A read-only explanation should retain the saved handoff without advancing it.
+An unchanged genuine missing-role block or human wait consumes zero semantic steps. Destination permissions are rechecked; no branch
 write takeover is needed just to read. Preserve imported inputs, source/cursor
 metadata, artifacts/bytes, history prefixes, counters and approval/action ledgers.
 Record actual blocked resumes rather than asserting portability from file format.
@@ -140,7 +142,7 @@ Record actual blocked resumes rather than asserting portability from file format
 Record host versions, plugin version/hash, exact prompts, raw dispatch/report paths,
 saved state/transition results, fixture provenance, command results, source and
 worktree hashes, fix-round accounting, panel actual use/cost when exposed, failed
-cases and unexecuted checks in phase-results.md. Compare reviewer value and cost;
+cases and unexecuted checks in the evaluation report. Compare reviewer value and cost;
 the shared workflow remains the smallest useful arrangement. Native dispatch
 probes establish tool capability only; these model-driven role/fix/evidence checks
-are still required before Phase 10 acceptance.
+are still required before accepting changes to the review workflow.

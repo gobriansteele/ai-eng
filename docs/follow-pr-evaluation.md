@@ -1,17 +1,17 @@
-# Phase 11 follow-up evaluation
+# PR follow-up evaluation
 
 Evaluator-only guide. Do not give this oracle or expected dispositions to role
 workers. Raw fixtures under plugins/factory/fixtures/follow-pr are deliberately
 synthetic saved observations, not actual GitHub reads, executed CI, model findings,
 passed factory review or user authorization. Keep homes, source/worktrees, raw
-outputs and runtime outside source. Parent owns packaging, actual host execution,
-live proposal/approval and acceptance. Static checks alone do not complete Phase11.
+outputs and runtime outside source. The evaluator owns packaging, actual host execution and evidence review. Live
+actions require a concrete proposal and approval. Static checks alone do not
+establish PR follow-up behavior.
 
 ## Saved observation cases
 
 Use independent homes for Codex and Claude Code and disposable taskboard sources
-based on the investigator sample/raw review requirements. Preserve accepted earlier
-phase homes/artifacts. Prepare any dedicated code worktree through an actually
+based on the investigator sample/raw review requirements. Preserve earlier evaluation homes and artifacts. Prepare any dedicated code worktree through an actually
 available supported mechanism and record actual source/common Git directory,
 base/HEAD/tree/status/branch/ownership provenance. A read-only case may use a
 declared disposable checkout without claiming factory worktree ownership.
@@ -64,7 +64,7 @@ Cases, isolated per host:
 
 The focused follow-up import permits reading/classifying raw existing-PR evidence
 without claiming previous roles ran. It does not permit publishing a known-bad
-seed as reviewed. Missing-source behavior for legacy Phase3 fixtures and focused
+seed as reviewed. Missing-source behavior for legacy post-intake fixtures without source bodies and focused
 review import must still work unchanged.
 
 ## Actual role runs and correction
@@ -95,9 +95,8 @@ own. Record actual blockers and untested paths honestly.
 ## Specifically approved live trial
 
 Live testing needs its own concrete reviewed proposal and direct permission.
-The separate live-pr-trial.md records the proposed isolated target, branches,
-exact candidate/check/comment/fix, bounded actions and limits; a plan is not
-approval. Do not send synthetic snapshots to a live run as remote truth. Use
+Record the isolated target, branches, candidate patch, check, review comment,
+correction and action limits in that proposal. A proposal is not approval. Do not send synthetic snapshots to a live run as remote truth. Use
 actual fresh GitHub metadata, complete relevant pagination, checks/logs and exact
 review comment; retain actual returned IDs/URLs and current SHAs. A controlled
 existing PR may supply the follow-up starting point without claiming its seed
@@ -112,6 +111,6 @@ uncertain-action reconciliation or separately labeled synthetic coverage, and no
 merge/deploy. Write exposure/private reads alone are not live follow-up success.
 Record host/CLI/plugin versions and fingerprints, exact prompts, authorization,
 raw observations/dispatches/reports, state transitions/counts and blocked/skipped
-checks in phase-results. Keep test oracles outside role context and distinguish
+checks in the evaluation report. Keep test oracles outside role context and distinguish
 imported scenario metadata, actual local executions, actual model decisions and
 real remote operations throughout.

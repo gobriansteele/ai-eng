@@ -1,10 +1,10 @@
-# Phase 12 reporter evaluation
+# Reporter evaluation
 
 Evaluator-only oracle. Do not pass expected draft wording, dispositions or this
 guide to role workers. Raw report fixtures are synthetic observations/scenario
 metadata, not actual integration reads, model output, send permission or completed
-upstream roles. Parent owns packaging, actual both-host runs and acceptance. Live
-trial is deferred to Brian; it does not block offline/manual release. Do not post
+upstream roles. The evaluator owns packaging, actual both-host runs and evidence review. Live
+send testing requires a separately authorized trial. Do not post
 messages, create PRs, mutate product/runtime records directly, activate schedules
 or clean resources to perform these evaluations.
 
@@ -95,7 +95,7 @@ Preserve whole history prefixes, counters and destination-specific dispositions.
 
 Record actual commands/prompts, CLI/plugin versions/fingerprint, raw outputs,
 draft payloads/digests, canonical transitions/step counts, unchanged/cross-host
-comparisons, truthful missing capabilities and untested live sends in phase-results.
+comparisons, truthful missing capabilities and untested live sends in the evaluation report.
 No deterministic answer script or edited canonical JSON substitutes for actual
 model execution. Static helper/JSON/frontmatter checks prove structure only;
 this offline evidence does not establish live connector send/retry behavior.

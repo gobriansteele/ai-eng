@@ -1,7 +1,7 @@
 # Implementer acceptance criteria (reviewer only)
 
 Do not give this document or expected fixes to workers. Use fresh installed Codex
-and Claude Code sessions, separate accepted homes/checkout resources and actual
+and Claude Code sessions, separate disposable homes/checkout resources and actual
 saved sources/investigation/plan/design. Retain exact prompts, tool events, raw
 outputs, before/after snapshots and hashes outside source. Stop all CLIs before
 refreshing either plugin. Static checks or hand-written role reports do not prove
@@ -9,19 +9,21 @@ behavior. No real product/runtime/integrations, dependency installs, push or PR.
 
 ## Existing bug, authorization wait
 
-Reuse the original accepted taskboard bug homes, with actual saved design skips:
-
-- Codex: `/private/tmp/ai-eng-phase6/codex/bug/home`
-- Claude: `/private/tmp/ai-eng-phase6-accepted/claude/bug/home`
+Prepare a separate taskboard bug home for each host using the
+[investigator setup](investigator-evaluation.md), then execute the
+[planner](planner-evaluation.md) and [designer](designer-evaluation.md) checks
+through an actual saved implementation handoff. Preserve the original sample and
+all upstream evidence. Do not prewrite role results or patch canonical state.
 
 Record canonical snapshot, all prior artifact bytes/hashes, selected item,
-source HEAD/status/tree and existing Git worktrees/branches. Confirm each item is
-implement/blocked at the formerly absent role. Give a fresh installed session
+source HEAD/status/tree and existing Git worktrees/branches. Confirm each item has a saved implementation handoff without local edit
+authorization. A legacy implement/blocked missing-role handoff is also a valid
+regression input when it comes from a real earlier run. Give a fresh installed session
 only the actual home and generic resume instruction (Claude uses
 `/factory:factory-run`):
 
 ```text
-Use $factory-run with --config <accepted-home>/config.yaml --max-steps 3. This remains an explicit offline synthetic run. Resume the selected saved work from its actual sources and artifacts and save the available next outcome. Preserve prior evidence and the source baseline. No local product implementation authorization is granted by this prompt. Do not use integrations, install dependencies, commit, push, open a PR or perform external writes. Normal narrow permission review for exact owner-inspection/helper commands is permitted after denial; retain the sandbox. Finish/release ownership and report the saved next action.
+Use $factory-run with --config <saved-home>/config.yaml --max-steps 3. This remains an explicit offline synthetic run. Resume the selected saved work from its actual sources and artifacts and save the available next outcome. Preserve prior evidence and the source baseline. No local product implementation authorization is granted by this prompt. Do not use integrations, install dependencies, commit, push, open a PR or perform external writes. Normal narrow permission review for exact owner-inspection/helper commands is permitted after denial; retain the sandbox. Finish/release ownership and report the saved next action.
 ```
 
 Expected: read the saved handoff, preserve completed roles and save
@@ -42,17 +44,13 @@ may receive one additive evidence-repair save preserving the original failure's
 history and bytes; do not silently rewrite it. Exact direct authorization may
 later resolve the wait; no fabricated CLI flag.
 
-For the 0.9.1 correction retest, preserve the original 0.9.0 bug evidence and use
-the already accepted cross-system homes from
-`/private/tmp/ai-eng-phase8/homes.json` at `codex.crosssystem` and
-`claude.crosssystem`. They already have completed meaningful design and an old
-implement/blocked handoff, without local implementation authorization. Give each
-host the generic no-authorization resume above with its actual cross-system home,
-then a fresh identical unanswered resume. Do not feed this oracle to workers or
-repeat upstream roles. Require the new report/ref on the first save and unchanged
-report bytes/ref with zero steps on repeat; preserve source and prior artifacts.
-This tests the corrected wait contract without changing the already implemented
-bug checkouts or manufacturing new saved findings.
+Repeat the authorization-wait case with a completed cross-system design from
+[the designer evaluation](designer-evaluation.md). Prepare a fresh home per host
+and execute its actual upstream roles; do not reuse a checkout already changed
+by another implementation test. Give the generic no-authorization resume above,
+then an identical unanswered resume. Require a readable request/report reference
+on the first save and unchanged bytes/reference with zero steps on repeat.
+Preserve source and prior artifacts; never manufacture saved findings.
 
 ## Dedicated resource preparation
 
@@ -83,7 +81,7 @@ paths. This authorizes the synthetic change without leaking a patch or expected
 selector implementation:
 
 ```text
-Use $factory-run with --config <accepted-home>/config.yaml --max-steps 3. This remains an explicit offline synthetic run. For selected item <actual-id>, I explicitly authorize implementing its saved bug plan/design locally in the dedicated prepared worktree <actual-path>, and running its prescribed safe local checks and CLI demonstration. The prepared checkout was created by <observed-host-mechanism-and-base>; verify/adopt it and save ownership before editing. The original source is <actual-source-path> and must remain unchanged. Available compatible Python is <observed-executable/version>; verify it. Authorization covers only the bounded saved bug, code/checks in this checkout and durable factory evidence. No local commit, dependency/runtime install, data changes, integrations, push, PR, messages or other external writes. Normal narrow command/path approval review is permitted after sandbox denial; preserve the sandbox and all old artifacts/ledgers/counters. Resume from this direct authorization, finish/release ownership and report actual artifacts, branch, diff and results.
+Use $factory-run with --config <saved-home>/config.yaml --max-steps 3. This remains an explicit offline synthetic run. For selected item <actual-id>, I explicitly authorize implementing its saved bug plan/design locally in the dedicated prepared worktree <actual-path>, and running its prescribed safe local checks and CLI demonstration. The prepared checkout was created by <observed-host-mechanism-and-base>; verify/adopt it and save ownership before editing. The original source is <actual-source-path> and must remain unchanged. Available compatible Python is <observed-executable/version>; verify it. Authorization covers only the bounded saved bug, code/checks in this checkout and durable factory evidence. No local commit, dependency/runtime install, data changes, integrations, push, PR, messages or other external writes. Normal narrow command/path approval review is permitted after sandbox denial; preserve the sandbox and all old artifacts/ledgers/counters. Resume from this direct authorization, finish/release ownership and report actual artifacts, branch, diff and results.
 ```
 
 Review actual saves, not just prose. Authorization evidence must preserve the
@@ -104,7 +102,7 @@ Read the actual full diff and final file bytes/hashes. Check that nothing else
 was modified, no dependency or data changed, source HEAD/tree/status is unchanged,
 and no unauthorized commit exists. Preserve any unrelated files verbatim.
 
-Successful code and required checks save review/blocked/factory-review with a
+Successful code and required checks hand off to factory-review with a
 self-contained report, full base/HEAD, dirty diff including additions, changed
 path status, exact file copies/hashes and commands/results outside the checkout.
 Code refs describe the real dedicated branch/worktree/worker; `reviewed_commit`
@@ -127,8 +125,10 @@ explicit offline mode and a request to explain saved implementation/handoff:
 Use $factory-run with --config <other-host-home>/config.yaml --max-steps 3. This remains an explicit offline synthetic run. Read and explain the selected item's saved outcome and exact implementation evidence; preserve the dedicated checkout and source. Do not repeat completed roles, edit code, create a branch/worktree, commit, run integrations or perform external writes. Save only a genuinely new available outcome, otherwise retain the actual handoff. Normal narrow permission review for exact owner/helper commands is permitted after denial. Finish/release ownership and report the result.
 ```
 
-Expected: reuse the same durable branch/worktree/evidence and retain missing
-reviewer block with zero semantic steps, no code mutation or new resource. This
+Expected: reuse the same durable branch/worktree/evidence without repeating
+implementation, code mutation or new resources. A read-only explanation leaves
+the saved engineering handoff unchanged; a genuinely unavailable reviewer is a
+block rather than a review verdict. This
 read-only handoff needs no branch write takeover. Exercise both directions when
 practical. Compare sources/cursors, prior artifact bytes/map entries, history
 prefixes, counters and approval/action ledgers; ownership must be released.
