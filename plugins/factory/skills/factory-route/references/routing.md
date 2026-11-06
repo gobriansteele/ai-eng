@@ -2,13 +2,19 @@
 
 The `factory_work.py begin --source <absolute-json>` helper validates and saves
 a saved source. Explicit --source demonstrations remain synthetic; live
-collection writes sources with `synthetic: false` and intake provenance. Source fields are `synthetic: true`, `source_id`
+collection writes sources with `synthetic: false` and intake provenance. Common
+source fields are `synthetic` (boolean), `source_id`
 (stable thread identity), `version` (immutable capture identity), `link`,
 `available_thread` (ordered objects with `id`, `author`, `text`), `availability`
 (what was available or missing), and `evidence` (objects with `id`, `kind`, `text`).
 Message/evidence IDs are unique within a capture. Read every message and observation.
 The watcher supplies immutable live captures and eligibility/coverage separately
 from semantic routing. Preserve existing synthetic fields/digests unchanged.
+
+Direct chat requests use `begin --request <absolute-json>` and the same fields,
+with `synthetic: false` for real requests and `direct` provenance instead of
+Slack `intake`; see [direct intake](../../factory-run/references/direct-intake.md).
+Both surfaces share receipt identity, routing and item preservation below.
 
 The receipt key is compact JSON `[source_id,version]`; its `digest` hashes the
 entire normalized source with Python `json.dumps(source, sort_keys=True)` and

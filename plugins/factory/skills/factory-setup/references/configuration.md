@@ -42,6 +42,13 @@ separate paths remain valid and are never silently relocated. There is no home
 schema field. Errors return exit 2 with JSON; partial setup returns exit 0 with
 explicit blocks.
 
+Slack collection is optional. With no selected channels, direct chat intake works
+with `slack.workspace_id: null`, `slack.channels: []` and `intake.start_at: null`.
+Slack capabilities remain honestly recorded but do not affect readiness in that
+configuration. When channels are selected, collection needs their usual access
+and preserved starts. A partial setup blocks only the work needing each missing
+capability, not unrelated direct intake.
+
 ## Default resolution and pinning
 
 Every top-level user-facing skill resolves once before accessing factory state:

@@ -13,8 +13,10 @@ resolving again. Never start a second owner
 or release the orchestrator's token between integration reads. Resolve this loaded
 package and read the [collection contract](references/collection.md).
 
-Read `factory_work.py watch-plan` and current saved state. Use only configured
-workspace/channel IDs and preserved setup channel starts. A missing start blocks
+Read `factory_work.py watch-plan` and current saved state. With no configured
+channels, return zero captures without requiring Slack setup or access. Channel
+access/coverage blockers do not block independent direct intake or saved work.
+Use only configured workspace/channel IDs and preserved setup channel starts. A missing start blocks
 that channel; setup must verify it. Adding/removing channels belongs to setup,
 never resetting watcher cursors. Saved setup capability reports do not establish
 this host's current access or permission. Discover its authenticated Slack read

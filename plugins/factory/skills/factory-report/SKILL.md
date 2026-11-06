@@ -1,6 +1,6 @@
 ---
 name: factory-report
-description: Draft concise Slack originating-thread and Jira comment updates from a saved factory item's evidenced results and refreshed status. Reuse unchanged drafts, preserve engineering state, and send only an exact explicitly authorized update with uncertain-send reconciliation. No automatic Jira transitions, merge, deployment or schedules.
+description: Report saved results in the harness and draft applicable Slack/Jira updates. Reuse unchanged drafts, preserve engineering state, and send externally only with exact authorization and uncertain-send reconciliation. No automatic Jira transitions, merge, deployment or schedules.
 ---
 
 # Factory report
@@ -22,8 +22,14 @@ mode use only declared raw snapshots. Never invent upstream model work, a source
 thread, deployment, verification or an external read. A reporting gap does not
 erase the actual engineering stage/status/role/next action or shared fix count.
 
-Default to LOCAL DRAFTS for the actual originating Slack thread and resolved
-Jira issue comments. Include the useful result, evidence/PR link when available,
+For direct chat intake, return the result and next action in the current harness
+and retain the local report. No Slack/Jira destination is required; its absence
+is not a reporting blocker or a reason to ask for one. Draft external updates only
+for an actual linked destination or an explicit user request. Replying in the
+current harness is not an external post and needs no send-approval ledger entry.
+
+For applicable external updates, default to LOCAL DRAFTS for the actual originating
+Slack thread and resolved Jira issue comments. Include the useful result, evidence/PR link when available,
 and any decision needed; omit worker identities, debate, prompts and internal
 process chatter. A blocked investigation needs the concrete missing input; a
 ready PR is ready for review, not shipped; merge alone proves neither deployment

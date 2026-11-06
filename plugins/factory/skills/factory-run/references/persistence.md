@@ -39,6 +39,12 @@ identity never resets saved values; a different legacy fixture is refused.
 For saved-source routing use `begin --source <absolute-synthetic-source.json>`
 instead of `--fixture`. Both are explicit offline demonstration input. Config-only begin is valid on a
 fresh production workspace, creating empty schema-2 inventory before collection.
+`begin --request <absolute-direct-capture.json>` accepts real direct chat intake
+with [direct provenance](direct-intake.md), or explicitly synthetic direct test
+input. Choose only one of `--request`, `--source` and `--fixture`. The request is
+saved atomically under the verified invocation owner before Slack collection;
+capture and exact retry consume no semantic step. Source receipt replay/conflict
+rules apply unchanged, and `--source` remains synthetic-only.
 A new source can be saved even when an active item is blocked. Read
 [the router contract](../../factory-route/references/routing.md) for source and
 result fields. `route --decision <absolute-json> --expected-revision <revision>`

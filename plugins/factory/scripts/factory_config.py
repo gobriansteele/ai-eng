@@ -524,11 +524,10 @@ def atomic_write(path: Path, text: str) -> None:
 
 def readiness(data: Config, report: Report | None) -> list[str]:
     blocked: list[str] = []
-    if not data["slack"]["workspace_id"]:
+    slack_enabled = bool(data["slack"]["channels"])
+    if slack_enabled and not data["slack"]["workspace_id"]:
         blocked.append("Slack workspace ID missing")
-    if not data["slack"]["channels"]:
-        blocked.append("Slack channels not selected")
-    if not data["intake"]["start_at"]:
+    if slack_enabled and not data["intake"]["start_at"]:
         blocked.append("Intake start not established")
     repos = discover(data)
     if not repos["repositories"]:
@@ -544,6 +543,7 @@ def readiness(data: Config, report: Report | None) -> list[str]:
             f"Capability {key}: {value['status']}"
             for key, value in report["capabilities"].items()
             if value["status"] != "observed"
+            and (slack_enabled or not key.startswith("slack_"))
         )
     return blocked
 
@@ -760,6 +760,7 @@ def run_resolved(
             "bounded repository discovery",
             "saved-work orchestration",
             "saved-source routing",
+            "direct harness request intake",
             "bounded Slack collection and historical thread import",
             "scoped investigation with durable local evidence",
             "product planning with durable questions and answer resume",
@@ -771,7 +772,7 @@ def run_resolved(
             "evidence-based local retrospectives and ownership-aware maintenance previews/additive archive copies",
             "native scheduling runbook without schedule activation",
         ],
-        "workflow": "bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation, independent review and authorized draft PR follow-up with two shared fix rounds; remote coverage and permission limits reported; local report drafts preserve engineering state; exact authorized message delivery untested; native scheduling documented but not activated/tested; maintenance defaults preview-only",
+        "workflow": "direct chat and bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation, independent review and authorized draft PR follow-up with two shared fix rounds; remote coverage and permission limits reported; local report drafts preserve engineering state; exact authorized message delivery untested; native scheduling documented but not activated/tested; maintenance defaults preview-only",
     }
 
 

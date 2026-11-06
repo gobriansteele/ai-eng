@@ -7,7 +7,7 @@ import json
 import re
 from typing import NotRequired, TypedDict, cast
 
-from factory_config import ConfigError, mapping, string, timestamp
+from factory_config import HARNESSES, ConfigError, Harness, mapping, string, timestamp
 
 
 class Message(TypedDict):
@@ -40,6 +40,14 @@ class Intake(TypedDict):
     coverage: str
 
 
+class DirectIntake(TypedDict):
+    harness: Harness
+    conversation_id: str | None
+    request_id: str
+    received_at: str
+    trigger_message_ids: list[str]
+
+
 class Source(TypedDict):
     synthetic: bool
     source_id: str
@@ -49,6 +57,7 @@ class Source(TypedDict):
     availability: str
     evidence: list[Evidence]
     intake: NotRequired[Intake]
+    direct: NotRequired[DirectIntake]
 
 
 class Finding(TypedDict):
@@ -104,13 +113,14 @@ def message_text(value: object) -> str:
 
 def source(value: object) -> Source:
     raw_source = cast(dict[str, object], value) if isinstance(value, dict) else {}
-    fields = set(Source.__annotations__) - {"intake"}
-    data = mapping(
-        value, fields | ({"intake"} if "intake" in raw_source else set()), "source"
-    )
+    provenance = {"intake", "direct"} & raw_source.keys()
+    fields = set(Source.__annotations__) - {"intake", "direct"}
+    data = mapping(value, fields | provenance, "source")
     if type(data["synthetic"]) is not bool:
         raise ConfigError("source.synthetic must be boolean")
-    if data["synthetic"] is False and "intake" not in data:
+    if len(provenance) > 1:
+        raise ConfigError("Source must have only one intake surface")
+    if data["synthetic"] is False and not provenance:
         raise ConfigError("Live sources require intake provenance")
     messages: list[Message] = []
     for value in array(data["available_thread"], "available_thread"):
@@ -146,6 +156,29 @@ def source(value: object) -> Source:
         "availability": string(data["availability"], "availability"),
         "evidence": evidence,
     }
+
+    if "direct" in data:
+        direct = mapping(data["direct"], set(DirectIntake.__annotations__), "direct")
+        harness = string(direct["harness"], "direct.harness")
+        if harness not in HARNESSES:
+            raise ConfigError("Unsupported direct intake harness")
+        request_id = string(direct["request_id"], "direct.request_id")
+        triggers = text_list(direct["trigger_message_ids"], "direct triggers")
+        root_id = "direct:" + request_id
+        message_ids = {m["id"] for m in messages}
+        if result["source_id"] != root_id or root_id not in message_ids:
+            raise ConfigError(
+                "Direct source must retain its stable request/root identity"
+            )
+        if not triggers or not set(triggers) <= message_ids:
+            raise ConfigError("Direct intake triggers must be saved messages")
+        result["direct"] = {
+            "harness": cast(Harness, harness),
+            "conversation_id": optional(direct["conversation_id"], "conversation_id"),
+            "request_id": request_id,
+            "received_at": timestamp(direct["received_at"], "direct.received_at"),
+            "trigger_message_ids": triggers,
+        }
 
     if "intake" in data:
         raw_intake = mapping(data["intake"], set(Intake.__annotations__), "intake")

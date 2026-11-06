@@ -42,8 +42,11 @@ single step (`--single-step`, one saved decision), or an explicit `--max-steps`
 from 1 through 10. These invocation options do not change YAML. For explicitly requested native
 scheduling, read the [runbook](references/scheduling.md); pin the resolved
 config/local in the scheduled prompt, with no account schedule activation implied.
-A resolved config with no synthetic input is the production entry point: watch, then route/resume
-saved work. `--source`, `--fixture`, `--collection` or an explicit offline/synthetic
+A resolved config with no synthetic input is the production entry point: save any
+direct request, watch configured Slack channels, then route/resume saved work.
+For a new request typed in the harness, read [direct intake](references/direct-intake.md)
+and use `begin --request`; this is not an offline flag. Pass its exact capture path
+through any foreground CLI handoff. `--source`, `--fixture`, `--collection` or an explicit offline/synthetic
 request selects an offline demonstration; never call live integrations in that mode.
 
 First inspect saved state and discover the actual harness CLI owner. A durable
@@ -59,7 +62,8 @@ When the sandbox denies process inspection or a specific authorized helper
 mutation, retry only that command through the host's normal approval mechanism;
 never broaden permissions or disable the sandbox automatically.
 
-Generate a run UUID once and retain it for retries; call `begin`. Existing state
+Generate a run UUID once and retain it for retries; call `begin`, including
+`--request <absolute-capture>` for new direct intake. Existing state
 resumes without input. For saved-source demonstrations, use the explicitly selected
 synthetic JSON as `--source`; it is saved under the invocation owner before routing.
 A supplied new source must be considered even when another saved item is blocked.
@@ -68,7 +72,9 @@ production workspace needs no synthetic seed. Unless explicitly report-only as
 described below, after begin and before handling an active block, invoke shared
 `factory-watch` under this same owner/token. In live
 mode it checks current host access, collects every ready configured channel and
-reports coverage/blockers; `--import-thread` is an explicit historical import. In
+reports coverage/blockers; `--import-thread` is an explicit historical import.
+No configured channels is a successful no-op. Slack capability gaps do not block
+independent direct intake or saved work; report the uncovered channels. In
 offline mode skip live watch; an explicit `--collection <synthetic-json>` passes
 that normalized observation through collect. Collection can proceed while saved
 work is blocked and does not consume semantic steps. Retain other channels'

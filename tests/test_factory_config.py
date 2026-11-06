@@ -79,6 +79,24 @@ class ConfigTests(unittest.TestCase):
             confirm_runtime_change=False,
         )
 
+    def test_chat_only_setup_does_not_require_slack(self) -> None:
+        self.data["slack"] = {"workspace_id": None, "channels": []}
+        self.save()
+        args = self.args()
+        evidence = json.loads(self.evidence.read_text())
+        for key, value in evidence["capabilities"].items():
+            if key.startswith("slack_"):
+                value.update(status="unavailable", evidence="Slack not connected")
+        self.evidence.write_text(json.dumps(evidence))
+        result = fc.run(args)
+        self.assertEqual(result["setup_status"], "ready")
+        self.assertIsNone(result["effective_config"]["intake"]["start_at"])
+        self.assertEqual(
+            result["capability_report"]["capabilities"]["slack_connection"]["status"],
+            "unavailable",
+        )
+        self.assertEqual(fc.run(self.args("status"))["setup_status"], "ready")
+
     def test_unknown_version_duplicate_and_missing_runtime_rejected(self) -> None:
         for key, value in (("schema_version", 2), ("fix_round", 9)):
             data = deepcopy(self.data)

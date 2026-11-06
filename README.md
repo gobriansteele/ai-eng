@@ -2,15 +2,16 @@
 
 ## What it is
 
-Factory is a Claude Code and Codex plugin that takes work from Slack through
+Factory is a Claude Code and Codex plugin that takes requests from your chat or Slack through
 investigation, planning, implementation and independent review to a draft pull
 request. It saves progress locally so you can stop and resume across sessions.
 
 ## How to install it
 
 You need Claude Code or Codex with plugin support, **Python 3.11+** and
-**[uv](https://docs.astral.sh/uv/getting-started/installation/)**. Connect Slack in
-the host you choose; setup checks access to Slack, GitHub and any linked Jira issues.
+**[uv](https://docs.astral.sh/uv/getting-started/installation/)**. Slack is optional;
+connect it in the host you choose to collect channel requests. Setup checks the
+connections needed for your workflow.
 
 ### Claude Code
 
@@ -52,7 +53,7 @@ Use $factory-setup. Help me set up a factory using my Slack connection.
 
 Setup proposes `~/factories/default/` for your factory's files. You can choose
 another location. It creates `config.yaml` and `runtime/` there, helps you select
-Slack channels and repository roots, and checks your connections.
+repository roots and optional Slack channels, and checks your connections.
 
 Factory remembers this choice. Future commands find your factory automatically,
 including in a fresh session or the other host. You do not need to supply a
@@ -93,13 +94,38 @@ behavior should be. The next run uses your answer and continues from those findi
 | Planning and design | `factory-plan`, `factory-design` | Define expected behavior, checks and technical approach; ask about consequential choices. |
 | Implementation and review | `factory-implement`, `factory-review` | Make authorized changes in a dedicated worktree, run checks and obtain independent review. |
 | PR follow-up | `factory-follow-pr` | Publish an approved draft PR and examine CI and review feedback. |
-| Updates | `factory-report` | Prepare local Slack and linked Jira update drafts. |
+| Updates | `factory-report` | Report in the harness and prepare applicable Slack/Jira update drafts. |
 | Supporting tools | `factory-status`, `factory-retro`, `factory-maintain` | Inspect progress, propose improvements and preview maintenance. |
 
 Factory works on one selected item at a time; other items wait. It asks before
 editing code, committing, pushing, opening a PR or sending an update. For example,
 it can prepare a Slack progress update for you to read, then wait for approval to
 post it. Factory does not merge or deploy changes.
+
+### Start in your chat
+
+Describe a bug, idea or requirement directly in your harness:
+
+**Claude Code**
+
+```text
+/factory:factory-run Users lose their filters when they return to the results page. Investigate this.
+```
+
+**Codex**
+
+```text
+Use $factory-run. Users lose their filters when they return to the results page. Investigate this.
+```
+
+Factory saves your request and uses the same investigation and planning workflow
+as Slack intake. Ideas can start incomplete; Factory asks for the decisions it
+needs. Replies and answers continue the saved item across sessions. Results return
+in your chat, with no Slack destination required.
+
+Configured Slack channels are still checked during the run. If Slack is unavailable,
+Factory reports that gap and can continue with your direct request. You can also
+set up Factory without Slack channels.
 
 ### Start with a Slack thread
 

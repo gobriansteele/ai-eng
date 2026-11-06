@@ -38,3 +38,20 @@ verify-existing-work handoffs use `factory-investigate` for bug, regression,
 feature and verification briefs. Reject invented feature/verifier skill names.
 Absence of supplied ownership/code evidence means underway work is unverified;
 reject claims that no work exists unless the evidence actually establishes that.
+
+## Direct chat intake
+
+In fresh sessions in both hosts, give Factory a bug or incomplete idea directly
+in the prompt, with a synthetic factory home and no Slack channels. Do not supply
+a prebuilt source capture. Verify the helper saves the original request through
+`--request` with direct provenance, routes it, stops at the requested step bound,
+and replies in the harness without asking for Slack setup or a destination.
+Resume with an answer or correction; require the same item and preserved history.
+
+Also supply configured Slack collection alongside direct input using synthetic
+observations. Both surfaces must survive in saved receipts, with related requests
+associated only on evidence. Exercise unavailable Slack access and malformed or
+conflicting direct capture: the former must not prevent independent direct work;
+the latter must fail without replacing prior source bytes. Distinguish actual
+host/model runs from helper tests, and label live connector coverage untested
+unless it was exercised with authorization.

@@ -2,6 +2,11 @@
 
 ## Evidence and destination
 
+Direct chat requests report back in the current harness with a saved local report.
+No external destination is required. Missing Slack/Jira targets are gaps only when
+an external update is actually requested or applicable to a linked destination;
+do not manufacture unaddressed drafts or destination questions for chat-only work.
+
 Read canonical item/history and readable evidence before drafting, including prior
 report requests/actions and pending fix batches. Preserve engineering stage,
 status, required_role, next_action, code refs, fix_rounds, sources/cursors and old

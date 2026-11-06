@@ -38,9 +38,11 @@ helper's `--confirm-runtime-change` only after that choice. Missing choices conf
 no action authorization.
 
 Discover the current harness's available integration tools and connection state.
-Use its relevant harness guide only for observed host-specific details. If Slack
-MCP is unavailable, explain how to connect/authenticate a Slack MCP server in this
-harness and rerun; do not substitute a different service. Discover accessible
+Use its relevant harness guide only for observed host-specific details. Slack is
+optional: direct chat intake needs no workspace or channels. For chat-only setup,
+keep `workspace_id: null`, `channels: []`, and the initial intake start null.
+If Slack is wanted but unavailable, report the dependent collection gap and allow
+direct intake to proceed; do not substitute a different service. Discover accessible
 workspaces/channels and resolve user names or links to stable workspace/channel
 IDs. Confirm choices with the user; never hardcode a workspace or channel. An
 unknown workspace ID stays null, even if a channel ID is known. Validate read

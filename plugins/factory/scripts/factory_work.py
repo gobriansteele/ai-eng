@@ -1157,18 +1157,32 @@ class Store:
         fixture: Path | None,
         max_steps: int = 3,
         source_path: Path | None = None,
+        request_path: Path | None = None,
     ) -> Snapshot:
         identity = verify_owner(pid, harness)
         integer(max_steps, "max_steps", 1, 10)
         string(request_id, "request_id")
         version, fingerprint = plugin_identity()
         effective = saved_config(read_copy(self.config))
-        if fixture is not None and source_path is not None:
-            raise WorkError("Choose saved source or legacy fixture, not both")
+        if sum(p is not None for p in (fixture, source_path, request_path)) > 1:
+            raise WorkError(
+                "Choose direct request, saved source or legacy fixture, not multiple inputs"
+            )
+        incoming_path = request_path if request_path is not None else source_path
         incoming_source = (
-            None if source_path is None else source(read_json(source_path))
+            None if incoming_path is None else source(read_json(incoming_path))
         )
-        if incoming_source is not None and not incoming_source["synthetic"]:
+        if (
+            request_path is not None
+            and incoming_source is not None
+            and "direct" not in incoming_source
+        ):
+            raise WorkError("--request requires direct harness intake provenance")
+        if (
+            source_path is not None
+            and incoming_source is not None
+            and not incoming_source["synthetic"]
+        ):
             raise WorkError(
                 "Live sources require owner-gated collection; --source is synthetic input"
             )
@@ -1364,8 +1378,9 @@ class Store:
         return {
             "workspace_id": workspace,
             "channels": channels,
-            "blocked": (["Slack workspace not configured"] if workspace is None else [])
-            + (["Slack channels not selected"] if not channels else []),
+            "blocked": ["Slack workspace not configured"]
+            if channels and workspace is None
+            else [],
             "revision": None if state is None else state["revision"],
         }
 
@@ -1572,6 +1587,7 @@ class Arguments:
     run_id: str | None
     fixture: Path | None
     source: Path | None
+    request: Path | None
     max_steps: int
     expected_revision: int | None
     decision: Path | None
@@ -1602,6 +1618,7 @@ def parse_arguments() -> Arguments:
     parser.add_argument("--run-id")
     parser.add_argument("--fixture", type=Path)
     parser.add_argument("--source", type=Path)
+    parser.add_argument("--request", type=Path)
     bounds = parser.add_mutually_exclusive_group()
     bounds.add_argument("--single-step", action="store_true")
     bounds.add_argument("--max-steps", type=int, default=3)
@@ -1632,6 +1649,7 @@ def parse_arguments() -> Arguments:
         run_id=cast(str | None, raw["run_id"]),
         fixture=cast(Path | None, raw["fixture"]),
         source=cast(Path | None, raw["source"]),
+        request=cast(Path | None, raw["request"]),
         max_steps=1 if raw["single_step"] is True else cast(int, raw["max_steps"]),
         expected_revision=cast(int | None, raw["expected_revision"]),
         decision=cast(Path | None, raw["decision"]),
@@ -1665,6 +1683,7 @@ def main() -> int:
                     args.fixture,
                     args.max_steps,
                     args.source,
+                    args.request,
                 )
             elif args.command == "collect":
                 if args.decision is None or args.expected_revision is None:
