@@ -39,7 +39,8 @@ factory config and fixture:
 ```
 
 Resume after the original CLI stops with the same config and no fixture. Normal
-bounded use defaults to at most three saved steps; explicit `--max-steps` is 1..10.
+use has no step cap. Forward the item’s execution mode and scoped delegation;
+pass a positive `--max-steps` or `--single-step` only when requested.
 The helper discovers the long-lived `claude` CLI ancestor; use that observed PID
 rather than a transient helper/shell. Process-inspection or mutation denial is a
 block until the specific command can run through normal permission review. Do
@@ -50,7 +51,7 @@ one foreground CLI worker from the selected factory home and wait for completion
 passing the explicit configuration and bound:
 
 ```sh
-claude -p '/factory:factory-run Pinned factory context: config <factory-home>/config.yaml; local override none. Resume saved work with --max-steps 3; finish and report the result.'
+claude -p '/factory:factory-run Pinned factory context: config <factory-home>/config.yaml; local override none. Resume the selected item with its saved execution mode and scope through its endpoint; finish and report the result.'
 ```
 
 Use the pinned absolute config path. If resolution returned a local override,
@@ -201,7 +202,7 @@ authenticated `gh api --method GET` with pagination for branch/all-state PR
 listings. This is the demonstrated fallback when this host lacks a sufficient
 connector, not a connection inherited from Codex. Discover actual current access
 before use. The probe did not establish checks/log/review coverage or execute
-any external write; CLI authentication alone grants no push/draft authorization.
+any external write; CLI authentication alone grants no push/PR authorization.
 
 
 ## Reporting capabilities

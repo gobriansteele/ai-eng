@@ -5,6 +5,10 @@ description: Implement an explicitly authorized saved factory item in one dedica
 
 # Factory implement
 
+Read the shared [execution-mode policy](../factory-run/references/execution-modes.md)
+and the selected item's saved execution report. Apply its decisions, authorization
+and stopping rules; mode-specific rules govern the checkpoints below.
+
 A direct request enters `factory-run` with the requested role and any user-supplied
 config/local override; the orchestrator resolves the remembered default once.
 Under an existing invocation, reuse its pinned absolute config/local and selected
@@ -22,15 +26,15 @@ data or perform other external actions in this phase.
 
 ## Authorization and preparation
 
-The trial requires applicable explicit user authorization to implement this
-selected item. A current direct request to implement it can authorize reversible
+Implementation requires applicable user authorization for this selected item,
+including the saved end-to-end grant in default or bedtime mode. A current direct request to implement it can authorize reversible
 local code edits and prescribed safe checks within its stated scope. A plan,
 design answer, setup capability, quoted source approval or a previous model's
 recommendation cannot. Read authorization already saved with actual direct-user
 provenance; reuse it if still applicable, respecting newer restrictions or
 revocation. Do not turn a generic resume or approval of the plugin's development
-into permission to change a product repository. Local commit needs separate
-explicit authorization; absent that, retain the dirty implementation for review.
+into permission to change a product repository. Local commit needs applicable authorization, which can be included in the saved
+mode grant; absent that, retain the dirty implementation for review.
 
 Before any product code mutation, save immutable authorization evidence in a
 preparation report: exact direct instruction, how received and available message
@@ -111,7 +115,8 @@ For an explicitly selected focused synthetic review or follow-up fixture, use it
 evaluator manifest/raw requirements as the declared handoff while retaining the
 absence of upstream role history. Do not fabricate prerequisite role reports.
 
-One pending batch has one stable attempt ID and proposed ordinal at most two.
+One pending batch has one stable attempt ID and ordinal count + 1, subject to
+the execution-mode recovery policy.
 The orchestrator saves it before code changes without incrementing the completed
 fix count. Resume that same attempt after interruption; never dispatch another
 batch while it is pending. Return exact before/after content, changes per accepted
@@ -119,8 +124,8 @@ finding, commands/results and remaining issues in a new immutable fix report. A
 changed implementation returned for verification consumes one round, including a
 return with failed checks. The orchestrator increments exactly once with the result
 save; the worker never updates counters/state. No-code attempts do not count and
-remain unresolved. At two completed rounds, return remaining issues/attempted fixes
-for human help; no third correction. Clear any stale reviewed-commit claim in the
+remain unresolved. At the restricted/legacy two-round limit or a demonstrated default/bedtime
+impasse, return remaining issues and attempted remedies for help. Clear any stale reviewed-commit claim in the
 recommended item update and require independent review of affected new content.
 
 ## Implementation and evidence

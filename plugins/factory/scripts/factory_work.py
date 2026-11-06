@@ -85,6 +85,11 @@ class Pending(TypedDict):
     evidence: str
 
 
+class Execution(TypedDict):
+    mode: Literal["default", "bedtime", "restricted"]
+    evidence: str
+
+
 class Item(TypedDict):
     id: str
     synthetic: bool
@@ -102,6 +107,7 @@ class Item(TypedDict):
     fix_rounds: int
     approvals: list[Approval]
     pending_actions: list[Pending]
+    execution: NotRequired[Execution]
 
 
 class Invocation(TypedDict):
@@ -111,7 +117,7 @@ class Invocation(TypedDict):
     started_at: str
     finished_at: str | None
     outcome: str | None
-    max_steps: int
+    max_steps: int | None
     steps: int
     plugin_version: str
     source_fingerprint: str
@@ -356,7 +362,11 @@ def stable_id(source_id: str, subitem_key: str) -> str:
 
 
 def item(value: object) -> Item:
-    data = mapping(value, set(Item.__annotations__), "item")
+    raw = obj(value, "item")
+    fields = set(Item.__annotations__) - {"execution"}
+    data = mapping(
+        raw, fields | ({"execution"} if "execution" in raw else set()), "item"
+    )
     if type(data["synthetic"]) is not bool:
         raise WorkError("item.synthetic must be boolean")
     source_id = string(data["source_id"], "source_id")
@@ -386,7 +396,7 @@ def item(value: object) -> Item:
         raise WorkError("Unknown code reference")
     if "worktree" in code and not Path(code["worktree"]).is_absolute():
         raise WorkError("Worktree must be an absolute path")
-    return {
+    result: Item = {
         "id": identity,
         "synthetic": data["synthetic"],
         "source_id": source_id,
@@ -400,10 +410,28 @@ def item(value: object) -> Item:
         "required_role": nullable(data["required_role"], "required_role"),
         "artifact_paths": artifact_paths,
         "code": code,
-        "fix_rounds": integer(data["fix_rounds"], "fix_rounds", 0, 2),
+        "fix_rounds": integer(
+            data["fix_rounds"], "fix_rounds", 0, 2**53 if "execution" in data else 2
+        ),
         "approvals": approvals,
         "pending_actions": actions,
     }
+    if "execution" in data:
+        policy = mapping(data["execution"], set(Execution.__annotations__), "execution")
+        mode = string(policy["mode"], "execution.mode")
+        evidence = string(policy["evidence"], "execution.evidence")
+        if (
+            mode not in ("default", "bedtime", "restricted")
+            or not Path(evidence).is_absolute()
+        ):
+            raise WorkError(
+                "Execution requires a supported mode and absolute authorization evidence path"
+            )
+        result["execution"] = {
+            "mode": cast(Literal["default", "bedtime", "restricted"], mode),
+            "evidence": evidence,
+        }
+    return result
 
 
 def decision(value: object) -> Decision:
@@ -495,8 +523,12 @@ def invocation(value: object) -> Invocation:
     harness = string(data["harness"], "harness")
     if harness not in ("codex", "claude-code"):
         raise WorkError("Invalid saved harness")
-    limit = integer(data["max_steps"], "max_steps", 1, 10)
-    steps = integer(data["steps"], "steps", 0, limit)
+    limit = (
+        None
+        if data["max_steps"] is None
+        else integer(data["max_steps"], "max_steps", 1, 2**53)
+    )
+    steps = integer(data["steps"], "steps", 0, 2**53 if limit is None else limit)
     started = timestamp(data["started_at"], "started_at")
     finished = nullable(data["finished_at"], "finished_at")
     outcome = nullable(data["outcome"], "outcome")
@@ -621,6 +653,17 @@ def legacy_snapshot(value: object) -> LegacySnapshot:
 
 
 def preserve(previous: Item, updated: Item) -> None:
+    old_execution = previous.get("execution")
+    new_execution = updated.get("execution")
+    if (
+        old_execution != new_execution
+        and old_execution is not None
+        and (
+            new_execution is None
+            or old_execution["evidence"] == new_execution["evidence"]
+        )
+    ):
+        raise WorkError("Execution mode changes require a new evidence report")
     if (
         previous["id"],
         previous["synthetic"],
@@ -635,6 +678,14 @@ def preserve(previous: Item, updated: Item) -> None:
         raise WorkError("Cannot replace saved source identity")
     if updated["fix_rounds"] < previous["fix_rounds"]:
         raise WorkError("Fix-round count cannot decrease")
+    if updated["fix_rounds"] > previous["fix_rounds"] + 1:
+        raise WorkError("Complete at most one fix round per save")
+    if (
+        updated["fix_rounds"] > previous["fix_rounds"]
+        and previous["fix_rounds"] >= 2
+        and (updated.get("execution", {}).get("mode", "restricted") == "restricted")
+    ):
+        raise WorkError("Restricted execution permits at most two fix rounds")
     for key in ("source_links", "jira_keys"):
         if not set(previous[key]) <= set(updated[key]):
             raise WorkError("Cannot drop saved source/Jira links")
@@ -692,6 +743,12 @@ def apply_route(
         updated = updates[target]
         if target not in items and updated["synthetic"] != saved["source"]["synthetic"]:
             raise WorkError("New item provenance must match its source")
+        if (
+            target not in items
+            and "execution" in updated
+            and target != operation["active_item_id"]
+        ):
+            raise WorkError("Grant an execution mode only to the selected item")
         if target not in items and (
             updated["fix_rounds"] != 0
             or updated["approvals"]
@@ -703,6 +760,10 @@ def apply_route(
         if target in items:
             preserve(items[target], updated)
             previous = items[target]
+            if previous.get("execution") != updated.get("execution"):
+                raise WorkError(
+                    "Routing cannot change an existing item's execution mode"
+                )
             if (
                 previous["artifact_paths"],
                 previous["code"],
@@ -1155,12 +1216,13 @@ class Store:
         pid: int,
         request_id: str,
         fixture: Path | None,
-        max_steps: int = 3,
+        max_steps: int | None = None,
         source_path: Path | None = None,
         request_path: Path | None = None,
     ) -> Snapshot:
         identity = verify_owner(pid, harness)
-        integer(max_steps, "max_steps", 1, 10)
+        if max_steps is not None:
+            integer(max_steps, "max_steps", 1, 2**53)
         string(request_id, "request_id")
         version, fingerprint = plugin_identity()
         effective = saved_config(read_copy(self.config))
@@ -1440,7 +1502,7 @@ class Store:
                 return state
             if state["revision"] != expected_revision:
                 raise WorkError("Revision changed; reread before deciding")
-            if run["steps"] >= run["max_steps"]:
+            if run["max_steps"] is not None and run["steps"] >= run["max_steps"]:
                 raise WorkError(
                     "Invocation step limit reached; finish and resume later"
                 )
@@ -1448,6 +1510,7 @@ class Store:
             if updated["id"] != state["active_item_id"]:
                 raise WorkError("Only the selected active item may advance")
             preserve(state["items"][updated["id"]], updated)
+            self.check_execution_evidence(state["items"][updated["id"]], updated)
             state["items"][updated["id"]] = updated
             run["steps"] += 1
             self.append(state, token, "decision", operation)
@@ -1472,9 +1535,13 @@ class Store:
                 return state
             if state["revision"] != expected_revision:
                 raise WorkError("Revision changed; reread before deciding")
-            if run["steps"] >= run["max_steps"]:
+            if run["max_steps"] is not None and run["steps"] >= run["max_steps"]:
                 raise WorkError(
                     "Invocation step limit reached; finish and resume later"
+                )
+            for updated in operation["items"]:
+                self.check_execution_evidence(
+                    state["items"].get(updated["id"]), updated
                 )
             state["active_item_id"] = apply_route(
                 state["items"], state["sources"], operation
@@ -1502,7 +1569,7 @@ class Store:
                 return state
             if state["revision"] != expected_revision:
                 raise WorkError("Revision changed; reread before reconciling")
-            if run["steps"] >= run["max_steps"]:
+            if run["max_steps"] is not None and run["steps"] >= run["max_steps"]:
                 raise WorkError(
                     "Invocation step limit reached; finish and resume later"
                 )
@@ -1518,6 +1585,20 @@ class Store:
             atomic_snapshot(self.path, state)
             return state
 
+    def check_execution_evidence(self, previous: Item | None, updated: Item) -> None:
+        old = None if previous is None else previous.get("execution")
+        new = updated.get("execution")
+        if old == new:
+            return
+        if new is None:
+            raise WorkError("Execution mode changes require new authorization evidence")
+        if old is not None and old["evidence"] == new["evidence"]:
+            raise WorkError("Mode changes require a new evidence report")
+        if not Path(new["evidence"]).read_text().strip():
+            raise WorkError(
+                "Execution authorization evidence must be readable and nonempty"
+            )
+
     def finish(self, token: str, harness: Harness, pid: int, outcome: str) -> Snapshot:
         if outcome not in (
             "single_step",
@@ -1526,6 +1607,7 @@ class Store:
             "waiting_for_human",
             "no_available_work",
             "stopped",
+            "completed",
         ):
             raise WorkError("Unsupported finish outcome")
         with self.mutation():
@@ -1539,6 +1621,23 @@ class Store:
                 return state
             if state["active_run"] != token:
                 raise WorkError("Invocation is no longer active")
+            if outcome == "completed":
+                selected = state["active_item_id"]
+                completed = None if selected is None else state["items"][selected]
+                if completed is None or (
+                    completed["stage"] != "follow_pr"
+                    or completed["status"] != "done"
+                    or completed["required_role"] is not None
+                    or not completed["code"].get("pr_url")
+                    or any(
+                        action["scope"]["action"] in ("pushes", "pull_requests")
+                        and action["status"] != "confirmed"
+                        for action in completed["pending_actions"]
+                    )
+                ):
+                    raise WorkError(
+                        "Completion requires a done PR item with resolved publication actions"
+                    )
             run["finished_at"], run["outcome"] = now(), outcome
             state["active_run"] = None
             self.append(state, token, "finish")
@@ -1588,7 +1687,7 @@ class Arguments:
     fixture: Path | None
     source: Path | None
     request: Path | None
-    max_steps: int
+    max_steps: int | None
     expected_revision: int | None
     decision: Path | None
     outcome: str | None
@@ -1621,7 +1720,7 @@ def parse_arguments() -> Arguments:
     parser.add_argument("--request", type=Path)
     bounds = parser.add_mutually_exclusive_group()
     bounds.add_argument("--single-step", action="store_true")
-    bounds.add_argument("--max-steps", type=int, default=3)
+    bounds.add_argument("--max-steps", type=int)
     parser.add_argument("--expected-revision", type=int)
     parser.add_argument("--decision", type=Path)
     parser.add_argument("--outcome")
@@ -1650,7 +1749,9 @@ def parse_arguments() -> Arguments:
         fixture=cast(Path | None, raw["fixture"]),
         source=cast(Path | None, raw["source"]),
         request=cast(Path | None, raw["request"]),
-        max_steps=1 if raw["single_step"] is True else cast(int, raw["max_steps"]),
+        max_steps=1
+        if raw["single_step"] is True
+        else cast(int | None, raw["max_steps"]),
         expected_revision=cast(int | None, raw["expected_revision"]),
         decision=cast(Path | None, raw["decision"]),
         outcome=cast(str | None, raw["outcome"]),

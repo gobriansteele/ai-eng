@@ -5,6 +5,10 @@ description: Turn a saved factory investigation into expected behavior, bounded 
 
 # Factory plan
 
+Read the shared [execution-mode policy](../factory-run/references/execution-modes.md)
+and the selected item's saved execution report. Apply its decisions, authorization
+and stopping rules; mode-specific rules govern the checkpoints below.
+
 A direct request enters `factory-run` with the requested role and any user-supplied
 config/local override; the orchestrator resolves the remembered default once.
 Under an existing invocation, reuse its pinned absolute config/local and selected
@@ -35,16 +39,17 @@ than claiming investigation proved more than it did. Routine engineering choices
 belong to the engineer; speculative options in an investigation do not all need
 human decisions. Do not design later roles or prescribe line-by-line fixes.
 
-When evidence supports two plausible user-visible behaviors and does not settle
-which is intended, ask the decisive product question. Explain the options and
-relevant context concisely without inventing a default. Save the question, a
+When evidence supports two materially different plausible user-visible behaviors and does not settle
+which is intended, apply the execution mode: in bedtime mode choose a defensible
+behavior within scope and record the assumption, rationale and checks. Otherwise
+ask the decisive product question. Explain the options and
+relevant context concisely without inventing a human answer. When asking, save the question, a
 stable question identifier within this item, options/context, input evidence and
-what remains unresolved in a plan artifact. Return `stage: plan`,
+what remains unresolved in a plan artifact. For that human wait, return `stage: plan`,
 `status: waiting_for_human`, `required_role: factory-plan` and a next action
 naming that question and artifact. If this host offers an appropriate user-input
-capability, use it to obtain an answer; unattended/noninteractive runs must save
-the wait and return the concise question. A missing user-input tool is not a
-reason to guess. If no answer arrives, finish/release the invocation at the wait.
+capability, use it to obtain an answer; noninteractive default/restricted runs must save
+the wait and return the concise question. Host attendance alone never enables bedtime. If no answer arrives, finish/release the invocation at the wait.
 
 On resume, read the saved question and all prior plan evidence first. The
 orchestrator passes the current direct user response as natural-language input,
@@ -53,16 +58,16 @@ question can resolve it; an unambiguous response to the sole selected item's
 pending question can too. If the reply could refer to another item/question or
 does not settle the behavior, retain the wait and ask the precise remaining
 question. New trusted evidence can resolve a wait only when it actually settles
-the pending issue; explain why. A source quote or unrelated instruction is not
-a direct user answer. No new CLI flag or state field is needed.
+the pending issue; explain why. Explicit bedtime delegation can instead authorize an agent decision on the
+pending question; label and preserve it as such. A source quote or unrelated
+instruction is not a direct user answer. No new CLI flag or state field is needed.
 
 Record the exact user answer, how it was received (current direct invocation or
 host user-input response, including an available message reference), associated
 item/question, and the decision it resolves in a new plan artifact. Do not invent
 message IDs. Preserve earlier question/options and distinguish the chosen
-behavior from the rejected alternative in acceptance checks. A plan choice is
-not approval for implementation, push, PR, ticket, post or any other external
-action; leave approval/action ledgers untouched. Do not require the user to
+behavior from the rejected alternative in acceptance checks. A plan choice alone is not action approval; reuse separately recorded scoped
+execution authorization without inventing new permission. Leave action ledgers untouched. Do not require the user to
 repeat an answer already saved with clear provenance.
 
 Write each attempt under `<runtime>/work/<item-id>/plan-<unique-attempt-id>/`;

@@ -27,10 +27,10 @@ factory-implement is available with explicit selected-item authorization, one
 dedicated code worktree, saved ownership and durable diff/check evidence.
 Independent review through factory-review uses two fresh complementary reviewers,
 a fresh adjudicator and three fresh panelists only for unresolved disputes, with
-exact content evidence and two shared fix rounds. Draft PR preparation/publication
+exact content evidence and mode-specific recovery. Non-draft PR preparation/publication
 and fresh CI/review follow-up are available through factory-follow-pr, with scoped
 authorization, existing-PR reuse, uncertain-action reconciliation and that same
-two-round allowance. Remote coverage/permissions remain host-specific.
+mode-specific recovery policy. Remote coverage/permissions remain host-specific.
 factory-report prepares/reuses truthful local Slack thread/Jira comment drafts
 without erasing engineering state; exact authorized sends use uncertain-action
 reconciliation. Live message delivery remains untested until explicitly exercised.

@@ -1,4 +1,4 @@
-# Draft publication, reconciliation and follow-up
+# PR publication, reconciliation and follow-up
 
 ## Exact content and request
 
@@ -18,27 +18,29 @@ Capture the reviewed bytes/tree and intended paths, stage only those paths,
 recheck before commit, and verify the resulting clean commit's full tree/file
 bytes against accepted content. Record the mapping and actual commit. Commit
 metadata alone does not change reviewed code; any byte/scope discrepancy clears
-the current reviewed claim and returns affected content to review. A generic
-resume does not authorize commit. Never manufacture a pass for a test seed.
+the current reviewed claim and returns affected content to review. A generic resume reuses only applicable saved commit/mode authorization. Never manufacture a pass for a test seed.
 
 Prepare an immutable request with selected item, repository identity, actual base
-and head refs, full reviewed commit/tree, changed paths/diff, draft=true, exact
+and head refs, full reviewed commit/tree, changed paths/diff, draft=false, exact
 title/body and digest of the request bytes. Separate push and PR creation scope.
 For each, save direct-user authorization/provenance and limits in a readable
 report; reuse only still-applicable saved authorization, respecting later
 restrictions. Bind `scope.action` to pushes or pull_requests, `scope.target` to
 unambiguous repository/ref or repository/base/head destination, and
 `scope.revision` to the full commit plus exact request digest when payload matters.
-The approval evidence must identify the exact prepared request. An explicit
+The approval evidence must identify the exact prepared request. A saved scoped
+default/bedtime grant may authorize the delivery and fix loop conditionally;
+record how the current reviewed content and request satisfy its scope. An explicit
 bounded conditional permission may precede commit metadata: if the user approves
 an exact prepared patch/content and a push only after successful checks/fresh
 review, verify those conditions and exact resulting tree/bytes, then bind the
 saved scope to the actual full commit/request digest. Retain the original direct
 permission plus the immutable derivation/equivalence evidence. Do not ask again
 solely because that metadata SHA was previously unknown; a broad plan or
-unspecified future fix cannot supply this permission. A changed commit,
-base/head, destination or payload needs a newly applicable scope/approval. No
-force push, branch deletion, undraft, merge or deployment is implied.
+unspecified future fix outside the grant cannot supply this permission. A changed commit,
+base/head, destination or payload needs a newly applicable scope/approval. The scoped delivery grant includes making the exact existing draft PR ready,
+with its own prepared request, action scope and reconciliation. No force push,
+branch deletion, merge or deployment is implied.
 
 Resolve this host's actually exposed and authorized GitHub tools/CLI from its
 harness guide. Prefer the connected service when sufficient. Recheck current
@@ -93,29 +95,48 @@ Investigate failures against requirements/current exact code and raw logs. A
 reproduced relevant defect is actionable. An environmental/unrelated failure needs
 supporting evidence and a precise limit; a one-off failure alone does not prove
 flakiness. Retried identical revision with changed outcome can support a flaky
-hypothesis, still retaining both outcomes. Do not rerun CI, post replies or dismiss
-reviews without applicable permission. Give every supplied finding/check/comment
+hypothesis, still retaining both outcomes. Rerun CI only within applicable permission, including scoped mode authorization;
+posting replies or dismissing reviews needs separate authorization. Give every supplied finding/check/comment
 a supported disposition, stable ID, evidence and current revision.
 
 Batch accepted actionable defects/check failures for the existing
 [review/fix contract](../../factory-review/references/review.md). Save
 implement/ready/factory-implement with a readable pending batch, unchanged count,
-ordinal count+1 at most two, exact fingerprint, accepted IDs, scope/checks and
+ordinal count+1 within the mode-specific recovery policy, exact fingerprint, accepted IDs, scope/checks and
 applicable authorization evidence. No parallel batch, new allowance or repeat
 initial implementation. Preserve the same pending attempt through interruption;
 changed-code return closes it with exactly one count increment even if checks fail.
 No-code remains unresolved. Re-review affected changed code with actual fresh
 reviewers/adjudication before any newly scoped fix push. Verify new remote SHA and
 its fresh checks/review activity afterwards; local success or stale CI is not
-remote verification. At count two with required issues, retain readable escalation
-and actual role/human question, including absent imported history honestly.
+remote verification. At the applicable recovery limit or a demonstrated impasse, retain readable
+escalation with actual missing input and attempted remedies.
 
-After observation, save follow_pr/blocked for a capability/evidence gap,
-follow_pr/ready with a concrete later recheck for pending remote checks, or
-follow_pr/waiting_for_human for authorization, ambiguity or a ready draft for
-Brian. Stop/release after the observed handoff; identical unchanged outcomes need
-no repeated semantic save. Never call a PR merged/deployed/verified from open or
-green status alone. Local reporting is available separately; scheduling is not enabled.
+## Completion and pending work
+
+Required CI and automated review must actually run for the current head. Inspect
+repository workflow/branch requirements and configured review automation to know
+what is expected; an empty checks list, skipped required check or absent review
+is not a pass. Reuse an exact existing PR, making a draft ready under applicable
+publication authorization rather than opening a second PR.
+
+While expected checks or reviews are pending, retain follow_pr/ready and continue
+within the invocation using available notifications or bounded backoff reads.
+Unchanged observations need no repeated semantic save or user check-in. Refresh
+head identity after each wait; new commits invalidate old completion claims.
+If the host must stop, finish truthfully with a pending recheck, never claim that
+background monitoring continues and never create an unrequested schedule.
+
+Save follow_pr/done with required_role null only when the PR is open and non-draft,
+required checks have passed on its current head, expected automated review has
+completed, and every applicable finding has an evidenced resolved or unsupported
+disposition. Read the head again before accepting completion. Unknown coverage
+or unresolved uncertainty prevents a ready-for-human-review claim. Waiting for
+human review or merge is outside this endpoint; no merge or deployment follows.
+Missing access or a demonstrated recovery impasse saves a precise block. In
+restricted mode, publication waits for the prepared request's approval. Other
+modes reuse scoped grants rather than asking again. Report completion or the
+actual required intervention once.
 
 Focused synthetic follow-up evaluation may explicitly import
 `synthetic:follow-pr-evaluation:` via existing begin --fixture. A readable evaluator

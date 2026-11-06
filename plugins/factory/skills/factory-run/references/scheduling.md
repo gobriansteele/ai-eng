@@ -12,10 +12,10 @@ prompt. Do not ask for a config path already remembered by setup. The scheduled
 work must keep these pinned paths even if the user later changes the default;
 changing an existing schedule's factory requires an explicit schedule update.
 
-Use the installed shared skill with that explicit absolute config and bound:
+Use the installed shared skill with that explicit absolute config and scope:
 
 ```text
-Use factory-run with configuration /absolute/factory-home/config.yaml and --max-steps 3. Resume saved work and finish the bounded invocation.
+Use factory-run with configuration /absolute/factory-home/config.yaml. Resume the selected item with its saved execution mode and scope; finish at its endpoint or a genuine blocker.
 ```
 
 When resolution returned a local override, add `Use local override
@@ -27,7 +27,7 @@ Codex can name `$factory-run`; Claude Code can use `/factory:factory-run`. Keep
 the scheduled prompt this small: role, permission, persistence and reporting rules
 live in the shared skill. Use the persistent factory home as the local project,
 not a disposable code worktree. Native notification settings remain separate from
-the workflow prompt: notify meaningful progress/completion/failure/needed action,
+the workflow prompt: notify completion/failure/needed action,
 keep unchanged checks quiet.
 
 ## Host choices
@@ -63,8 +63,8 @@ cross-host tests support persistence, not scheduler execution.
 After explicit activation/cadence approval, use the native tool/UI to review the
 exact home/prompt/timezone/permissions and existing tasks; enable only one host
 against a home. Observe the first requested read-only scheduled run and its real
-saved state/owner/tool results. Default external outputs remain drafts and local
-implementation still requires applicable selected-item authorization.
+saved state/owner/tool results. Schedules do not imply bedtime delegation or authorize unrelated new items.
+Reuse only the selected item’s saved execution mode and scope.
 
 Pause through the native tool/UI and verify no new invocation starts. Pausing a
 schedule does not kill an already running CLI: wait for its finish or an explicit

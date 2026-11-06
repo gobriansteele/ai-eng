@@ -81,9 +81,12 @@ majority remains a wait/block with the specific next question/check. The orchest
 checks evidence and this safeguard; it does not vote away defects or impersonate
 any missing role. No panel runs for already accepted/dismissed findings.
 
-## Pending batch and shared two-round allowance
+## Pending batch and recovery
 
-One item has two total fix rounds across internal review and PR follow-up.
+One item shares its fix counter across internal review and PR follow-up. Apply
+the [execution-mode recovery policy](../../factory-run/references/execution-modes.md):
+restricted/legacy work permits two total rounds; default/bedtime continues
+productive fixes and stops only at an impasse after changing approach.
 A round means the engineer receives one accepted batch, changes implementation
 and returns it for verification. Initial implementation/review and unchanged
 reviews consume zero. Group currently accepted findings into one batch; avoid a
@@ -94,8 +97,7 @@ report with `implement` / `ready` / `factory-implement` (or its truthful authori
 wait/block), preserving `fix_rounds` for now. The batch records stable batch/round
 attempt ID, count before, proposed ordinal (count + 1), finding IDs, exact input
 fingerprint, allowed scope/checks, authorizing evidence, owner and next action.
-This is a pending attempt, not a completed round. Never dispatch a third ordinal,
-create a second pending batch, or count preparation/authorization as a code fix.
+This is a pending attempt, not a completed round. Never create a second pending batch or count preparation/authorization as a code fix.
 All resumes and later PR follow-up must first read pending-batch/history evidence;
 finish or explicitly resolve the same pending attempt before considering another.
 Unknown/live implementation ownership still blocks mutation.
@@ -109,9 +111,9 @@ report and its outcome. A changed-code return with failed required checks still
 counts: save implement/blocked with the failed-check evidence; a later correction
 is another batch/round. The return report closes that batch ID; a completed batch
 cannot authorize further edits. A later failed-check correction needs a new saved
-batch at the current count, subject to the same two-round limit. The orchestrator
-may batch the concrete remaining accepted findings/required-check failures on a
-later authorized resume; no need to invent another reviewer verdict about an
+batch at the current count, subject to the same mode-specific recovery policy. The orchestrator
+may batch the concrete remaining accepted findings/required-check failures for an
+authorized correction in this invocation or on resume; no need to invent another reviewer verdict about an
 observed failed check. No-code attempts do not count and cannot pass review;
 retain the unresolved batch/wait/block with its reason. Do not increment separately
 for reviewer verification or an exact save retry.
@@ -124,13 +126,11 @@ new fingerprint and incremented count. Re-review affected code and interactions
 with fresh independent reviewers and adjudication; explicitly justify any unchanged
 scope verdict reuse. All old reports remain readable but cannot approve newer bytes.
 
-At count two with remaining required fixes or failed verification, save a concrete
-waiting_for_human at review (or implement for required-check failure), naming the
-actual role needing help. Summarize accepted remaining findings, both batches,
-attempted changes/results, current exact code and a precise question for Brian.
-No third automatic correction, counter reset, pass, push or PR is allowed. A human
-response does not silently enlarge this fixed trial limit; a changed policy needs
-explicit agreement rather than an invented extra allowance.
+At the applicable recovery limit or demonstrated impasse, save the actual
+review/implement block with remaining findings, attempts, current content and
+needed input. Keep the counter and evidence; never claim a pass merely because
+recovery stopped. Product/architecture ambiguities follow the mode's decision
+policy, including explicitly delegated bedtime decisions.
 
 ## Saved outcome
 

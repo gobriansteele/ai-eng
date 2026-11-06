@@ -1,5 +1,9 @@
 # Saved work and invocation contract
 
+Apply the selected item’s [execution mode](execution-modes.md) to decisions,
+authorization and recovery. Legacy items without execution metadata retain their
+existing checkpoints; mode-specific delegation governs the human waits below.
+
 Use `uv run --isolated --frozen --no-dev --project <loaded-plugin> python
 <loaded-plugin>/scripts/factory_work.py <command> --config <path> --harness
 codex|claude-code [--local <yaml>]`. Dependencies/cache behavior matches the
@@ -74,8 +78,10 @@ verbatim and a migration event is appended. No source body is fabricated. Other
 mutators require schema 2 or 3; use a fresh begin to migrate. Corrupt schema 1 is
 refused before any replacement; live/unknown owners prevent migration.
 
-Normal `begin` defaults to `--max-steps 3`, with valid range 1..10;
-`--single-step` is equivalent to 1. No YAML limit is added. The run UUID is the
+Normal `begin` has no step cap (`max_steps: null`). An explicit positive
+`--max-steps` sets a cap; `--single-step` is equivalent to 1. Old numeric limits
+remain intact in saved invocations. All modes still save progress after each step.
+Both hosts need the updated plugin before resuming null caps or execution metadata. No YAML limit is added. The run UUID is the
 durable token. `begin` with the same UUID and same invocation inputs is
 idempotent, including after replacement succeeded but the reply was lost.
 A finished UUID never silently starts a new invocation: use a fresh UUID.
@@ -91,7 +97,12 @@ Replace `{}` with the complete item copied from the latest snapshot and changed
 only as justified. Item fields: stable `id`, `synthetic`, `source_id`,
 `subitem_key`, `source_links`, `jira_keys`, `classification`, `stage`, `status`,
 `next_action`, nullable `required_role`, `artifact_paths`, `code`, `fix_rounds`,
-`approvals`, `pending_actions`. Status is `ready`, `blocked`, `waiting_for_human`
+`approvals`, `pending_actions`, and optional `execution` with `mode`
+(`default`, `bedtime`, `restricted`) and an absolute `evidence` report path. New or
+changed execution metadata requires a readable, nonempty immutable authorization
+report; a changed mode needs a new report. Routing may set it only for a newly
+selected item, never unrelated pending items or an existing item. Use an ordinary
+owner-gated save for an explicit selected-item mode change. Status is `ready`, `blocked`, `waiting_for_human`
 or `done`; the helper does not choose stages or roles. Artifact/worktree paths
 are absolute. `code` can contain branch, worktree, pr_url, reviewed_commit and
 worker_reference when observed. Durable paths/links are the handoff; a host worker
@@ -103,15 +114,16 @@ external-action reconciliation command below handles evidenced status transition
 it cannot prove human permission, remote state, or artifact existence.
 
 The helper enforces one active invocation, revision CAS, step bounds, stable
-identity, nondecreasing fix rounds (0..2), preserved source/Jira links and prior
-scoped approval/action entries. Duplicate decision ID with identical content
+identity, nondecreasing fix rounds (at most one increment per save), preserved source/Jira links and prior
+scoped approval/action entries. Legacy/restricted work cannot start a third fix;
+default/bedtime uses the mode-specific progress/recovery rule. Duplicate decision ID with identical content
 returns saved state without consuming another step, even with an old revision.
 Reusing an ID with different content fails. Use a stable ID for the logical
 transition across interruptions; read history before choosing a new decision.
 
 `finish --owner-pid <pid> --run-id <uuid> --outcome <reason>` releases ownership.
 Reasons: single_step, step_limit, blocked, waiting_for_human, no_available_work,
-stopped. Retrying the same finish is idempotent. A crash before finish leaves the
+stopped, completed. Retrying the same finish is idempotent. A crash before finish leaves the
 token active; a later `begin` may mark it interrupted only after verifying the
 owner is dead or its PID now has a different observed identity. An alive owner
 blocks even when it seems idle; unknown ownership blocks until inspection/repair.
@@ -249,7 +261,8 @@ absolute report paths for preparation and final evidence under unique
 written after their evidence, with stable save operation IDs and decision JSON
 beside attempts. Partial artifacts are not a completed canonical transition.
 
-The trial needs explicit selected-item local implementation authorization. Save
+Implementation needs selected-item local authorization, including an applicable
+saved default/bedtime end-to-end grant. Save
 its exact direct instruction, observed provenance, repository/item scope and
 limits in immutable report context. Planning/design answers and source quotes
 are not authorization. Reuse applicable saved direct-user evidence, respecting
@@ -334,13 +347,13 @@ accepted code keeps reviewed_commit unset; clean exact reviewed commits may set 
 
 Save one pending accepted batch before engineering changes with unchanged completed
 fix_rounds and a stable proposed ordinal/attempt ID. No second pending batch or
-ordinal over two. Reconcile pending evidence/history first on every resume. Increment
+ordinal beyond the selected mode’s recovery allowance. Reconcile pending evidence/history first on every resume. Increment
 exactly once with the owner-gated changed-code return-for-verification save, even
 when required checks fail; preserve the same attempt through interruptions. Initial
 implementation/review and no-code attempts consume none. Internal and PR
 fixes share this count. Corrected successful checks return review/ready; failed
-checks remain implement/blocked. After two unsuccessful rounds, save a concrete
-human escalation with issues/attempts instead of a third fix or PR. Partial code
+checks remain implement/blocked. At the selected mode’s recovery limit or a demonstrated impasse, save a concrete
+block with issues and attempted remedies. Product decisions follow the mode policy. Partial code
 and evidence remain preserved. A pass saves follow_pr/ready/factory-follow-pr;
 that role is available and rechecks exact content before publication. Unchanged handoff/wait reuse consumes zero semantic steps.
 

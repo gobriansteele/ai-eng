@@ -1,12 +1,15 @@
 ---
 name: factory-run
-description: Run or resume bounded factory work using the remembered default or an explicit config. Orchestrates saved intake, engineering roles, PR follow-up and reporting while preserving evidence and authorization boundaries.
+description: Run or resume factory work using the remembered default or an explicit config. Orchestrates saved intake, engineering roles, PR follow-up and reporting under the selected execution mode while preserving evidence and authorization boundaries.
 ---
 
 # Factory run
 
 Read the shared [agent-selection policy](references/agent-selection.md) before
-dispatching work. Apply it to every assignment, including foreground coordinators,
+dispatching work. Read [execution modes](references/execution-modes.md) before
+choosing scope, authorization or a stopping point. Save the selected item’s mode
+and scoped delegation, and pass them to every role. Apply agent selection to every
+assignment, including foreground coordinators,
 direct role requests, retries and resumes. Pass it to workers that delegate further.
 
 Act as the orchestrator: read durable evidence, choose the next step, and save
@@ -36,10 +39,9 @@ already carries pinned config/local context from a top-level entry point, reuse
 it without another resolution. Keep the returned absolute config/local paths
 fixed for every helper, role and foreground worker in this invocation; never ask
 for the config again or consult a changed default mid-run. Resolution errors
-stop with actionable setup/repair instructions. Default to at most three saved
-steps per invocation. Honor a requested
-single step (`--single-step`, one saved decision), or an explicit `--max-steps`
-from 1 through 10. These invocation options do not change YAML. For explicitly requested native
+stop with actionable setup/repair instructions. Default to no step cap and continue the selected item to its authorized endpoint.
+Honor `--single-step` (one saved decision) or an explicit positive `--max-steps`;
+a null saved `max_steps` means unlimited. These options do not change YAML. For explicitly requested native
 scheduling, read the [runbook](references/scheduling.md); pin the resolved
 config/local in the scheduled prompt, with no account schedule activation implied.
 A resolved config with no synthetic input is the production entry point: save any
@@ -54,9 +56,9 @@ run token owns the entire invocation, including time between helper calls. Use
 the observed nearest long-lived CLI ancestor's PID, never the helper, transient shell,
 `$PPID` guess, desktop app-server, or invented PID. If the desktop has no CLI
 owner, dispatch one foreground fresh CLI invocation in the same harness with the
-pinned absolute config/local context, this skill, and the requested bound, then
+pinned absolute config/local context, this skill, and any explicitly requested mode and bound, then
 wait for its result;
-see the harness guide. The CLI worker owns and performs the entire run. If this
+see the harness guide. The CLI worker owns and performs the entire run; do not add a step cap in the handoff. If this
 capability or required process inspection is unavailable, report the blocker.
 When the sandbox denies process inspection or a specific authorized helper
 mutation, retry only that command through the host's normal approval mechanism;
@@ -91,6 +93,10 @@ report, not a new synthetic item. This is natural-language invocation scope, not
 a new helper flag. Do not reinterpret it as permission to send. Finish/release
 after reporting; subsequent engineering-role instructions do not apply to this
 report-only invocation.
+
+If the selected item is already `follow_pr / done` and no new work or changed
+result is requested, reuse its saved completion report and finish without rerunning
+review or polling. Do not claim saved observations are fresh remote reads.
 
 Read canonical `items`, `active_item_id`, source receipts, relevant history,
 bounds, scoped approvals and pending actions. There is only one selected active
@@ -177,7 +183,8 @@ When the selected item is at plan and a semantic step remains, invoke shared
 `factory-plan` with the full preserved item, source captures, investigation and
 prior plan artifact paths, config/runtime and offline/live mode. An old
 `factory-plan` missing-role block is resumable now. An actual
-`waiting_for_human` stays waiting without a relevant direct answer or evidence;
+`waiting_for_human` stays waiting without a relevant direct answer, evidence, or
+explicit bedtime delegation covering the pending decision;
 role availability alone does not resolve it. Read its saved question before
 interpreting the current user prompt. Pass a direct response verbatim to the
 planner with observed provenance and its association to the selected item/question.
@@ -205,8 +212,8 @@ and prior design paths, config/runtime, offline/live mode and relevant repositor
 context. An old missing-designer block is resumable now; availability does not
 resolve a real architectural human wait. Read the saved question before passing
 any direct answer verbatim with its observed provenance and item/question
-association, just as for planning. An unchanged wait without a relevant answer
-or evidence consumes zero steps. Never treat quoted source approval as a direct
+association, just as for planning. An unchanged wait without a relevant answer, evidence or applicable bedtime
+delegation consumes zero steps. Never treat quoted source approval as a direct
 human answer. No new helper flag is needed.
 
 Read the returned design/skip handoff, validate its inputs, rationale, technical
@@ -226,7 +233,8 @@ blocks name the actual missing input at the step that needs it.
 
 A completed or justified-skipped design saves `implement` / `ready` /
 `factory-implement`, naming its self-contained handoff. The shared implementer is
-available. A human design answer grants no implementation or external permission.
+available. A design answer alone grants no implementation or external permission; reuse
+applicable end-to-end authorization from the execution report.
 Reuse completed design and resume old missing-implementer blocks; do not repeat
 investigation/planning/design merely because implementation is now available.
 
@@ -241,7 +249,8 @@ association; also supply this invocation's observed owner/worker identity. Verif
 saved authorization context rather than assuming earlier product/architecture
 answers authorize code work.
 
-Missing local implementation authorization requires an actual readable
+When the execution report or other direct permission does not authorize local
+implementation, the wait requires an actual readable
 `<runtime>/work/<item-id>/implementation-<unique-attempt-id>/preparation.md`
 before saving `implement` / `waiting_for_human` / `factory-implement`. Verify
 that report records exact current direct instruction/provenance and absence of
@@ -281,7 +290,7 @@ plan/design wait with evidence. Append unique preparation/final report paths,
 retaining earlier bytes and all source/cursor/history/counter/action/approval
 context. Save using ordinary owner-gated `save`, keeping stable operation ID and
 decision JSON beside each attempt and reconciling uncertain saves. Local edit or
-separately explicit local-commit authorization lives in immutable report context;
+applicable local-commit authorization (including scoped mode delegation) lives in immutable report context;
 the external-action ledger is unchanged. Initial implementation consumes no fix
 round. Leave `reviewed_commit` unset: code has not been independently reviewed.
 
@@ -315,23 +324,19 @@ changed code returns for verification. Authorization/ownership still follow the
 implementation contract. Do not create another batch while one is pending.
 On changed-code return, verify its before/after evidence and complete that same
 batch with exactly one increment in the same owner-gated result save. Failed
-required checks count too and close that batch at implement/blocked. On a later
-authorized resume below two, save a new batch from the concrete remaining accepted
+required checks count too and close that batch at implement/blocked. When the execution mode permits another attempt, save a new batch from the concrete remaining accepted
 findings/check failures before another edit; a completed batch cannot authorize
 further changes. Interrupted partial edits
 resume the same pending batch; unchanged/no-code attempts consume no round and
-cannot pass. Initial implementation/review consume zero. Internal review and
-PR follow-up share the same two total rounds; never reset it. Re-review
+cannot pass. Initial implementation/review consume zero. Internal review and PR follow-up share the same counter and mode-specific
+recovery policy; never reset it. Re-review
 corrected code with fresh independent workers under the review contract.
 
-After two unsuccessful rounds, save a readable escalation report and the actual
-review/implement waiting_for_human with remaining supported issues, both attempts,
-current exact content and a concrete question for Brian. Imported exhausted
-scenario metadata must be labeled; never invent missing prior attempts. Do not
-start a third fix or create a PR. A disputed human question retains review /
-waiting_for_human / factory-review; a dispatch/evidence gap retains review /
-blocked / factory-review. Unchanged real waits consume zero steps and role
-availability alone does not resolve them.
+Follow the execution-mode recovery rule: restricted/legacy work stops after two
+rounds; default/bedtime continues while making material progress and changes
+approach or stops at a demonstrated impasse. Save remaining issues and attempted
+remedies at the actual blocked role. A product/design dispute follows that mode's
+decision policy; unavailable dispatch/evidence remains a genuine blocker.
 
 A pass needs the complete disposition audit and exact current fingerprint in a
 readable final report. Only a clean exact reviewed commit can populate
@@ -347,7 +352,7 @@ that shared role with all saved review/implementation/content, authorization,
 code refs, pending actions/batches and counter history, config/runtime, actual
 owner and mode. Verify its immutable reports and current exact checkout/remote
 identities. Reuse observed existing PRs; save code.pr_url plus evidence without
-claiming a factory creation action. For a new approved push/draft request, append
+claiming a factory creation action. For a new authorized push/non-draft PR request, append
 its exact scoped approval/proposed action via ordinary save, then use the narrow
 owner-gated reconcile command to checkpoint uncertain BEFORE execution and confirm
 only observed results. Reserve the required steps before starting; a partial or
@@ -359,17 +364,20 @@ and unknown remote waits. Do not replace pending entries through ordinary save.
 Read current-head CI/status/log/review/comment coverage, disposition findings with
 evidence, and save a single accepted pending fix batch before implementer dispatch
 with the completed count unchanged. Use the existing shared count/close/re-review
-rules above, including failed checks counting once and count-two escalation.
-Re-review corrected content before any separately authorized fix push; verify its
+rules above, including failed checks counting once and mode-specific recovery.
+Re-review corrected content before any scoped authorized fix push; verify its
 new remote SHA, not old CI. Append unique follow-pr report paths, preserving old
 artifacts/bytes, history, sources/cursors, approval scopes and counts. Save actual
 follow_pr blocked/ready/waiting_for_human outcomes with concrete next action;
-unchanged observed waits need no repeated step. Allow at most one follow-up
-observation/handoff, then prepare any due local report below before finish/release
-while ownership and capacity remain; no automatic poll, merge or deployment. A ready
-draft waits for Brian, with remote checks and coverage stated precisely.
+unchanged observed waits need no repeated step. Continue observing pending CI and automated review within this invocation,
+using bounded waits/backoff and preserving unchanged observations without duplicate
+saves. Resolve actionable findings through the fix/review/push loop. Only save
+`follow_pr / done` with no required role when the PR is non-draft, required checks
+pass on the current head and applicable automated review findings are resolved.
+Unknown coverage prevents completion. Then report once and finish `completed`;
+never merge, deploy or automatically select another item.
 
-When saved work makes meaningful progress/completes or reaches a new block/human
+When the selected work completes or reaches a genuine block/required human
 question, invoke available factory-report for local drafts if a semantic step
 remains. Also honor explicit report requests without forcing another engineering
 step. Compare stable meaningful observation/destination identity with saved report
@@ -434,13 +442,14 @@ An uncertain external action must be reconciled from fresh observations in the
 selected mode before retry; actual external actions require the loaded follow-up
 contract and applicable authorization.
 
-Stop on the first unavailable role, wait, block, completed single step, or step
-limit. Otherwise reread saved state and choose another available step within the
-remaining bound. A completed route can proceed to investigation within that
+Stop only at completion, an applicable mode checkpoint or genuine decision/block,
+or an explicitly requested step limit. Reassess saved waits under the selected
+mode instead of treating every unresolved decision as a mandatory human stop.
+Otherwise reread saved state and continue the selected item. A completed route can proceed to investigation within that
 bound; completed investigation can proceed to planning and actionable planning to
 design, then authorized implementation within the remaining bound. Completed
 implementation can proceed to independent review and bounded fixes, then
-authorized draft PR follow-up when prerequisites hold. Respect genuine waits,
+authorized non-draft PR follow-up when prerequisites hold. Respect genuine waits,
 no-action and invocation bounds.
 An old investigator, planner, designer, implementer, reviewer or follow-up
 missing-role block
@@ -454,8 +463,7 @@ item stage/status/next action, snapshot path, revision, step count/bound and blo
 The invocation ends when this CLI worker stops; another fresh harness can resume.
 
 
-For native recurring invocations, meaningful progress/completion/failure or a
-needed human action merits notification; unchanged checks stay quiet through the
+For native recurring invocations, completion/failure or a needed human action merits notification; unchanged checks stay quiet through the
 host's separate native notification policy. Do not generate duplicate drafts or
 extra work merely to report a tick. Direct factory-retro/factory-maintain requests
 are read-only operational activities with their own contracts, not engineering

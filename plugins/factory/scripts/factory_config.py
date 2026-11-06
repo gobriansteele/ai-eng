@@ -281,7 +281,7 @@ def load_config(config: Path, local: Path | None = None) -> Config:
         "fix_rounds": 2,
     }:
         raise ConfigError(
-            "This trial supports one active item and two total fix rounds"
+            "Factory supports one active item and a two-attempt recovery checkpoint"
         )
     expected_actions = {
         "tickets": "approval_required",
@@ -766,13 +766,13 @@ def run_resolved(
             "product planning with durable questions and answer resume",
             "technical design with justified skips and durable architectural choices",
             "explicitly authorized local implementation with dedicated worktrees and durable evidence",
-            "independent review, adjudication and two shared fix rounds",
-            "scoped draft PR publication, uncertain-action reconciliation and fresh CI/review follow-up",
+            "independent review, adjudication and mode-specific recovery",
+            "scoped non-draft PR publication, uncertain-action reconciliation and fresh CI/review follow-up",
             "deduplicated local Slack/Jira report drafts and scoped post reconciliation preserving engineering state",
             "evidence-based local retrospectives and ownership-aware maintenance previews/additive archive copies",
             "native scheduling runbook without schedule activation",
         ],
-        "workflow": "direct chat and bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation, independent review and authorized draft PR follow-up with two shared fix rounds; remote coverage and permission limits reported; local report drafts preserve engineering state; exact authorized message delivery untested; native scheduling documented but not activated/tested; maintenance defaults preview-only",
+        "workflow": "direct chat and bounded Slack intake, routing, investigation, product planning, technical design, authorized local implementation, independent review and authorized PR follow-up with mode-specific recovery; remote coverage and permission limits reported; local report drafts preserve engineering state; exact authorized message delivery untested; native scheduling documented but not activated/tested; maintenance defaults preview-only",
     }
 
 

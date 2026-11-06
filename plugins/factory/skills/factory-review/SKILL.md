@@ -5,6 +5,10 @@ description: Independently review a saved factory implementation, adjudicate evi
 
 # Factory review
 
+Read the shared [execution-mode policy](../factory-run/references/execution-modes.md)
+and the selected item's saved execution report. Apply its decisions, authorization
+and stopping rules; mode-specific rules govern the checkpoints below.
+
 A direct request enters `factory-run` with the requested role and any user-supplied
 config/local override; the orchestrator resolves the remembered default once.
 Under an existing invocation, reuse its pinned absolute config/local and selected
@@ -34,7 +38,7 @@ consensus. Revision/content changes invalidate affected verdicts, including dirt
 changes with the same HEAD; fresh review must identify the corrected result.
 
 Initial implementation and review use zero fix rounds. Internal review and later
-PR follow-up share two total rounds, following the pending-batch and completion
+PR follow-up share a counter and mode-specific recovery limits, following the pending-batch and completion
 rules in the contract. Never reset the counter or start an untracked correction.
 The implementer follows its existing authorization, ownership and check contract;
 review findings grant no new edit permission. No local commit is required for
@@ -42,8 +46,7 @@ review. Dirty accepted code is identified by base/HEAD, full diff and exact file
 hashes; `reviewed_commit` remains unset for it.
 
 Return immutable reports and a concrete recommendation: fix batch, precise
-block/human wait, or pass for the exact reviewed content. After two unsuccessful
-rounds, return the remaining issues, attempted fixes and concrete question for
-Brian. A pass hands off to available `factory-follow-pr` for exact-content and
+block/human wait, or pass for the exact reviewed content. At the applicable recovery limit or demonstrated impasse, return the remaining
+issues, attempted fixes and concrete unblock question. A pass hands off to available `factory-follow-pr` for exact-content and
 authorization checks; no push,
 PR, external messages, merge or cleanup follows from this skill.

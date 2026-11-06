@@ -3,8 +3,8 @@
 ## What it is
 
 Factory is a Claude Code and Codex plugin that takes requests from your chat or Slack through
-investigation, planning, implementation and independent review to a draft pull
-request. It saves progress locally so you can stop and resume across sessions.
+investigation, planning, implementation and independent review to a non-draft pull
+request with required CI and automated review resolved. It saves progress locally so you can stop and resume across sessions.
 
 ## How to install it
 
@@ -80,10 +80,31 @@ A **work item** is one bug report or feature request that Factory is working on.
 A **run** is one invocation of `factory-run`: it reads new input, continues saved
 work, saves its progress and stops. A work item can take several runs to finish.
 
-By default, a run takes up to three **steps**. A step is a saved decision or result,
-such as selecting a request, recording investigation findings or saving a plan.
-For example, a run might investigate a bug and then stop to ask what the expected
-behavior should be. The next run uses your answer and continues from those findings.
+By default, a run continues the selected item through the workflow, saving progress
+at each step. It stops for an important unresolved product/architecture decision,
+a genuine blocker, or completion. `--single-step` and an explicit `--max-steps`
+remain available when you want a bounded run.
+
+Choose how much decision-making to delegate:
+
+| Mode | Behavior |
+| --- | --- |
+| **Default** | Go end to end; ask important product/architecture questions. |
+| **Going to bed** | Explicitly delegate those decisions too; choose a defensible approach and stop only when genuinely blocked. |
+| **Restricted** | Pause to approve the implementation plan before edits and the prepared PR before publication. |
+
+For example, in Codex:
+
+```text
+Use $factory-run in going-to-bed mode for the course duplication request.
+Make the product and engineering decisions needed to finish.
+```
+
+In Claude Code, use `/factory:factory-run` with the same request. Modes and scope
+are saved per item across resumes. Going-to-bed mode never applies automatically
+to unrelated Slack requests. “Investigate only” still limits work to investigation.
+Factory reports completion or a needed decision/blocker, without routine approval
+check-ins. The host may still show progress, and must remain running to continue.
 
 `factory-run` coordinates these component skills:
 
@@ -93,14 +114,16 @@ behavior should be. The next run uses your answer and continues from those findi
 | Investigation | `factory-investigate` | Examine relevant code, reproduce problems and save findings. |
 | Planning and design | `factory-plan`, `factory-design` | Define expected behavior, checks and technical approach; ask about consequential choices. |
 | Implementation and review | `factory-implement`, `factory-review` | Make authorized changes in a dedicated worktree, run checks and obtain independent review. |
-| PR follow-up | `factory-follow-pr` | Publish an approved draft PR and examine CI and review feedback. |
+| PR follow-up | `factory-follow-pr` | Publish a non-draft PR and resolve required CI and automated review findings. |
 | Updates | `factory-report` | Report in the harness and prepare applicable Slack/Jira update drafts. |
 | Supporting tools | `factory-status`, `factory-retro`, `factory-maintain` | Inspect progress, propose improvements and preview maintenance. |
 
-Factory works on one selected item at a time; other items wait. It asks before
-editing code, committing, pushing, opening a PR or sending an update. For example,
-it can prepare a Slack progress update for you to read, then wait for approval to
-post it. Factory does not merge or deploy changes.
+Factory works on one selected item at a time. An end-to-end request in default or
+going-to-bed mode authorizes its scoped implementation, checks, commits, pushes,
+PR publication and necessary fixes. Restricted mode uses checkpoints instead.
+Completion means the non-draft PR has passing required checks and resolved
+automated review findings on the current head. Factory does not merge or deploy,
+and sending Slack/Jira updates still requires specific permission.
 
 ### Start in your chat
 
@@ -158,7 +181,7 @@ configured Slack channels for new messages and continues any saved work.
 
 ### Continue saved work
 
-When a run reaches its step limit, needs your answer or encounters a problem, it
+When a run reaches an explicit limit, needs your answer or encounters a blocker, it
 saves its place and stops. After it stops, continue with:
 
 **Claude Code**

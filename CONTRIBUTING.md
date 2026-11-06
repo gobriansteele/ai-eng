@@ -60,6 +60,7 @@ prompt so a test measures behavior rather than repetition of an answer.
 
 | Area | Evaluation guides |
 | --- | --- |
+| Execution modes | [Decisions, checkpoints and completion](docs/execution-modes-evaluation.md) |
 | Agent selection | [Dispatch, capability limits and resume](docs/agent-selection-evaluation.md) |
 | Intake | [Watcher](docs/watcher-evaluation.md), [router](docs/router-evaluation.md) |
 | Understanding the request | [Investigator](docs/investigator-evaluation.md), [planner](docs/planner-evaluation.md), [designer](docs/designer-evaluation.md) |
@@ -71,7 +72,8 @@ tests need a specific target and authorization for the actions they will perform
 
 ## Release a change
 
-For a plugin release, keep the versions in both plugin manifests and
+Before pushing changes to the shipped plugin to `main`, bump its version.
+Keep the versions in both plugin manifests and
 `plugins/factory/pyproject.toml` aligned, and refresh `plugins/factory/uv.lock`.
 Validate changed JSON and skill frontmatter. Install or update the package in both
 hosts, then verify the loaded version and behavior in fresh sessions. Do not edit

@@ -22,8 +22,9 @@ factory config and fixture:
 Use $factory-run with configuration <factory-home>/config.yaml and the loaded package's fixtures/synthetic-resume.json. Single step: save one next-step decision, then stop at the bound or a concrete evidence/authorization wait. Report the canonical snapshot path.
 ```
 
-Resume after the original CLI stops with the same config and no fixture. For
-normal bounded use request at most three steps (default), or `--max-steps 1..10`.
+Resume after the original CLI stops with the same config and no fixture.
+Normal use has no step cap; pass `--single-step` or a positive `--max-steps` only
+when requested. Forward the selected item’s execution mode and scoped delegation.
 The shared skill discovers the exact long-lived `codex` CLI ancestor through
 `factory_work.py owners`; its helper/shell PID is not the owner. Process
 inspection denied by sandbox is unknown: retry the specific command through the
@@ -33,7 +34,7 @@ For desktop, first resolve and pin config/local in the parent as above, then
 dispatch one foreground CLI worker and wait for completion:
 
 ```sh
-codex exec --skip-git-repo-check --approve-for-me --sandbox workspace-write -C '<factory-home>' 'Use $factory-run. Pinned factory context: config <factory-home>/config.yaml; local override none. Resume saved work with --max-steps 3; finish and report the result.'
+codex exec --skip-git-repo-check --approve-for-me --sandbox workspace-write -C '<factory-home>' 'Use $factory-run. Pinned factory context: config <factory-home>/config.yaml; local override none. Resume the selected item with its saved execution mode and scope through its endpoint; finish and report the result.'
 ```
 
 Substitute the pinned absolute config path and use its existing factory home.
