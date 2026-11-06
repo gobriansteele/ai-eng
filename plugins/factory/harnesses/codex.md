@@ -6,10 +6,20 @@ For installation, updates and troubleshooting, see the
 
 ## Run and resume
 
-In a fresh CLI session:
+In a fresh CLI session, ordinary use needs no configuration path after setup:
 
 ```text
-Use $factory-run with configuration <factory-home>/config.yaml and the loaded package's fixtures/synthetic-resume.json. Single step: save the next-step decision, then stop at an unavailable role. Report the canonical snapshot path.
+Use $factory-run to resume saved work.
+```
+
+The top-level skill resolves once through the shared
+[configuration contract](../skills/factory-setup/references/configuration.md#default-resolution-and-pinning).
+Pin its absolute config/local for all helpers and workers; do not resolve again
+inside a foreground worker. For a synthetic test, explicitly select its separate
+factory config and fixture:
+
+```text
+Use $factory-run with configuration <factory-home>/config.yaml and the loaded package's fixtures/synthetic-resume.json. Single step: save one next-step decision, then stop at the bound or a concrete evidence/authorization wait. Report the canonical snapshot path.
 ```
 
 Resume after the original CLI stops with the same config and no fixture. For
@@ -19,13 +29,18 @@ The shared skill discovers the exact long-lived `codex` CLI ancestor through
 inspection denied by sandbox is unknown: retry the specific command through the
 normal host approval mechanism, preserving sandbox settings. Never infer death.
 
-For desktop, dispatch one foreground CLI worker and wait for completion:
+For desktop, first resolve and pin config/local in the parent as above, then
+dispatch one foreground CLI worker and wait for completion:
 
 ```sh
-codex exec --skip-git-repo-check --approve-for-me --sandbox workspace-write -C '<factory-home>' 'Use $factory-run with configuration <factory-home>/config.yaml. Resume saved work with --max-steps 3; finish and report the result.'
+codex exec --skip-git-repo-check --approve-for-me --sandbox workspace-write -C '<factory-home>' 'Use $factory-run. Pinned factory context: config <factory-home>/config.yaml; local override none. Resume saved work with --max-steps 3; finish and report the result.'
 ```
 
-Use an existing selected home and substitute the actual config path. For a new
+Substitute the pinned absolute config path and use its existing factory home.
+If resolution returned a local override, replace `local override none` with
+its explicit absolute path in the worker prompt. Otherwise keep `none`; an explicit config never borrows the
+registry's local override. The worker reuses these pinned inputs and does not
+resolve the default again. For a new
 synthetic test include the explicitly selected fixture in that prompt. `--approve-for-me` retains workspace-write and routes specific required commands
 through automatic approval review; it does not disable the sandbox or grant
 external-action permission.
@@ -47,7 +62,7 @@ deciding. Legacy post-intake fixtures now wait for missing source evidence.
 
 ## Read-only Slack intake
 
-With an explicit config and no synthetic flag, factory-run calls factory-watch
+With a resolved config and no synthetic flag, factory-run calls factory-watch
 then routes saved intake. Direct watch requests also enter that orchestrator so
 one verified CLI token spans all MCP reads. Historical `--import-thread` requests
 name the selected configured channel and thread root/link; live cursors stay put.
@@ -198,8 +213,9 @@ Report actual supported operations/limits; no live message delivery is claimed.
 ## Native scheduling and maintenance
 
 Read the bundled [scheduling runbook](../skills/factory-run/references/scheduling.md)
-when the user requests a native schedule. No schedule/fire is established by CLI
-acceptance. factory-maintain uses this host's actually available lifecycle and
+when the user requests a native schedule. Resolve at schedule creation and save
+explicit absolute config/local paths in its prompt so later default changes
+cannot redirect it. No schedule/fire is established by CLI acceptance. factory-maintain uses this host's actually available lifecycle and
 recorded resource identity; preview or archive copy grants no removal permission.
 Discover native automation management only when requested; the local app/project
 must be available. Managed worktree archive/restore capabilities do not establish

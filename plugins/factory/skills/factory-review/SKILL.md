@@ -5,6 +5,11 @@ description: Independently review a saved factory implementation, adjudicate evi
 
 # Factory review
 
+A direct request enters `factory-run` with the requested role and any user-supplied
+config/local override; the orchestrator resolves the remembered default once.
+Under an existing invocation, reuse its pinned absolute config/local and selected
+item. Do not resolve again or ask the user for a config path.
+
 Review the selected item's actual implementation through `factory-run`. Read the
 [review and fix contract](references/review.md) before dispatch. Use its saved
 sources, actionable plan, design/skip, repository instructions, implementation

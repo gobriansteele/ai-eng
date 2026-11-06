@@ -50,17 +50,28 @@ In Codex:
 Use $factory-setup. Help me set up a factory using my Slack connection.
 ```
 
-Setup helps you choose a factory home, Slack channels and repository roots, plus
-Jira settings if relevant. For example, you could choose `~/factories/work`;
-keep it outside your code repositories. Setup shows the resolved paths, creates
-`config.yaml` and `runtime/` in that home and checks the current host's access.
-You do not need to copy or hand-edit a YAML template.
+Setup proposes `~/factories/default/` for your factory's files. You can choose
+another location. It creates `config.yaml` and `runtime/` there, helps you select
+Slack channels and repository roots, and checks your connections.
 
-Keep the configuration path: it identifies your factory in later sessions.
-Configuration, findings and work history stay in your chosen home. Each host needs
-its own connections and setup checks, even when sharing that home. See the
-[configuration reference](plugins/factory/skills/factory-setup/references/configuration.md)
-for supported settings.
+Factory remembers this choice. Future commands find your factory automatically,
+including in a fresh session or the other host. You do not need to supply a
+configuration path each time. Each host still needs its own connections.
+
+Your configuration and work history stay in the factory home. A small registry at
+`~/.config/ai-eng/registry.json` remembers its location (or under `XDG_CONFIG_HOME`
+if you use that setting). Plugin updates leave both intact.
+
+**Already have a factory?** Run setup once with its existing configuration and ask
+it to make that your default. For example, in Claude Code:
+
+```text
+/factory:factory-setup Use ~/factories/work/config.yaml as my default factory.
+```
+
+Existing files and work history stay where they are. For custom paths, a second
+factory or lookup details, see the
+[configuration reference](plugins/factory/skills/factory-setup/references/configuration.md).
 
 ## How it runs
 
@@ -97,13 +108,13 @@ Factory to read that specific thread and save it as input. This lets you choose
 an older request instead of waiting for a new message in a configured channel.
 Importing does not post to Slack or authorize code changes.
 
-Use your configuration path, the thread's link and its channel ID. The channel
-must be one you selected during setup.
+Use the thread's link and its channel ID. The channel must be one you selected
+during setup.
 
 **Claude Code**
 
 ```text
-/factory:factory-run Use configuration ~/factories/work/config.yaml.
+/factory:factory-run
 Use --import-thread to read <thread-link> from configured channel <channel-id>.
 Investigate the request and show me the next action.
 ```
@@ -111,7 +122,7 @@ Investigate the request and show me the next action.
 **Codex**
 
 ```text
-Use $factory-run with configuration ~/factories/work/config.yaml.
+Use $factory-run.
 Use --import-thread to read <thread-link> from configured channel <channel-id>.
 Investigate the request and show me the next action.
 ```
@@ -122,19 +133,19 @@ configured Slack channels for new messages and continues any saved work.
 ### Continue saved work
 
 When a run reaches its step limit, needs your answer or encounters a problem, it
-saves its place and stops. After it stops, use the same configuration to continue:
+saves its place and stops. After it stops, continue with:
 
 **Claude Code**
 
 ```text
-/factory:factory-run Use configuration ~/factories/work/config.yaml.
+/factory:factory-run
 Resume saved work.
 ```
 
 **Codex**
 
 ```text
-Use $factory-run with configuration ~/factories/work/config.yaml.
+Use $factory-run.
 Resume saved work.
 ```
 
@@ -144,15 +155,15 @@ tasks in the export.” It uses that answer with the saved plan; you do not need
 import the thread again or repeat the conversation.
 
 You can continue in a fresh session or the other host. Let the previous run finish
-first. When switching hosts, run `factory-setup` with the existing configuration
-to check that host's connections before continuing.
+first. When switching hosts, run `factory-setup` to check that host's connections;
+it finds the same saved factory.
 
 ### Check progress
 
 Status reads saved progress without starting more work. For example:
 
 ```text
-/factory:factory-status Use configuration ~/factories/work/config.yaml.
+/factory:factory-status
 What is Factory working on, what has it finished, and what does it need from me?
 ```
 
@@ -162,8 +173,9 @@ In Codex, use `$factory-status` with the same request.
 
 A schedule starts the same `factory-run` request at a chosen interval—for example,
 every weekday morning. Each run checks for new Slack input and continues from the
-last saved result. If it needs your answer or approval, later runs still wait for
-that response.
+last saved result. The schedule remembers the factory selected when you create
+it, even if you later change your default. If Factory needs your answer or approval,
+later runs still wait for that response.
 
 Set up recurring execution separately using the
 [Factory scheduling guide](plugins/factory/skills/factory-run/references/scheduling.md).
@@ -174,11 +186,16 @@ passed; publishing a real PR and running on a schedule still need validation.
 
 - **Skill missing:** start a fresh session and check installation in the
   [Claude Code guide](docs/claude-code.md) or [Codex guide](docs/codex.md).
-- **Setup incomplete:** rerun setup with your existing configuration. It identifies
-  missing connections or permissions and preserves saved work.
+- **No factory found:** run `factory-setup` to create one or register an existing
+  configuration.
+- **Saved configuration is missing or invalid:** correct the reported file or use
+  `factory-setup` to select the correct configuration as your default. Factory
+  stops rather than switching to a different factory.
+- **Setup incomplete:** rerun setup. It identifies missing connections or
+  permissions and preserves saved work.
 - **No new work:** confirm the channel was selected during setup. Use
   `--import-thread` with its channel ID and thread link for an older request.
-- **Resume is blocked:** inspect `factory-status` with the same config. Answer the
+- **Resume is blocked:** inspect `factory-status`. Answer the
   saved question or resolve the reported access or environment issue, then resume
   after the previous run stops. Repeating a run does not resolve a missing answer.
 

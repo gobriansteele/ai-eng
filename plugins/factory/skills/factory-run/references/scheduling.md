@@ -1,15 +1,27 @@
 # Native scheduling
 
-This release supports the shared bounded manual workflow. No account schedule was
-created or activated, and no scheduled fire is claimed. Brian owns the real-work
-trial and can request a concrete host/home/cadence later. Do not install cron,
+Use native scheduling only when the user requests it. Do not install cron,
 a daemon, a queue or a cloud-to-local state adapter.
 
-Use the installed shared skill with an explicit absolute config and bound:
+At schedule creation, resolve the selected factory once through the
+[default resolution contract](../../factory-setup/references/configuration.md#default-resolution-and-pinning),
+using the remembered default unless the user supplies a config/local override.
+Stop on an invalid selection with its setup/repair instruction. Save the returned
+absolute config path and, when non-null, absolute local override in the scheduled
+prompt. Do not ask for a config path already remembered by setup. The scheduled
+work must keep these pinned paths even if the user later changes the default;
+changing an existing schedule's factory requires an explicit schedule update.
+
+Use the installed shared skill with that explicit absolute config and bound:
 
 ```text
 Use factory-run with configuration /absolute/factory-home/config.yaml and --max-steps 3. Resume saved work and finish the bounded invocation.
 ```
+
+When resolution returned a local override, add `Use local override
+/absolute/factory-home/local.yaml` with its actual path. When it returned null,
+omit the local override; the explicit config prevents inheriting a later default's
+local file. Do not put `resolve the default` in a saved schedule prompt.
 
 Codex can name `$factory-run`; Claude Code can use `/factory:factory-run`. Keep
 the scheduled prompt this small: role, permission, persistence and reporting rules

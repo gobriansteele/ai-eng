@@ -5,6 +5,11 @@ description: Preview retention and cleanup candidates from recorded factory owne
 
 # Factory maintain
 
+Resolve the default once through the [configuration contract](../factory-setup/references/configuration.md#default-resolution-and-pinning),
+unless this call already carries pinned absolute config/local from an invocation.
+Reuse those paths for all helpers and artifacts; an invalid default stops with
+setup/repair instructions instead of selecting another factory.
+
 Default to PREVIEW ONLY, preserving configured cleanup: preview_only. Read the
 [maintenance contract](references/maintenance.md) before classifying resources or
 copying an archive. Use explicit config/runtime/resource records and read-only

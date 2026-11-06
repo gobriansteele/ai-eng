@@ -5,6 +5,11 @@ description: Prepare an exact reviewed factory draft PR with scoped authorizatio
 
 # Factory follow PR
 
+A direct request enters `factory-run` with the requested role and any user-supplied
+config/local override; the orchestrator resolves the remembered default once.
+Under an existing invocation, reuse its pinned absolute config/local and selected
+item. Do not resolve again or ask the user for a config path.
+
 Work through `factory-run` on the selected saved item. Read the
 [follow-up contract](references/follow-pr.md) before deciding outcomes. Workers
 return immutable evidence and recommendations; the verified invocation

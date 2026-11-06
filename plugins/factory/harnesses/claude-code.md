@@ -22,10 +22,20 @@ that call with RID/P assignments, command substitution or a compound command cha
 The observed rejected compound begin command did not test the literal uv mutator;
 report it denied only if an actual literal permitted-form helper call fails.
 
-In a fresh CLI session:
+In a fresh CLI session, ordinary use needs no configuration path after setup:
 
 ```text
-/factory:factory-run Use configuration <factory-home>/config.yaml and the loaded package's fixtures/synthetic-resume.json. Single step: save the next-step decision, then stop at an unavailable role. Report the canonical snapshot path.
+/factory:factory-run Resume saved work.
+```
+
+The top-level skill resolves once through the shared
+[configuration contract](../skills/factory-setup/references/configuration.md#default-resolution-and-pinning).
+Pin its absolute config/local for all helpers and workers; do not resolve again
+inside a foreground worker. For a synthetic test, explicitly select its separate
+factory config and fixture:
+
+```text
+/factory:factory-run Use configuration <factory-home>/config.yaml and the loaded package's fixtures/synthetic-resume.json. Single step: save one next-step decision, then stop at the bound or a concrete evidence/authorization wait. Report the canonical snapshot path.
 ```
 
 Resume after the original CLI stops with the same config and no fixture. Normal
@@ -35,14 +45,20 @@ rather than a transient helper/shell. Process-inspection or mutation denial is a
 block until the specific command can run through normal permission review. Do
 not infer owner death or automatically relax permissions.
 
-For desktop, launch one foreground CLI worker from the selected factory home and
-wait for its completion, passing the explicit configuration and bound:
+For desktop, first resolve and pin config/local in the parent as above. Launch
+one foreground CLI worker from the selected factory home and wait for completion,
+passing the explicit configuration and bound:
 
 ```sh
-claude -p '/factory:factory-run Use configuration <factory-home>/config.yaml. Resume saved work with --max-steps 3; finish and report the result.'
+claude -p '/factory:factory-run Pinned factory context: config <factory-home>/config.yaml; local override none. Resume saved work with --max-steps 3; finish and report the result.'
 ```
 
-Use the actual config path. Include a selected synthetic fixture only for a new
+Use the pinned absolute config path. If resolution returned a local override,
+replace `local override none` with its explicit absolute path. Otherwise keep
+`none`; an
+explicit config never borrows the registry's local override. The worker reuses
+these pinned inputs and does not resolve the default again.
+Include a selected synthetic fixture only for a new
 synthetic test. Preserve the CLI's normal reviewed tool permissions; noninteractive
 permission denial must be reported rather than bypassed. If the current desktop
 cannot launch/authorize this foreground invocation, report the gap. Its CLI owns
@@ -62,7 +78,7 @@ deciding. Legacy post-intake fixtures now wait for missing source evidence.
 
 ## Read-only Slack intake
 
-With an explicit config and no synthetic flag, factory-run calls factory-watch
+With a resolved config and no synthetic flag, factory-run calls factory-watch
 then routes saved intake. Direct watch requests also enter that orchestrator so
 one verified CLI token spans all MCP reads. Historical `--import-thread` requests
 name the selected configured channel and thread root/link; live cursors stay put.
@@ -201,8 +217,9 @@ actual missing operations; no live message delivery is claimed.
 ## Native scheduling and maintenance
 
 Read the bundled [scheduling runbook](../skills/factory-run/references/scheduling.md)
-when the user requests a native schedule. No schedule/fire is established by CLI
-acceptance. factory-maintain uses this host's actually available lifecycle and
+when the user requests a native schedule. Resolve at schedule creation and save
+explicit absolute config/local paths in its prompt so later default changes
+cannot redirect it. No schedule/fire is established by CLI acceptance. factory-maintain uses this host's actually available lifecycle and
 recorded resource identity; preview or archive copy grants no removal permission.
 CLI /loop and Desktop persistent schedules have different lifetimes; verify this
 machine's Desktop capability rather than inferring it from the CLI version.

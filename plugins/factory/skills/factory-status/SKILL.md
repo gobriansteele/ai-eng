@@ -1,6 +1,6 @@
 ---
 name: factory-status
-description: Show the loaded software factory plugin version, implemented skills, and setup readiness for an explicitly supplied configuration. Use for installation or status questions; does not set up or run work.
+description: Show the loaded factory plugin version, available skills and readiness for the remembered default or an explicit config. Does not set up or run work.
 ---
 
 # Factory status
@@ -42,14 +42,17 @@ established config, optionally use
 `factory_work.py inspect` read-only to report the selected active item stage/status/next
 action and pending item IDs and snapshot path; never acquire an invocation or change work for status.
 
-Without an explicitly supplied or already established config path, say **Setup
-not assessed — provide a configuration path or use factory-setup.** Do not search
-the machine or infer there is no private configuration.
+Resolve once through the setup skill's [default resolution contract](../factory-setup/references/configuration.md#default-resolution-and-pinning),
+using the remembered default unless the user supplied an override. Reuse its
+absolute config/local paths for status and inspect; do not ask for them again.
+If no default or conventional config exists, report **Setup needed — use
+factory-setup.** Invalid config/default/registry stops with its precise repair;
+never search the machine or silently select another factory.
 
-With a path, use the loaded package's helper `scripts/factory_config.py status
+With the pinned path, use the loaded package's helper `scripts/factory_config.py status
 --config <path> --harness codex|claude-code` via `uv run --isolated --frozen --no-dev --project <plugin-root>
 python <script> ...`. Identify the current harness from observed context. Pass
-`--local` only if the user supplied an override. Read the setup skill's
+the resolved `--local` when non-null. Read the setup skill's
 [contract](../factory-setup/references/configuration.md) for details when needed.
 Report invalid configuration, dependency failures and unavailable repositories
 truthfully. Show effective config/runtime path and partial readiness/blocks. Saved

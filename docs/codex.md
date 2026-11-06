@@ -29,11 +29,11 @@ The marketplace source should identify `gobriansteele/ai-eng`, not a development
 checkout. In a fresh Codex session, ask:
 
 ```text
-Use $factory-status with configuration ~/factories/work/config.yaml. Show the loaded version and setup readiness.
+Use $factory-status. Show the loaded version and setup readiness.
 ```
 
-Use your actual configuration path. Connect Slack in Codex and the GitHub/Jira
-tools needed for your work. Connections in Claude Code do not carry over.
+Factory finds the configuration remembered during setup. Connect Slack in Codex
+and the GitHub/Jira tools needed for your work. Connections in Claude Code do not carry over.
 
 ## Update
 
@@ -44,8 +44,10 @@ codex plugin marketplace upgrade ai-eng-local
 codex plugin add factory@ai-eng-local
 ```
 
-Start a fresh session and check status again. Your configuration and saved work
-stay in the factory home you chose during setup.
+Start a fresh session and check status again. Your factory home and default
+selection are stored separately from the installed plugin. If you are upgrading
+from a version that required a configuration path, run setup once with that path
+and ask it to make this your default factory.
 
 ## Replace a development installation
 
@@ -69,7 +71,7 @@ saved work.
 | Marketplace authentication fails | Check the Git credentials configured on your machine. |
 | Setup cannot read a channel or repository | Check this session's connections and permissions for the selected resource. |
 | Dependency download fails | Check that `uv` and Python 3.11+ are available and that the required download is permitted. |
-| The run reports a permission or worker block | Use `factory-status` to read the missing capability. Resolve it through normal permissions, then resume with the same configuration. |
+| The run reports a permission or worker block | Use `factory-status` to read the missing capability. Resolve it through normal permissions, then resume. |
 
 For source development, see [Contributing](../CONTRIBUTING.md). The packaged
 [harness reference](../plugins/factory/harnesses/codex.md) is for agents executing

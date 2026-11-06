@@ -29,11 +29,11 @@ Open `/plugin` and check the Installed tab, or run `claude plugin list` in a
 terminal. In a fresh Claude Code session, ask:
 
 ```text
-/factory:factory-status Use configuration ~/factories/work/config.yaml. Show the loaded version and setup readiness.
+/factory:factory-status Show the loaded version and setup readiness.
 ```
 
-Use your actual configuration path. Slack, Jira and GitHub access come from this
-Claude Code session's connections; installing Factory does not connect accounts.
+Factory finds the configuration remembered during setup. Slack, Jira and GitHub
+access come from this Claude Code session's connections; installing Factory does not connect accounts.
 
 ## Update
 
@@ -44,8 +44,10 @@ claude plugin marketplace update ai-eng-local
 claude plugin update factory@ai-eng-local --scope user
 ```
 
-Start a fresh session and check status again. Your chosen factory home stores the
-configuration and work history separately from the installed plugin.
+Start a fresh session and check status again. Your factory home and default
+selection are stored separately from the installed plugin. If you are upgrading
+from a version that required a configuration path, run setup once with that path
+and ask it to make this your default factory.
 
 ## Replace a development installation
 
@@ -66,7 +68,7 @@ and reuse its configuration; do not rerun setup with a new home to recover work.
 | Installation exists only in one project | Inspect its scope. User scope makes it available across projects. |
 | Setup cannot read Slack | Connect Slack in Claude Code and verify access to the selected channel. |
 | A helper cannot run | Check `uv --version` and `python3 --version`; allow the specific required command through normal permission review. |
-| A run needs a tool that is unavailable | Read the saved blocker with `factory-status`. Connect or authorize that capability, then resume with the same configuration. |
+| A run needs a tool that is unavailable | Read the saved blocker with `factory-status`. Connect or authorize that capability, then resume. |
 
 For source development, see [Contributing](../CONTRIBUTING.md). The packaged
 [harness reference](../plugins/factory/harnesses/claude-code.md) is for agents

@@ -6,8 +6,10 @@ description: Collect new Slack intake and explicit historical thread imports for
 # Factory watch
 
 Work under factory-run's existing verified CLI invocation owner and run token.
-If invoked directly, enter factory-run with the same explicit `--config`, optional
-user-supplied `--local`, and collection/import request. Never start a second owner
+If invoked directly, enter factory-run with the collection/import request and
+any user-supplied config/local override; it resolves the remembered default once.
+Under an existing invocation, reuse its pinned absolute config/local without
+resolving again. Never start a second owner
 or release the orchestrator's token between integration reads. Resolve this loaded
 package and read the [collection contract](references/collection.md).
 

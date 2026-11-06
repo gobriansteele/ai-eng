@@ -3,20 +3,22 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
 import re
 import tempfile
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Literal, TypedDict, cast
+from typing import Iterator, Literal, TypedDict, cast
 
 import yaml
 
 Harness = Literal["codex", "claude-code"]
-Command = Literal["validate", "discover", "setup", "status"]
+Command = Literal["resolve-config", "validate", "discover", "setup", "status"]
 
 
 class Channel(TypedDict):
@@ -80,9 +82,22 @@ class Validation(TypedDict):
     effective_config: Config
 
 
-class SetupStatus(TypedDict):
-    effective_config: Config
+class Resolution(TypedDict):
+    config_path: str
+    local_path: str | None
     runtime_path: str
+    factory_id: str
+    source: Literal["explicit", "registry", "conventional"]
+
+
+class Registry(TypedDict):
+    schema_version: int
+    default_config: str
+    default_local: str | None
+
+
+class SetupStatus(Resolution):
+    effective_config: Config
     harness: Harness
     setup_status: Literal["partial", "ready"]
     blocked: list[str]
@@ -94,11 +109,13 @@ class SetupStatus(TypedDict):
 @dataclass
 class Arguments:
     command: Command
-    config: Path
+    config: Path | None = None
     local: Path | None = None
     harness: Harness | None = None
     evidence: Path | None = None
     confirm_runtime_change: bool = False
+    registry: Path | None = None
+    set_default: bool = False
 
 
 class ConfigError(ValueError):
@@ -152,7 +169,7 @@ def string(value: object, where: str) -> str:
 def read_yaml(path: Path) -> dict[str, object]:
     try:
         value: object = yaml.load(path.read_text(), Loader=UniqueLoader)
-    except (OSError, yaml.YAMLError) as exc:
+    except (OSError, UnicodeError, yaml.YAMLError) as exc:
         raise ConfigError(f"Cannot read YAML {path}: {exc}") from exc
     if not isinstance(value, dict):
         raise ConfigError(f"{path}: expected a mapping")
@@ -295,6 +312,131 @@ def load_config(config: Path, local: Path | None = None) -> Config:
     return result
 
 
+def registry_path(path: Path | None = None) -> Path:
+    if path is not None:
+        return Path(os.path.abspath(path.expanduser()))
+    xdg = os.environ.get("XDG_CONFIG_HOME")
+    base = Path(xdg) if xdg else Path.home() / ".config"
+    if not base.is_absolute():
+        raise ConfigError("XDG_CONFIG_HOME must be an absolute path")
+    return Path(os.path.abspath(base / "ai-eng" / "registry.json"))
+
+
+def absolute_registry_path(value: object, where: str) -> str:
+    path = Path(string(value, where))
+    if not path.is_absolute():
+        raise ConfigError(f"{where}: expected an absolute path")
+    return str(path.resolve())
+
+
+def read_registry(path: Path) -> Registry | None:
+    try:
+        text = path.read_text()
+    except FileNotFoundError as exc:
+        if path.is_symlink() or path.parent.exists() and not path.parent.is_dir():
+            raise ConfigError(f"Registry needs repair at {path}: {exc}") from exc
+        return None
+    except (OSError, UnicodeError) as exc:
+        raise ConfigError(f"Registry needs repair at {path}: {exc}") from exc
+    try:
+        raw = mapping(
+            json.loads(text, object_pairs_hook=unique_json_mapping),
+            {"schema_version", "default_config", "default_local"},
+            "registry",
+        )
+        if type(raw["schema_version"]) is not int or raw["schema_version"] != 1:
+            raise ConfigError("Unsupported registry schema_version; expected 1")
+        return {
+            "schema_version": 1,
+            "default_config": absolute_registry_path(
+                raw["default_config"], "registry.default_config"
+            ),
+            "default_local": (
+                absolute_registry_path(raw["default_local"], "registry.default_local")
+                if raw["default_local"] is not None
+                else None
+            ),
+        }
+    except (ValueError, OSError, RuntimeError) as exc:
+        raise ConfigError(
+            f"Registry needs repair at {path}: {exc}; use factory-setup with explicit --config and --set-default"
+        ) from exc
+
+
+def unique_json_mapping(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ConfigError(f"Duplicate registry key: {key}")
+        result[key] = value
+    return result
+
+
+def registry_config(registry: Registry) -> tuple[Path, Path | None]:
+    return Path(registry["default_config"]), (
+        Path(registry["default_local"]) if registry["default_local"] else None
+    )
+
+
+def resolve_config(
+    config: Path | None = None,
+    local: Path | None = None,
+    registry: Path | None = None,
+) -> Resolution:
+    source: Literal["explicit", "registry", "conventional"] = "explicit"
+    if config is None:
+        saved = read_registry(registry_path(registry))
+        if saved is not None:
+            config, remembered_local = registry_config(saved)
+            if local is None:
+                local = remembered_local
+            source = "registry"
+        else:
+            config = Path.home() / "factories" / "default" / "config.yaml"
+            source = "conventional"
+    try:
+        config = config.expanduser().resolve()
+        local = local.expanduser().resolve() if local is not None else None
+        data = load_config(config, local)
+    except (ConfigError, OSError, RuntimeError) as exc:
+        raise ConfigError(
+            f"Cannot resolve {source} factory configuration: {exc}; run factory-setup to create or repair it"
+        ) from exc
+    return {
+        "config_path": str(config),
+        "local_path": str(local) if local is not None else None,
+        "runtime_path": data["runtime_path"],
+        "factory_id": data["factory_id"],
+        "source": source,
+    }
+
+
+@contextmanager
+def registry_lock(path: Path) -> Iterator[None]:
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        descriptor = os.open(
+            path.with_name(f".{path.name}.lock"), os.O_CREAT | os.O_RDWR, 0o600
+        )
+        with os.fdopen(descriptor, "w") as stream:
+            fcntl.flock(stream, fcntl.LOCK_EX)
+            yield
+    except OSError as exc:
+        raise ConfigError(f"Cannot update registry at {path}: {exc}") from exc
+
+
+def register_default(path: Path, resolution: Resolution) -> None:
+    config = Path(resolution["config_path"])
+    local = Path(resolution["local_path"]) if resolution["local_path"] else None
+    load_config(config, local)
+    registry: Registry = {
+        "schema_version": 1,
+        "default_config": str(config),
+        "default_local": str(local) if local is not None else None,
+    }
+    atomic_write(path, json.dumps(registry, indent=2) + "\n")
+
+
 def inspect_directory(path: Path) -> str | None:
     if not path.is_dir() or not os.access(path, os.R_OK | os.X_OK):
         return "directory is missing or unreadable"
@@ -406,8 +548,47 @@ def readiness(data: Config, report: Report | None) -> list[str]:
     return blocked
 
 
-def run(args: Arguments) -> Validation | Discovery | SetupStatus:
-    data = load_config(args.config, args.local)
+def run(args: Arguments) -> Resolution | Validation | Discovery | SetupStatus:
+    if args.set_default and args.command != "setup":
+        raise ConfigError("--set-default is supported only by setup")
+    resolution = resolve_config(args.config, args.local, args.registry)
+    if args.command == "resolve-config":
+        return resolution
+    if args.command != "setup":
+        return run_resolved(args, resolution)
+    path = registry_path(args.registry)
+    selected_paths = {resolution["config_path"], resolution["local_path"]}
+    if (
+        str(path.resolve()) in selected_paths
+        or str(path.with_name(f".{path.name}.lock").resolve()) in selected_paths
+    ):
+        raise ConfigError(
+            "Registry and registry lock must be separate from config and local files"
+        )
+    with registry_lock(path):
+        resolution = resolve_config(args.config, args.local, args.registry)
+        saved = None
+        if not args.set_default:
+            saved = read_registry(path)
+            if saved is not None:
+                try:
+                    load_config(*registry_config(saved))
+                except ConfigError as exc:
+                    raise ConfigError(
+                        f"Registered default needs repair: {exc}; use factory-setup with explicit --config and --set-default"
+                    ) from exc
+        result = run_resolved(args, resolution)
+        if saved is None or args.set_default:
+            register_default(path, resolution)
+        return result
+
+
+def run_resolved(
+    args: Arguments, resolution: Resolution
+) -> Validation | Discovery | SetupStatus:
+    config = Path(resolution["config_path"])
+    local = Path(resolution["local_path"]) if resolution["local_path"] else None
+    data = load_config(config, local)
     if args.command == "discover":
         return discover(data)
     if args.command == "validate":
@@ -415,9 +596,7 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
     if args.harness is None:
         raise ConfigError("setup and status require --harness")
     runtime = Path(data["runtime_path"])
-    association_path = args.config.resolve().with_name(
-        f".{args.config.name}.factory-setup.json"
-    )
+    association_path = config.with_name(f".{config.name}.factory-setup.json")
     previous_runtime = None
     if association_path.exists():
         try:
@@ -468,7 +647,7 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             and all(observed[key]["status"] == "observed" for key in channel_keys)
         ):
             data["intake"]["start_at"] = datetime.now(timezone.utc).isoformat()
-            original = read_yaml(args.config)
+            original = read_yaml(config)
             mapping(original["intake"], {"start_at"}, "intake")["start_at"] = data[
                 "intake"
             ]["start_at"]
@@ -503,11 +682,9 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             atomic_write(starts_path, json.dumps(starts, indent=2) + "\n")
         if (
             data["intake"]["start_at"]
-            != mapping(read_yaml(args.config)["intake"], {"start_at"}, "intake")[
-                "start_at"
-            ]
+            != mapping(read_yaml(config)["intake"], {"start_at"}, "intake")["start_at"]
         ):
-            atomic_write(args.config, yaml.safe_dump(original, sort_keys=False))
+            atomic_write(config, yaml.safe_dump(original, sort_keys=False))
         encoded = json.dumps(data, sort_keys=True)
         report = {
             "harness": args.harness,
@@ -569,6 +746,7 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
             f"Runtime relocation requires explicit choice; previous records remain at {previous_runtime}"
         )
     return {
+        **resolution,
         "effective_config": data,
         "runtime_path": str(runtime),
         "harness": args.harness,
@@ -599,8 +777,12 @@ def run(args: Arguments) -> Validation | Discovery | SetupStatus:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("validate", "discover", "setup", "status"))
-    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument(
+        "command", choices=("resolve-config", "validate", "discover", "setup", "status")
+    )
+    parser.add_argument("--config", type=Path)
+    parser.add_argument("--registry", type=Path)
+    parser.add_argument("--set-default", action="store_true")
     parser.add_argument("--local", type=Path)
     parser.add_argument("--harness", choices=HARNESSES)
     parser.add_argument("--evidence", type=Path)
@@ -613,6 +795,8 @@ def main() -> int:
         harness=parsed.harness,
         evidence=parsed.evidence,
         confirm_runtime_change=parsed.confirm_runtime_change,
+        registry=parsed.registry,
+        set_default=parsed.set_default,
     )
     if args.command in ("setup", "status") and not args.harness:
         parser.error("setup and status require --harness")

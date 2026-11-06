@@ -5,6 +5,11 @@ description: Implement an explicitly authorized saved factory item in one dedica
 
 # Factory implement
 
+A direct request enters `factory-run` with the requested role and any user-supplied
+config/local override; the orchestrator resolves the remembered default once.
+Under an existing invocation, reuse its pinned absolute config/local and selected
+item. Do not resolve again or ask the user for a config path.
+
 Work on the selected saved item through `factory-run`. Read its full sources,
 investigation, actionable plan, necessary design or justified skip, prior attempts
 and relevant repository instructions. Verify readable inputs and actual source

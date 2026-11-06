@@ -5,7 +5,13 @@ description: Review explicitly selected completed or blocked factory outcomes an
 
 # Factory retro
 
-Read the explicitly selected factory config/items/runs and their actual readable
+Resolve the default once through the [configuration contract](../factory-setup/references/configuration.md#default-resolution-and-pinning),
+unless this call already carries pinned absolute config/local from an invocation.
+Reuse those paths throughout; an invalid default stops with setup/repair
+instructions. Select the requested items/runs within that factory, without asking
+for its config again.
+
+Read the selected factory config/items/runs and their actual readable
 source, decision, implementation/review/report evidence. Use the loaded helper's
 read-only inspect when canonical state exists; no invocation acquisition or
 canonical mutation is needed. With an explicit evaluation manifest, distinguish

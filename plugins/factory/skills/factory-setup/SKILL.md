@@ -1,6 +1,6 @@
 ---
 name: factory-setup
-description: Set up or revise a local software factory configuration, verify available connections in the current harness, and report partial readiness. Use for initial setup, channel selection changes, or rechecking setup; does not run work or schedule it.
+description: Set up a factory home and remembered default, revise its choices, or recheck connection readiness in the current harness. Does not run work or schedule it.
 ---
 
 # Factory setup
@@ -9,13 +9,22 @@ Use the loaded plugin root (two directories above this skill's directory), share
 [configuration contract](references/configuration.md), and its synthetic example.
 Identify this harness from observed host context; never guess an integration exists.
 
-Start with a configuration path the user supplied or previously established in
-this conversation. For a new factory, use the supplied home or ask once when it
-is missing, suggesting `~/factories/<factory-id>` outside source and target
-repositories. Derive
-`<home>/config.yaml` and `<home>/runtime/`, storing `runtime_path: ./runtime`.
-Show both resolved absolute paths before writing; the selected home establishes
-both choices. Do not add a home setting or search the machine for private configs.
+For an existing factory, resolve its configuration once using the contract's
+[default resolution](references/configuration.md#default-resolution-and-pinning).
+Use an explicit user config/home when supplied. For a requested new factory,
+use its chosen home or propose `~/factories/default` outside source and target
+repositories. Let the user change that home without requiring a separate config
+path, runtime path or invented factory ID. A config that does not yet exist in
+an explicitly chosen new home is a creation request: prepare its YAML through
+this setup flow, then validate it and run setup with the explicit path. Do not
+mistake that request for a broken existing factory or select another home.
+Derive `<home>/config.yaml` and `<home>/runtime/`, storing
+`runtime_path: ./runtime`. Show both resolved absolute paths before writing.
+Use `default` as the initial factory ID unless the user chooses another identity.
+Do not search the machine for private configs. An invalid existing explicit
+config or registered default stops resolution: show the precise repair, or offer
+setup of an explicitly chosen valid config with `--set-default`; never silently create a
+replacement or reset existing records.
 
 Read existing choices before asking for missing ones. Preserve fields and all
 runtime records, channel starts, cursors, work, and other harness reports on reruns.
@@ -64,8 +73,15 @@ Setup does not run product code or write in those repositories.
 
 Use the shared helper to validate the proposed YAML before saving choices. Use
 `setup` with evidence from this harness to record partial or ready setup; see the
-contract for commands and report format. The helper creates only setup metadata,
-not a workflow or watcher. Display effective configuration, absolute runtime path,
+contract for commands and report format. Preserve any selected `--registry`
+override on the setup write as well as resolution; tests must not write the real
+registry after resolving a temporary one. The helper creates only setup metadata,
+not a workflow or watcher. The first successful setup remembers this config and
+its local override as the shared default. Rechecking it retains that default;
+setting up another factory leaves the existing default unchanged unless the user
+explicitly chooses `--set-default`. An existing config can be registered in place;
+no relocation is needed. Show the selected default and any deliberate change.
+Display effective configuration, absolute runtime path,
 checked capabilities and remaining blocks. The final readiness summary must match
 the helper's `setup_status` and `blocked` output. If evidence is insufficient,
 correct its statuses and rerun `setup` before reporting the resulting readiness;

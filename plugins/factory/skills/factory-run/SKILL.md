@@ -1,6 +1,6 @@
 ---
 name: factory-run
-description: Run or resume the local software factory from an explicit configuration, saving one step or a bounded invocation across Codex and Claude Code. Collects live Slack intake, routes saved sources and resumes handoffs; investigates scoped code, plans behavior, designs technical handoffs, implements authorized local changes, independently reviews exact content, adjudicates findings and applies at most two shared fix rounds; follows authorized draft PRs and fresh CI/review activity; drafts evidenced Slack/Jira updates without erasing engineering state; stops truthfully at unavailable later roles.
+description: Run or resume bounded factory work using the remembered default or an explicit config. Orchestrates saved intake, engineering roles, PR follow-up and reporting while preserving evidence and authorization boundaries.
 ---
 
 # Factory run
@@ -26,13 +26,19 @@ Read the loaded plugin's [persistence contract](references/persistence.md)
 before running the helper. Resolve the package two directories above this skill's
 containing directory; use its scripts and fixtures, not an authoring checkout.
 
-Use the explicitly supplied or established `--config` and optional user-supplied
-`--local`. Default to at most three saved steps per invocation. Honor a requested
+Resolve the default once using the [configuration contract](../factory-setup/references/configuration.md#default-resolution-and-pinning),
+passing an explicit config or local override only when supplied. If this call
+already carries pinned config/local context from a top-level entry point, reuse
+it without another resolution. Keep the returned absolute config/local paths
+fixed for every helper, role and foreground worker in this invocation; never ask
+for the config again or consult a changed default mid-run. Resolution errors
+stop with actionable setup/repair instructions. Default to at most three saved
+steps per invocation. Honor a requested
 single step (`--single-step`, one saved decision), or an explicit `--max-steps`
 from 1 through 10. These invocation options do not change YAML. For explicitly requested native
-scheduling, read the [runbook](references/scheduling.md); use this same explicit
-config/bounded saved-state workflow, with no account schedule activation implied. An explicit config
-with no synthetic input is the production entry point: watch, then route/resume
+scheduling, read the [runbook](references/scheduling.md); pin the resolved
+config/local in the scheduled prompt, with no account schedule activation implied.
+A resolved config with no synthetic input is the production entry point: watch, then route/resume
 saved work. `--source`, `--fixture`, `--collection` or an explicit offline/synthetic
 request selects an offline demonstration; never call live integrations in that mode.
 
@@ -41,7 +47,8 @@ run token owns the entire invocation, including time between helper calls. Use
 the observed nearest long-lived CLI ancestor's PID, never the helper, transient shell,
 `$PPID` guess, desktop app-server, or invented PID. If the desktop has no CLI
 owner, dispatch one foreground fresh CLI invocation in the same harness with the
-explicit config, this skill, and the requested bound, then wait for its result;
+pinned absolute config/local context, this skill, and the requested bound, then
+wait for its result;
 see the harness guide. The CLI worker owns and performs the entire run. If this
 capability or required process inspection is unavailable, report the blocker.
 When the sandbox denies process inspection or a specific authorized helper

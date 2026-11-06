@@ -4,7 +4,11 @@ Use `uv run --isolated --frozen --no-dev --project <loaded-plugin> python
 <loaded-plugin>/scripts/factory_work.py <command> --config <path> --harness
 codex|claude-code [--local <yaml>]`. Dependencies/cache behavior matches the
 [configuration contract](../../factory-setup/references/configuration.md).
-No global registry, environment borrowing, or config schema change is involved.
+Resolve the user-facing default once through the configuration contract, then
+pass its pinned absolute config and optional local override explicitly to every
+work-helper call. `factory_work.py` requires that explicit config; it never reads
+the registry. A later default change cannot redirect this invocation. Do not
+borrow another environment.
 
 `owners` is read-only and prints verified harness CLI ancestor identities. The
 actual long-lived process must be the nearest `codex` or `claude` executable in

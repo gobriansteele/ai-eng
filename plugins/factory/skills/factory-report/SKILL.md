@@ -5,7 +5,10 @@ description: Draft concise Slack originating-thread and Jira comment updates fro
 
 # Factory report
 
-Report on the selected saved item through `factory-run`. Read the
+Report on the selected saved item through `factory-run`. A direct report-only
+request enters that orchestrator with any user-supplied config/local override;
+it resolves the remembered default once. An existing invocation passes its pinned
+absolute config/local unchanged, without resolving again. Read the
 [reporting contract](references/reporting.md) for destination, deduplication and
 send/retry rules. An explicit report-only request prepares/reuses reporting
 artifacts without advancing intake or engineering. Workers return artifacts and

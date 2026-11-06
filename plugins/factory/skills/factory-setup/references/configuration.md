@@ -2,8 +2,16 @@
 
 One shared schema and helper serve both hosts. Resolve the plugin root from the
 loaded skill. Invoke `uv run --isolated --frozen --no-dev --project <plugin-root> python
-<plugin-root>/scripts/factory_config.py <command> --config <path>`; uv isolates
-PyYAML for this project. First use may populate uv's isolated dependency cache
+<plugin-root>/scripts/factory_config.py <command> [--config <path>]`; uv isolates
+PyYAML for this project. When host permissions allow prefix-scoped commands, run
+each helper as a separate literal `uv` call with actual paths and values, without
+wrappers, shell assignments, substitutions or command chains. A denial of such a
+wrapper is scoped to that command and does not establish that the separately
+allowed literal helper is denied; try its permitted form before reporting it
+unavailable. Respect any underlying access/action denial and retain the host's
+normal permissions.
+
+First use may populate uv's isolated dependency cache
 outside the package;
 this is separate from factory records. Status/validate/discover do not write
 factory records. To warm the dependency cache separately, use the same isolated
@@ -21,18 +29,76 @@ for a root, discovered repositories within it remain in scope even when absent
 from paths. A bounded role search can leave them unsearched; that is not evidence
 that they are unconfigured or unauthorized. `status --harness
 codex|claude-code` reads current matching evidence. `setup --harness ... --evidence
-<json>` writes setup metadata and establishes an intake start after selected
+<evidence-file.json>` writes setup metadata and establishes an intake start after selected
 Slack access is observed. Each command accepts optional `--local <yaml>`. Setup
 records an adjacent
 `.<config-name>.factory-setup.json` association to remember the selected runtime.
 A changed runtime requires explicit user choice and `--confirm-runtime-change`;
 this never migrates records. Keep the association with the private configuration.
-For a new factory, ask for one home (suggest `~/factories/<factory-id>`) and derive
-`<home>/config.yaml` with `runtime_path: ./runtime`. Show both resolved paths before
-writing. A selected home establishes both paths; existing or explicitly separate
-paths remain valid and are never silently relocated. The config path remains the
-explicit invocation identity; there is no home flag, schema field, or registry.
-Errors return exit 2 with JSON; partial setup returns exit 0 with explicit blocks.
+For a new factory, propose `~/factories/default` and let the user change the home;
+derive `<home>/config.yaml` with `runtime_path: ./runtime`. Show both resolved paths
+before writing. A selected home establishes both paths; existing or explicitly
+separate paths remain valid and are never silently relocated. There is no home
+schema field. Errors return exit 2 with JSON; partial setup returns exit 0 with
+explicit blocks.
+
+## Default resolution and pinning
+
+Every top-level user-facing skill resolves once before accessing factory state:
+
+```text
+uv run --isolated --frozen --no-dev --project <plugin-root> python <plugin-root>/scripts/factory_config.py resolve-config [--config <user-path>] [--local <user-local>] [--registry <registry-path>]
+```
+
+`resolve-config` is read-only. It returns absolute `config_path`, `runtime_path`,
+nullable absolute `local_path`, `factory_id`, and `source` (`explicit`, `registry`,
+or `conventional`). Resolve in this order:
+
+1. An explicit user config wins for this invocation. It does not change the
+   registry or inherit another factory's remembered local override.
+2. Otherwise use the registry's default config and remembered local override.
+   An explicit `--local` overrides the remembered local for this invocation.
+3. Only when the registry is absent, try `~/factories/default/config.yaml`.
+4. If neither exists, report setup needed and enter or suggest factory-setup.
+
+The shared registry lives at `$XDG_CONFIG_HOME/ai-eng/registry.json` when that
+variable is set, otherwise `~/.config/ai-eng/registry.json`; `--registry` is an
+explicit test or location override. It remains outside the package and is shared
+by both hosts. If a caller supplies `--registry`, retain its absolute path for
+this setup flow and pass the same override to `setup` writes as to resolution;
+a temporary/test registry must never become a write to the real registry.
+`factory_work.py` does not accept or need a registry argument: it uses pinned
+config/local only. The registry schema is `{"schema_version":1,"default_config":"/absolute/config.yaml","default_local":null}`;
+`default_local` may instead be an absolute override path. This stores paths, not
+credentials, tool permissions or runtime records.
+
+Invalid explicit config/local, unreadable or malformed registry, and invalid or
+missing registered defaults are errors. Stop with the offending path and an
+actionable repair or explicit setup/`--set-default` instruction. Do not fall back
+to another home, search for private configs, or reset/move runtime. A missing
+conventional config with no registry means setup is needed. A broken conventional
+config still needs repair. Explicit valid config may bypass an unrelated broken
+registry for an invocation; it never silently repairs that registry.
+
+Pin the returned absolute config and local (including its absence) for this whole
+invocation. Pass explicit `--config <config_path>` and, when non-null,
+`--local <local_path>` to every helper, role, fresh worker and foreground CLI.
+Internal roles reuse that context instead of resolving again. A default switch
+cannot redirect active work. A resumed top-level request resolves anew unless
+it already carries an explicit pinned config, as scheduled prompts do.
+
+`setup --harness ... --evidence <evidence-file.json>` registers the first successfully saved
+setup as default, including its selected local override. Rechecking the same
+factory retains the default. Setup of a second factory preserves the first
+unless the user explicitly selects `--set-default`. Existing configurations may
+be registered in place. To deliberately change the default or repair a broken
+registry, use `setup --config <valid-config> [--local <yaml>] --set-default
+--harness ... --evidence <evidence-file.json>` after the user's choice. This changes only the
+remembered selection; it never relocates configs or runtime. Other commands,
+including `resolve-config`, status and explicit invocation overrides, do not
+write the registry.
+
+## Configuration schema
 
 Schema version 1 requires exactly these fields (no unknown or missing keys):
 
@@ -63,8 +129,12 @@ actions:
   cleanup: preview_only
 ```
 
-Create this YAML at the selected home's `config.yaml` before invoking the helper;
-`./runtime` resolves beside that file. If using the authoring checkout's
+For an explicitly requested new factory home, create this YAML at its
+`config.yaml` before validating or invoking setup with that explicit path. A
+missing new config in this creation flow is not an invalid existing selection.
+Do not overwrite a config already there; read its choices first.
+For existing homes, resolve before accessing state. `./runtime` resolves beside
+the config file. If using the authoring checkout's
 `config/example.yaml`, copy it into the selected home first. Validating that source
 file in place correctly rejects its runtime inside the authoring tree.
 
@@ -72,11 +142,10 @@ Keep real YAML and runtime outside plugin source and disposable worktrees. No
 credentials belong in YAML. Factory ID uses lowercase letters, digits and hyphens.
 Slack names are labels; IDs are authoritative. `start_at` is system-managed: initially null, then a quoted timezone-qualified ISO
 string written by verified setup. Editing or resetting an established start is
-rejected using the adjacent config association. Historical intake is not
-implemented in this tranche. New channels
-always get their own current setup start; historical channel imports need future
-explicit import support. Existing starts survive removal/readdition and reruns.
-This phase stores starts, not watcher cursors, and never rewrites existing cursors.
+rejected using the adjacent config association. New channels get their own
+current setup start. Explicit historical thread imports use factory-watch and
+do not change that start or the live cursor. Existing starts survive
+removal/readdition and reruns. Setup never rewrites existing watcher cursors.
 
 All paths expand `~`; relative paths resolve against their containing YAML file,
 including an override file in a different directory. A local override may contain
@@ -87,7 +156,8 @@ Discovery does not follow directory symlinks or descend into found Git checkouts
 select a narrower root when appropriate. It lists repositories, not source code.
 Missing/unreadable locations remain configured and are reported unavailable.
 
-Evidence JSON has exactly `harness` and `capabilities`. Harness is `codex` or
+Write the evidence JSON to a file and pass its path to `--evidence`. The JSON
+has exactly `harness` and `capabilities`. Harness is `codex` or
 `claude-code`. Capabilities must contain each key below plus one
 `slack_channel:<id>` per currently selected channel:
 
@@ -138,8 +208,8 @@ factory-run additionally uses the canonical runtime/state/work.json snapshot;
 see its persistence contract. Setup leaves saved work and existing cursors alone.
 
 Unknown settings/schema versions and root escapes are validation errors. Missing
-connections/repos are readiness blocks. The fixed limits/actions validate this
-trial's supported choices; their enforcement during work is an agent instruction,
+connections/repos are readiness blocks. The fixed limits/actions validate the
+supported choices; their enforcement during work is an agent instruction,
 not a deterministic execution engine. YAML never overrides host restrictions or
 grants external-action approval. Setup readiness also does not mean workflow roles
 exist: inspect the loaded skills and current factory-status capability report
