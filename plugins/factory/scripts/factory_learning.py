@@ -45,9 +45,20 @@ FIELDS: dict[Kind, set[str]] = {
 }
 
 
+def unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ConfigError(f"Duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
 def read_json(path: Path) -> object:
     try:
-        return cast(object, json.loads(path.read_text()))
+        return cast(
+            object, json.loads(path.read_text(), object_pairs_hook=unique_object)
+        )
     except (OSError, ValueError) as exc:
         raise ConfigError(f"Cannot read {path}: {exc}") from exc
 

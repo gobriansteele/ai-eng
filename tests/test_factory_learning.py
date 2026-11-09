@@ -232,6 +232,68 @@ class LearningTests(unittest.TestCase):
             learning.record(self.root, self.observation)
         self.assertEqual(path.read_bytes(), before)
 
+    def test_duplicate_saved_members_preserve_ambiguous_history_bytes(self) -> None:
+        learning.record(self.root, self.observation)
+        path = self.root / "routine-continuation-question.json"
+        original = path.read_text()
+        saved = json.loads(original)
+        shadow = deepcopy(saved["events"])
+        shadow[0]["id"] = "shadow-observation"
+        duplicate_events = (
+            original.rstrip()[:-1] + ', "events": ' + json.dumps(shadow) + "}"
+        )
+        duplicate_nested_id = original.replace(
+            '"id": "run-one-continuation"',
+            '"id": "original-observation", "id": "shadow-observation"',
+        )
+        for malformed in (duplicate_events, duplicate_nested_id):
+            with self.subTest(malformed=malformed):
+                path.write_text(malformed)
+                before = path.read_bytes()
+                with self.assertRaisesRegex(learning.ConfigError, "Duplicate JSON key"):
+                    learning.inspect(self.root)
+                with self.assertRaisesRegex(learning.ConfigError, "Duplicate JSON key"):
+                    learning.record(self.root, self.observation)
+                self.assertEqual(path.read_bytes(), before)
+
+    def test_cli_rejects_duplicate_incoming_fields_without_mutation(self) -> None:
+        learning.record(self.root, self.observation)
+        candidate = self.root / "routine-continuation-question.json"
+        before = candidate.read_bytes()
+        config = self.base / "config.yaml"
+        config.write_text((SCRIPTS.parents[2] / "config/example.yaml").read_text())
+        source = json.dumps(self.observation)
+        malformed_inputs = (
+            source[:-1] + ', "id": "shadow-observation"}',
+            source.replace(
+                '"source_version": "synthetic-0.18.0"',
+                '"source_version": "old", "source_version": "new"',
+            ),
+        )
+        incoming = self.base / "duplicate-event.json"
+        for malformed in malformed_inputs:
+            with self.subTest(malformed=malformed):
+                incoming.write_text(malformed)
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        str(SCRIPTS / "factory_learning.py"),
+                        "record",
+                        "--config",
+                        str(config),
+                        "--input",
+                        str(incoming),
+                    ],
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(completed.returncode, 1, completed.stderr)
+                self.assertIn(
+                    "Duplicate JSON key", json.loads(completed.stdout)["error"]
+                )
+                self.assertEqual(candidate.read_bytes(), before)
+
 
 if __name__ == "__main__":
     unittest.main()
