@@ -461,6 +461,11 @@ saved source, without claiming a routing judgment. An unchanged existing wait
 or block needs no repeated decision. Never infer a legacy fixture's body from
 its source URL, classification or illustrative pending action.
 
+At completion or a genuine stop, use the [retro learning contract](../factory-retro/references/learning.md)
+to retain meaningful failures/corrections/detours and evaluate explicitly linked
+accepted improvements. Preserve the engineering outcome and release obligations;
+report unavailable learning writes without treating them as an engineering block.
+
 Save a decision with a stable operation ID (reuse the exact ID/content after an
 uncertain response), reason, and complete updated item, using the read revision.
 After a revision conflict reread and reconsider; never overwrite newer state.
