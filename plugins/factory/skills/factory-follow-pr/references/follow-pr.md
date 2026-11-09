@@ -123,15 +123,27 @@ without claiming the requested capability is ready.
 Required CI and automated review must actually run for the current head. Inspect
 repository workflow/branch requirements and configured review automation to know
 what is expected; an empty checks list, skipped required check or absent review
-is not a pass. Reuse an exact existing PR, making a draft ready under applicable
-publication authorization rather than opening a second PR.
+is not a pass. A PR URL, an existing-PR reference or draft=false does not prove
+that it is open; require the actual observed open/closed/merged state. Reuse an
+exact existing PR, making a draft ready under applicable publication authorization
+rather than opening a second PR.
 
-While expected checks or reviews are pending, retain follow_pr/ready and continue
-within the invocation using available notifications or bounded backoff reads.
-Unchanged observations need no repeated semantic save or user check-in. Refresh
-head identity after each wait; new commits invalidate old completion claims.
-If the host must stop, finish truthfully with a pending recheck, never claim that
-background monitoring continues and never create an unrequested schedule.
+Before depending on a host monitor, verify it actually activated, which events
+wake the owner, and how long the owning execution can remain active. Failure,
+conflict and comment notifications alone do not cover successful CI completion.
+The owning execution must observe that success as well, through a supported
+success event or permitted bounded backoff reads; monitoring is not completion.
+
+While expected checks or reviews are pending, retain follow_pr/ready and keep the
+owner active using those verified capabilities. Unchanged observations need no
+repeated semantic save or user check-in. Refresh head identity after each wait;
+new commits invalidate old completion claims. If the host cannot keep the owner
+active or forbids available rechecks, finish truthfully with the exact capability
+gap, pending recheck and resume responsibility. Never claim that background
+monitoring continues without verified coverage, use a sleep command to manufacture
+a future user turn, or create an unrequested schedule. No-failure/no-comment CI
+success must still reach the same saved completion endpoint where the runtime
+supports it.
 
 Save follow_pr/done with required_role null only when the PR is open and non-draft,
 required checks have passed on its current head, expected automated review has

@@ -206,7 +206,8 @@ acceptance checks, limits, result and stable save operation ID. Save the complet
 copied item only after verifying readable reports; keep decision JSON beside them
 and reconcile uncertain saves from history before retrying.
 
-A consequential unresolved product choice saves `plan` / `waiting_for_human` /
+A product choice that genuinely needs human knowledge, judgment or authority under
+the shared execution-mode policy saves `plan` / `waiting_for_human` /
 `factory-plan`. The report records a stable question identifier within the item,
 question/options/context and evidence; `next_action` points to it. A fresh direct
 natural-language user response is passed to the role with selected item/question
@@ -240,7 +241,8 @@ The report records a design-needed/skipped judgment and reason, input/source
 versions and paths, observed component/revision context, chosen approach,
 compatibility, sequencing and verification where needed. Even a concise skip
 provides enough product intent, checks, repository guidance and evidence links
-for a fresh implementer. A consequential unresolved architecture/API choice saves
+for a fresh implementer. An architecture/API choice that genuinely needs human
+knowledge, judgment or authority under the execution-mode policy saves
 `design` / `waiting_for_human` / `factory-design`, a stable question identifier,
 options/tradeoffs and a concrete next action. Direct natural-language answers use
 the same item/question association and observed provenance rules as planning;
@@ -381,9 +383,13 @@ keep their existing contracts; this creates no generic missing-evidence bypass.
 Role-specific truth/authorization checks are in the
 [PR contract](../../factory-follow-pr/references/follow-pr.md) and
 [reporting contract](../../factory-report/references/reporting.md). `posts` includes
-Slack thread replies and Jira comments; tickets policy is unchanged, and ticket
-creation/workflow changes are outside these roles. No new config enum is added.
-Ordinary save preserves every prior approval and pending-action entry verbatim.
+Slack thread replies and Jira comments; `tickets` covers separately scoped issue
+field updates and workflow transitions under the reporting contract. An end-to-end
+grant can authorize originating-issue maintenance; it does not authorize new issues
+or unrelated destinations. Configuration's `approval_required` requires applicable
+saved authorization, not a fresh dialog for each derived request. No config enum
+is added. Ordinary save preserves every prior approval and pending-action entry
+verbatim.
 
 For a genuinely authorized outbound request, ordinary owner-gated save appends a
 stable approval and proposed action with exact matching action/target/revision
@@ -402,7 +408,7 @@ verified owner/run/config/harness flags and exactly this shape:
 {"id":"stable-reconciliation-operation-id","reason":"Observed evidence and decision","item_id":"selected-stable-item-id","action":{"id":"existing-action-id","scope":{"action":"posts","target":"exact-destination-and-operation","revision":"exact-payload-and-status-digest"},"status":"uncertain","returned_id":null,"returned_url":null,"evidence":"/absolute/immutable-attempt-report.md"}}
 ```
 
-Only one EXISTING selected-item pushes/pull_requests/posts entry changes. ID/scope
+Only one EXISTING selected-item pushes/pull_requests/posts/tickets entry changes. ID/scope
 stay unchanged; a matching saved approval scope is required. Allowed transitions
 are proposed→uncertain, uncertain→confirmed or uncertain→proposed. No
 proposed→confirmed shortcut, confirmed mutation or arbitrary ledger editing.
