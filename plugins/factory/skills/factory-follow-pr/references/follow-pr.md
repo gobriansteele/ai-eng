@@ -114,6 +114,12 @@ escalation with actual missing input and attempted remedies.
 
 ## Completion and pending work
 
+Read the saved question/resolution artifacts under the
+[unanswered-decision contract](../../factory-run/references/pending-decisions.md).
+Current-head green checks do not resolve a required product decision. Preserve
+its wait and affected milestone; an independent intermediate PR can remain open
+without claiming the requested capability is ready.
+
 Required CI and automated review must actually run for the current head. Inspect
 repository workflow/branch requirements and configured review automation to know
 what is expected; an empty checks list, skipped required check or absent review

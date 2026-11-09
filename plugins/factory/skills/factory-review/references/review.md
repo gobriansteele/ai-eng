@@ -81,6 +81,12 @@ majority remains a wait/block with the specific next question/check. The orchest
 checks evidence and this safeguard; it does not vote away defects or impersonate
 any missing role. No panel runs for already accepted/dismissed findings.
 
+A necessary human decision discovered in review follows the
+[unanswered-decision contract](../../factory-run/references/pending-decisions.md).
+Record its stable question, evidence and affected milestone; do not turn it into
+a nonblocking limitation merely because remediation is outside this patch. A
+defensible delegated choice can settle it without a human wait.
+
 ## Pending batch and recovery
 
 One item shares its fix counter across internal review and PR follow-up. Apply

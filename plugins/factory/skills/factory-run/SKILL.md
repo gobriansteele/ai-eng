@@ -12,6 +12,10 @@ and scoped delegation, and pass them to every role. Apply agent selection to eve
 assignment, including foreground coordinators,
 direct role requests, retries and resumes. Pass it to workers that delegate further.
 
+Read the [unanswered-decision contract](references/pending-decisions.md) when a
+role needs human input. Preserve each unresolved question through unrelated replies,
+handoffs and completion checks; a disclosed limitation is not a resolved decision.
+
 Act as the orchestrator: read durable evidence, choose the next step, and save
 that decision. For startup files, use already exposed and permitted native file
 reading/discovery tools when available. A denied command has its observed scope:
