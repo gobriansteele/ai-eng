@@ -1,11 +1,16 @@
 # Verification facts
 
-Verification claims come from observed executions and tested content. Read raw
-results before describing them. Required timestamps come from the actual clock
-or logs; omit optional dates instead of estimating them. A failed, denied or
-unlaunched command is not a completed check. An absent record is not a pass or
-proof that no execution ever occurred: say “no post-commit execution is recorded”
-when that is all the evidence establishes.
+Every positive or negative execution claim requires supporting observations.
+Missing or incomplete records establish unverified execution; they establish
+neither that a check ran nor that it did not run. Distinguish a recorded result,
+an observed failure to launch or permission denial for a particular attempt,
+and an execution whose evidence is unavailable. Evidence about one attempt does
+not establish what happened in other attempts. Apply this distinction throughout
+reports, tables, summaries and next actions.
+
+Read raw results before describing them. Required timestamps come from the
+observed clock or execution metadata; omit optional dates instead of estimating
+them. Preserve the scope and limits of each observation.
 
 ## Small command capture
 
@@ -19,8 +24,9 @@ uv run --isolated --frozen --no-dev --project <plugin> python <plugin>/scripts/f
 Declare the relevant code, tests, configuration and lockfiles; inputs are files,
 relative to the command directory or absolute. Parent-traversal components (`..`)
 are rejected; supply an unambiguous path instead. Symlinks are read again after
-execution so retargeting is not hidden by resolving them once. This is bounded input evidence,
-not a fingerprint of the entire repository or undeclared dependencies. Keep the
+execution so retargeting is not hidden by resolving them once. This is bounded
+input evidence, not a fingerprint of the entire repository or undeclared
+dependencies. Keep the
 new evidence directory outside the source checkout. The recorder refuses to reuse
 an existing directory, invokes the supplied argv without a shell, captures raw
 stdout/stderr, and writes `command.json` last. It records actual UTC start/end,
@@ -28,12 +34,13 @@ monotonic duration, exit code or launch error, Git HEAD/status when available an
 before/after SHA256 of the declared files. No environment or credentials are
 collected. Normal tool permissions still apply.
 
-Read the final metadata and raw output. Missing or unreadable `command.json` means capture is
-incomplete; retain partial files and use a new directory for a justified retry.
-A nonzero exit is a failed check. A launch error means it did not run. Changed or
-unreadable inputs require explaining/rechecking the affected result, even if the
-command returned zero. Equality of endpoint hashes does not prove files never
-changed transiently during execution; keep the checkout stable while checking.
+Read the final metadata and raw output. Missing or unreadable `command.json`
+means capture is incomplete; retain partial files and use a new directory for a justified retry.
+A recorded nonzero exit is a failed check. An observed launch error establishes
+that the particular attempt failed to launch, without establishing the history
+of other attempts. Changed or unreadable inputs require explaining/rechecking
+the affected result, even if the command returned zero. Equality of endpoint
+hashes does not prove files never changed transiently during execution; keep the checkout stable while checking.
 This recorder does not decide whether coverage is sufficient or the feature works.
 
 ## Bind claims to the content actually checked
@@ -46,9 +53,10 @@ post-commit execution. A changed commit ID does not itself invalidate equal byte
 and an unchanged HEAD does not prove dirty inputs stayed equal. Missing inputs or
 provenance limit the claim; do not silently broaden a partial-file comparison.
 
-Reports distinguish executed checks, failed/unexecuted checks and unverified
-behavior. A passing helper suite does not prove a model behavior fix or an
-unexercised service path. Fresh-host behavioral evaluation retains its own actual
-outputs, failure/stop and resume evidence. Reviewers correct unsupported claims
+Report recorded successes or failures, observed launch/permission failures and
+unverified execution separately. Missing evidence is an uncertainty to retain,
+not an outcome or a new claim of nonexecution. A passing helper suite does not
+prove a model behavior fix or a service path absent from the exercised scope.
+Fresh-host behavioral evaluation retains its own actual outputs, failure/stop and resume evidence. Reviewers correct unsupported claims
 from the underlying records rather than vote them through. Reuse equivalent
 valid evidence; do not rerun identical checks for decorative timestamp alignment.

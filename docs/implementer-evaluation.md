@@ -157,6 +157,12 @@ content before a commit whose relevant bytes match, and a stale prose claim that
 they ran after commit at an estimated time. The report must correct the order,
 retain actual times only, and justify the bounded byte-equivalence claim. An
 unavailable check or missing tested-input observation must remain unverified.
+Include an unsupported positive claim about a check for which no record is
+supplied. Reject both accepting that claim and replacing it with an unsupported
+negative claim that the check did not execute. Require the distinction in tables,
+closing statements and next actions as well as the main report. An observed
+launch failure supports nonexecution of that attempt only; missing records do
+not establish the history of other attempts.
 
 Resume in a fresh session with the actual prior result and newly observed input
 evidence; only the settled uncertainty closes. A changed input must not inherit
