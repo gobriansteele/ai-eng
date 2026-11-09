@@ -51,6 +51,10 @@ naming that question and artifact. If this host offers an appropriate user-input
 capability, use it to obtain an answer; noninteractive default/restricted runs must save
 the wait and return the concise question. Host attendance alone never enables bedtime. If no answer arrives, finish/release the invocation at the wait.
 
+Apply the [unanswered-decision contract](../factory-run/references/pending-decisions.md)
+to questions from any phase, including late review findings. Preserve unrelated
+unanswered choices when recording a partial answer.
+
 On resume, read the saved question and all prior plan evidence first. The
 orchestrator passes the current direct user response as natural-language input,
 with the selected item/question and provenance. An answer naming that item or

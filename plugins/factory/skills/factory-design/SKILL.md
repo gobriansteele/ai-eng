@@ -56,6 +56,10 @@ noninteractive default/restricted runs save the wait and return the concise ques
 Without the needed answer or applicable bedtime delegation, release ownership
 at that wait.
 
+Apply the [unanswered-decision contract](../factory-run/references/pending-decisions.md)
+to questions from any phase. A reply about another choice does not resolve the
+architectural question or remove its effect on readiness.
+
 On resume, read the saved question and prior design evidence first. The
 orchestrator supplies the current direct natural-language user response verbatim
 with observed provenance and selected item/question association. An explicit

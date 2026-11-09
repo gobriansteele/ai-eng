@@ -46,6 +46,12 @@ that correction is meaningful, not stylistic duplication. Omit agent
 roles, internal iteration/vote counts, prompts and raw diagnostic chatter. Preserve
 material limitations rather than burying them in optimistic wording.
 
+Before drafting a result or question card, apply the
+[unanswered-decision contract](../../factory-run/references/pending-decisions.md).
+Keep each required unanswered question and its affected milestone visible, even
+after a reply settles a secondary preference. Cite an actual resolution when
+closing it; do not treat a limitation list or unrelated reply as acceptance.
+
 ## Durable draft identity and repeat behavior
 
 Use additive immutable files under

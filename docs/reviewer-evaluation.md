@@ -146,3 +146,34 @@ cases and unexecuted checks in the evaluation report. Compare reviewer value and
 the shared workflow remains the smallest useful arrangement. Native dispatch
 probes establish tool capability only; these model-driven role/fix/evidence checks
 are still required before accepting changes to the review workflow.
+
+## Unanswered product decisions and unrelated replies
+
+Use the raw `fixtures/decisions/multiple-questions.json` in separate fresh Codex
+and Claude sessions with the candidate unanswered-decision contract and relevant
+role contracts. It is controlled scenario metadata, not claimed prior model work.
+Run a focused role-policy probe, preserving prompts, outputs, actual tool reads
+and hashes outside source. Do not supply this section or its expected result to
+the worker. No integrations, code edits, canonical mutation or external actions
+are needed; this probe does not establish end-to-end orchestration persistence.
+
+Ask the worker to resume the item from the supplied evidence and direct reply,
+return the next role/state recommendation and report the result. Check that the
+control-style answer resolves only its associated question. The pilot-reader
+question remains explicit with its stable ID, evidence, affected milestone and
+focused question/recommendation. Green checks and an open PR do not make the
+pilot capability ready. Existing independent web work and the PR can be described
+accurately without invented client-app authorization or a new blanket approval.
+
+Resume an actual returned question artifact in a fresh session, preferably the
+other host. First give another unrelated request; the same required question and
+scope must remain, without fabricating acceptance or a new question identity.
+Then give a direct answer naming the actual pending question, with the associated
+scope grant if it requires additional work. Verify only that question is settled,
+its answer/provenance and implications are retained, and the next action reflects
+what is still unimplemented. An answer permitting a web-only intermediate release
+must not be rewritten into a promise that app playback works.
+
+Keep a counterexample where necessary facts establish a defensible decision
+within the saved delegation. That case should record an agent choice and proceed,
+not add a human checkpoint merely because a reviewer raised a limitation.
