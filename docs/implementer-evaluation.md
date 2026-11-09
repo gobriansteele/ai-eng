@@ -142,3 +142,22 @@ quoted-approval, missing-checkout restoration and native-lifecycle probes are
 valuable but distinct from the happy path. Report any not executed as untested;
 never claim native creation based on adoption alone. No helper/state patch may
 manufacture progress when a role or capability fails.
+
+## Verification claims and content identity
+
+In separate fresh Codex and Claude role probes, supply actual captured commands,
+raw output and code snapshots from a synthetic checkout, not a suggested verdict
+or a required metadata wrapper. Include checks run before a commit whose relevant
+bytes match, a stale report with estimated timing or unsupported execution claims,
+and a check with no supplied evidence. Require observed timing, accurate execution
+order and bounded content-equivalence claims. Missing evidence must remain
+unverified, including in tables and next actions; it proves neither execution
+nor nonexecution.
+
+Include an observed failed launch and a changed current input. The report must
+retain the actual failure and current verification gap rather than inherit a
+past pass. Resume in fresh sessions with the prior actual result and new captured
+evidence, closing only the uncertainty that evidence settles. Keep expected
+outcomes outside worker prompts and retain actual prompts, outputs and source
+hashes outside plugin source. These focused reporting probes establish neither
+end-to-end implementation nor installed-package behavior.

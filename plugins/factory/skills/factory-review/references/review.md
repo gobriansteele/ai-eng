@@ -12,6 +12,11 @@ the actual dedicated worktree/ownership and explicit local authorization. Produc
 
 ## Freeze and evidence
 
+Assess whether verification fits the change and repository requirements. Accept
+positive or negative claims about execution, timing and tested content only when
+actual observations support them. Missing evidence remains unverified; confirm
+that any reused results cover the delivered content.
+
 Each attempt lives under `<runtime>/work/<item-id>/review-<unique-attempt-id>/`.
 Preserve earlier report bytes and append absolute paths under unique `review-`
 artifact keys. Write reports after supporting evidence; keep stable save operation
