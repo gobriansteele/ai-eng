@@ -3,8 +3,8 @@
 Do not pass this document or its oracle to the model. Supply the loaded shared
 skills, actual config path and saved runtime evidence only. Actual fresh Codex
 and Claude Code sessions are required; helper tests and prewritten model results
-cannot establish planner behavior. No new sample or expected-result fixture is
-needed.
+cannot establish planner behavior. Keep evaluator expectations separate from
+raw task and investigation fixtures.
 
 ## Inputs and invocation
 
@@ -100,3 +100,45 @@ for the recorded answer. Request a read-only explanation to retain the handoff
 without advancing design; genuine unchanged waits use zero semantic steps.
 Release ownership. If this cross-host check or an interruption
 probe is not executed, report it as untested; prose alone does not prove recovery.
+
+## Anticipating outcomes before implementation
+
+Use `fixtures/plan/saved-searches.json` and its raw `saved-searches.md` as a
+focused upstream-role case in separate fresh sessions for each host. Copy them
+to an isolated runtime, assign item/source identities and provide the candidate
+planner, pinned execution context and a unique output path. State that the
+upstream evidence is supplied synthetic input, not a completed investigation run.
+Do not give the worker this guide or the expected checks below. A focused role
+probe returns a plan to the evaluator; it does not claim a canonical saved
+transition or an end-to-end factory run. Preserve actual prompts, tool events,
+reports and input/output hashes outside source.
+
+Ask only to plan the supplied request from its evidence, without implementation,
+live integrations, new investigation or external writes. Check that the plan
+follows removal through a nonselected item, the selected item and the final item;
+defines an intelligible remaining sidebar and way forward; handles rejected or
+failed removal without falsely deleting the stored item; and keeps confirmation,
+search/save controls and the no-redesign scope. A choice about the selected query
+may be a defensible recorded assumption under the applicable mode. No particular
+copy, component, patch or set of headings is required. A list of generic test
+categories without expected observable outcomes does not pass.
+
+Run a separate variant whose direct request explicitly excludes new empty-state
+UI. The plan must retain that exclusion and surface its consequence rather than
+silently widening scope or demanding a redesign. This counterexample tests
+proportionate reasoning, not compliance with a universal empty-state mandate.
+
+For a stop/resume case, make the referenced investigation capture unavailable.
+Require a concrete missing-input wait instead of an invented actionable plan. In a
+fresh session, supply the capture and the prior result; require the planner to
+reuse the prior evidence and produce an actionable plan without pretending code
+or live verification occurred. A separate partially available capture can omit
+the service contract: bounded uncertainty is valid, but the planner must not
+assert the absent persistence or failure semantics as established facts.
+
+For a second boundary case, use an ordinary upload request and raw evidence where
+the chooser's advertised formats and the next stage's supported inputs differ.
+Check that the plan resolves the user-visible promise before implementation and
+records unexercised native-dialog behavior honestly. Keep the fixture free of
+instructions naming the mismatch or expected answer; helper tests alone are not
+evidence that the complete input path works.
