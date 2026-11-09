@@ -39,8 +39,10 @@ provides ownership-aware cleanup previews and explicitly requested additive
 archive/restore copies. Native scheduling is documented, not activated or exercised;
 actual native deletion remains untested. With an
 established config, optionally use
-`factory_work.py inspect` read-only to report the selected active item stage/status/next
-action and pending item IDs and snapshot path; never acquire an invocation or change work for status.
+`factory_work.py inspect` read-only to report each unfinished run and its claimed item/owner, item stage/status/next
+action, unowned items, retained worktree/branch reservations and snapshot path.
+Use active_items and invocations for schema 4; no global selected item exists.
+For legacy schemas report the original selection and the explicit upgrade option; never acquire an invocation or change work for status.
 
 Resolve once through the setup skill's [default resolution contract](../factory-setup/references/configuration.md#default-resolution-and-pinning),
 using the remembered default unless the user supplied an override. Reuse its

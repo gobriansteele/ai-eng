@@ -107,10 +107,11 @@ write the registry.
 
 ## Configuration schema
 
-Schema version 1 requires exactly these fields (no unknown or missing keys):
+New factories use schema version 2 with exactly these fields (no unknown or missing keys).
+Schema 1 remains supported for legacy serial factories until explicit upgrade:
 
 ```yaml
-schema_version: 1
+schema_version: 2
 factory_id: example
 runtime_path: ./runtime
 slack:
@@ -124,7 +125,6 @@ repositories:
 intake:
   start_at: null
 limits:
-  active_work_items: 1
   fix_rounds: 2
 actions:
   tickets: approval_required
@@ -215,7 +215,10 @@ factory-run additionally uses the canonical runtime/state/work.json snapshot;
 see its persistence contract. Setup leaves saved work and existing cursors alone.
 
 Unknown settings/schema versions and root escapes are validation errors. Missing
-connections/repos are readiness blocks. The fixed limits/actions validate the
+connections/repos are readiness blocks. Schema 2 removes the factory-wide active_work_items limit; fix_rounds and actions
+retain their existing policies. Schema 1 requires its original limits and remains
+serial. Upgrade with the work helper through the saved-work contract; setup
+rechecks capabilities after upgrade without recreating the factory. Limits/actions validate the
 supported choices; their enforcement during work is an agent instruction,
 not a deterministic execution engine. YAML never overrides host restrictions or
 grants external-action approval. Setup readiness also does not mean workflow roles

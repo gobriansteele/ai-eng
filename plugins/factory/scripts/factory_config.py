@@ -220,8 +220,8 @@ def load_config(config: Path, local: Path | None = None) -> Config:
         },
         "config",
     )
-    if type(data["schema_version"]) is not int or data["schema_version"] != 1:
-        raise ConfigError("Unsupported schema_version; expected 1")
+    if type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2):
+        raise ConfigError("Unsupported schema_version; expected 1 or 2")
     if not re.fullmatch(
         r"[a-z0-9][a-z0-9-]{0,63}", string(data["factory_id"], "factory_id")
     ):
@@ -275,14 +275,12 @@ def load_config(config: Path, local: Path | None = None) -> Config:
     intake = mapping(data["intake"], {"start_at"}, "intake")
     if intake["start_at"] is not None:
         timestamp(intake["start_at"], "intake.start_at")
-    limits = mapping(data["limits"], {"active_work_items", "fix_rounds"}, "limits")
-    if any(type(v) is not int for v in limits.values()) or limits != {
-        "active_work_items": 1,
-        "fix_rounds": 2,
-    }:
-        raise ConfigError(
-            "Factory supports one active item and a two-attempt recovery checkpoint"
-        )
+    expected_limits = {"fix_rounds": 2}
+    if data["schema_version"] == 1:
+        expected_limits["active_work_items"] = 1
+    limits = mapping(data["limits"], set(expected_limits), "limits")
+    if any(type(v) is not int for v in limits.values()) or limits != expected_limits:
+        raise ConfigError("Unsupported limits for this configuration schema")
     expected_actions = {
         "tickets": "approval_required",
         "posts": "approval_required",

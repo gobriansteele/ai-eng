@@ -134,7 +134,7 @@ an action because time passed. Do not delete/edit remote posts to repair uncerta
 ## Invocation outcomes and focused evaluation
 
 An explicit report-only request to factory-run skips watch/route/code progression,
-reads the selected item and returns drafts/reporting disposition while preserving
+claims the explicitly identified item and returns drafts/reporting disposition while preserving
 its engineering state. With no selected item, report that absence; do not invent
 work. Normal runs may draft at meaningful saved progress, completion or a new
 block/human question when a semantic step remains. No-change observations do not

@@ -5,6 +5,12 @@ description: Publish an exact reviewed non-draft PR with scoped authorization, r
 
 # Factory follow PR
 
+For config 2/work schema 4, selected item means this run's explicitly claimed
+item. Require that claim before role execution and use expected-item-version
+for save/reconcile. Other runs may work on other items concurrently. Keep all
+permissions, artifacts and external actions scoped to this item. Read new receipt
+associations after a version conflict; never overwrite newer related evidence.
+
 Read the shared [execution-mode policy](../factory-run/references/execution-modes.md)
 and the selected item's saved execution report. Apply its decisions, authorization
 and stopping rules; mode-specific rules govern the checkpoints below.

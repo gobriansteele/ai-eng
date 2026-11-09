@@ -41,6 +41,7 @@ gets a new identity. Do not copy the entire unrelated chat history.
 After saving direct intake, still run configured Slack collection in live mode.
 No channels means nothing to collect. A Slack access/coverage gap is reported
 without discarding direct intake or blocking its independent routing. Process both
-surfaces through the existing router, retaining one active item and pending work;
+surfaces through the existing router, claiming one item per run while retaining
+other items and their independent owners;
 do not interrupt an active writer to prioritize the new request. Explicit offline
 evaluations never access live integrations, including when using `--request`.

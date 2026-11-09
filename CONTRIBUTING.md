@@ -60,6 +60,7 @@ prompt so a test measures behavior rather than repetition of an answer.
 
 | Area | Evaluation guides |
 | --- | --- |
+| Concurrent orchestrators | [Ownership, worktrees and upgrade](docs/concurrency-evaluation.md) |
 | Execution modes | [Decisions, checkpoints and completion](docs/execution-modes-evaluation.md) |
 | Agent selection | [Dispatch, capability limits and resume](docs/agent-selection-evaluation.md) |
 | Intake | [Watcher](docs/watcher-evaluation.md), [router](docs/router-evaluation.md) |

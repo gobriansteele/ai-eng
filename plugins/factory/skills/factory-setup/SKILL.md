@@ -26,6 +26,15 @@ config or registered default stops resolution: show the precise repair, or offer
 setup of an explicitly chosen valid config with `--set-default`; never silently create a
 replacement or reset existing records.
 
+New factories use config schema 2 from the configuration reference. For an existing
+schema-1 factory, explain that concurrency requires an explicit in-place upgrade
+through factory_work.py upgrade under the persistence contract. It backs up config
+and work.json, retains history/resources and does not require a new factory home.
+Stop legacy owners first; never auto-upgrade during a readiness-only recheck.
+If the desktop has no verified CLI owner, use the harness foreground CLI handoff
+for the explicit upgrade/setup request; do not start unrelated factory-run work.
+After an explicitly requested upgrade, recheck capabilities using this setup flow.
+
 Read existing choices before asking for missing ones. Preserve fields and all
 runtime records, channel starts, cursors, work, and other harness reports on reruns.
 Existing configurations keep their paths; never relocate them to adopt this layout.

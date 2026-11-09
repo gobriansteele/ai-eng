@@ -31,7 +31,7 @@ investigation/verification handoffs name `factory-investigate`. A genuine
 missing-role block must name the unavailable role; available roles may continue
 within the requested bound. An active block must not prevent collecting another channel.
 
-Verify canonical state directly: one selected active item, immutable source
+Verify canonical state directly: one claimed item per run with independent owners preserved, immutable source
 receipts, no reset fix counts/scopes/actions, exact trigger IDs, independent
 cursors, coverage limits and released invocation owner. Error/lost-reply tests
 must expose prior state or sources plus cursor together. Inspect old 1/2 records

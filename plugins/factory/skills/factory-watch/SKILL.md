@@ -56,7 +56,10 @@ otherwise save the durable workspace/channel/root reference without inventing an
 observed URL. Record discovery capability, queried bounds, terminal
 pagination and index/private/bot limitations. Submit one observation per channel
 with a stable collection ID using owner-gated `collect --decision <absolute-json>
---expected-revision <read-revision> --summary`. The helper commits immutable saved
+--summary`. For config 2/work schema 4, acquire the channel intake claim and
+reread watch-plan AFTER acquisition, BEFORE any connector reads, and release after
+commit. A busy channel is skipped/reported without blocking an independent item.
+Legacy factories still pass --expected-revision; follow their legacy contract. The helper commits immutable saved
 source captures and cursor together. A failed or incomplete page/thread fetch
 must not advance that channel. Preserve the error/partial observation outside
 canonical state, report the boundary not covered, and retry after a complete read.

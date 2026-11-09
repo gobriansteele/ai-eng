@@ -1,163 +1,169 @@
-# Saved work and invocation contract
+# Saved work and concurrent invocation contract
 
-Apply the selected item’s [execution mode](execution-modes.md) to decisions,
-authorization and recovery. Legacy items without execution metadata retain their
-existing checkpoints; mode-specific delegation governs the human waits below.
+Use the selected item's [execution mode](execution-modes.md). This contract is
+for config schema 2 and work schema 4. Config schema 1 retains its serial behavior;
+read [legacy persistence](legacy-persistence.md) only to inspect/resume an old
+factory before explicit upgrade. Do not apply schema-4 commands to legacy state.
 
-Use `uv run --isolated --frozen --no-dev --project <loaded-plugin> python
-<loaded-plugin>/scripts/factory_work.py <command> --config <path> --harness
-codex|claude-code [--local <yaml>]`. Dependencies/cache behavior matches the
-[configuration contract](../../factory-setup/references/configuration.md).
-Resolve the user-facing default once through the configuration contract, then
-pass its pinned absolute config and optional local override explicitly to every
-work-helper call. `factory_work.py` requires that explicit config; it never reads
-the registry. A later default change cannot redirect this invocation. Do not
-borrow another environment.
+## Configuration and upgrade
 
-`owners` is read-only and prints verified harness CLI ancestor identities. The
-actual long-lived process must be the nearest `codex` or `claude` executable in
-this helper's ancestry; `codex app-server` is excluded. `ps` establishes executable, start time
-and ancestry with locale/timezone normalized to C/UTC, and `kill(pid, 0)`
-establishes liveness. Sandbox denial is unknown,
-not death. Use a reported candidate's exact PID. Each mutator verifies the same
-owner again; a token alone cannot transfer ownership to another live harness.
-`inspect` is read-only, returns `state_path` and `snapshot` (null when absent), and
-validates existing records. Both commands require explicit config/harness.
+Resolve the factory once through the [configuration contract](../../factory-setup/references/configuration.md),
+then pin its absolute config/local paths. Invoke helpers with
+`uv run --isolated --frozen --no-dev --project <loaded-plugin> python
+<loaded-plugin>/scripts/factory_work.py <command> --config <config> --harness
+codex|claude-code [--local <override>]`. Do not borrow another environment.
 
-Generate a UUID once with local Python's `uuid.uuid4()` and reuse it on retries.
-Under command-prefix permissions, make the permitted Python call separately and
-paste the observed UUID and resolved paths literally into each permitted helper
-call; do not wrap the helper in assignments, substitutions or command chains.
-For a new synthetic test only:
+New factories use config schema 2 (`limits: {fix_rounds: 2}`) and begin creates
+work schema 4. For an existing factory, inspect first. An explicitly requested
+upgrade uses `upgrade --owner-pid <verified-cli-pid>` with pinned config/local and
+harness. It preserves original config and snapshot backups under
+`runtime/state/upgrades/<digest>/`, retains legacy state under the schema-4
+snapshot's `legacy` field, then replaces the configuration. Old plugin versions
+reject the new schemas. Stop legacy owners first; alive/unknown ownership blocks
+upgrade. A failure between the state and config replacements is recoverable by
+retrying the same upgrade, not restoring/resetting state. Existing paths, channel
+starts, cursors, item IDs, artifacts, history and scopes remain intact. Recheck
+setup capabilities in each host because the effective config hash changes.
+Do not upgrade a real factory as part of an unrelated plugin development test.
+
+## Runs and item claims
+
+`owners` returns verified CLI ancestor identities. Use the exact nearest actual
+long-lived Codex/Claude CLI PID; helper/shell PIDs and the desktop app-server are
+not owners. Unknown liveness is not death. `inspect` is read-only and returns
+`snapshot`, `active_items` and `inventory_version`.
+
+Generate a UUID once and retain it. `begin --owner-pid <pid> --run-id <uuid>` starts
+an independent unbound run, never a factory-wide exclusive writer. Optional
+`--request <capture>` saves direct intake; `--source <capture>` is synthetic-only;
+`--fixture <fixture>` seeds a new explicitly synthetic item. Choose one input.
+Exact begin retries preserve the original run and never restart a finished UUID.
+No input is needed to resume existing work. Null step caps remain the default;
+`--single-step` or positive `--max-steps` explicitly bounds semantic steps.
+
+Before dispatching any item role, claim its execution atomically:
 
 ```text
-begin --owner-pid <observed-cli-pid> --run-id <uuid> --fixture <loaded-plugin>/fixtures/synthetic-item.json --single-step
+claim --owner-pid <pid> --run-id <uuid> --operation-id <stable-id> --item-id <item-id> --expected-item-version <observed-version>
 ```
 
-To test preservation instead, select `fixtures/synthetic-resume.json`; its one
-fix round, illustrative approval scope and proposed action are explicitly
-synthetic. They grant no real permissions and claim no external execution.
-`synthetic_cursors` are illustrative handoff metadata, not watcher cursors. They remain separate from watcher cursors. Existing state resumes with no fixture;
-live collection follows the preserved setup channel starts. Providing the same legacy fixture
-identity never resets saved values; a different legacy fixture is refused.
-For saved-source routing use `begin --source <absolute-synthetic-source.json>`
-instead of `--fixture`. Both are explicit offline demonstration input. Config-only begin is valid on a
-fresh production workspace, creating empty schema-2 inventory before collection.
-`begin --request <absolute-direct-capture.json>` accepts real direct chat intake
-with [direct provenance](direct-intake.md), or explicitly synthetic direct test
-input. Choose only one of `--request`, `--source` and `--fixture`. The request is
-saved atomically under the verified invocation owner before Slack collection;
-capture and exact retry consume no semantic step. Source receipt replay/conflict
-rules apply unchanged, and `--source` remains synthetic-only.
-A new source can be saved even when an active item is blocked. Read
-[the router contract](../../factory-route/references/routing.md) for source and
-result fields. `route --decision <absolute-json> --expected-revision <revision>`
-uses the same owner/run arguments as save. It commits the agent-authored result,
-explicit item updates and selected active ID together and consumes one step.
-No-action commits a receipt/disposition audit with zero work items.
+Each unfinished run binds at most one item, and each item has at most one
+unfinished run. The binding is immutable within a run. A claim loser must not
+start workers. Another run may work on another item concurrently in either host.
+Carry item ID, run ID, owner, config/local and scope through every CLI/role packet.
+Resume by explicit item ID or unambiguous trusted request/question provenance.
+With several candidates, clarify rather than selecting a factory-wide default.
+For an explicitly requested queue run, choose an eligible unowned item, claim it,
+and reselect after a claim race. Item status is not ownership.
 
-Exact source identity/version/content replay reuses its receipt and routing;
-repeated captures cannot silently reroute or reset items. Conflicting content
-under the same immutable version refuses. A distinct version of the same thread
-is retained separately; the router reads prior captures/items and may attach with
-evidence. All source bodies and local ticket proposals stay inside runtime.
+`finish --owner-pid <pid> --run-id <uuid> --outcome <reason>` ends only that run,
+releasing its execution and intake claims. Reasons remain single_step,
+step_limit, blocked, waiting_for_human, no_available_work, stopped, completed.
+An intake-only run can finish without an item. Resource reservations persist.
+A crash leaves claims intact. A new run can use `recover --target-run <old-run>
+--operation-id <stable-id>` only after the helper verifies the old process is
+stopped/replaced; live or unknown owners block recovery. Reconcile any surviving
+workers before adopting code write access. Never take over based on elapsed time.
 
-Schema 2 uses `items` keyed by stable ID, nullable `active_item_id`, and `sources`
-keyed by compact JSON `[source_id,version]`. There is no mirrored current item.
-Only the selected item advances through ordinary `save`; a route may add/update
-several associated items while retaining one selected active ID. Additional
-saved items are pending. The helper validates explicit changes; the agent chooses
-workflow transitions, active selection and stop reasons.
+## Item saves and exact retries
 
-Schema 1 is still readable. `inspect` returns a validated compatibility view
-with the original schema number and inventory projection; it writes nothing.
-Only `begin`, under a verified owner and after checking prior owner liveness,
-migrates to schema 2 in its atomic snapshot. The legacy item, events, invocations,
-fix count, scopes/actions and cursor metadata are preserved. Legacy events remain
-verbatim and a migration event is appended. No source body is fabricated. Other
-mutators require schema 2 or 3; use a fresh begin to migrate. Corrupt schema 1 is
-refused before any replacement; live/unknown owners prevent migration.
+`save --owner-pid <pid> --run-id <uuid> --expected-item-version <version>
+--decision <json>` accepts the existing `{id, reason, item}` complete copied item
+shape. Only the claimed item may change. `reconcile` uses the same item-version
+flag and existing reconciliation JSON shape. Helpers load the latest snapshot
+inside a short mutex, verify the item version/owner and preserve unrelated items.
+Another item's save does not invalidate this item's version. A stale same-item
+save refuses and needs rereading. A busy mutex is a retryable transaction conflict.
 
-Normal `begin` has no step cap (`max_steps: null`). An explicit positive
-`--max-steps` sets a cap; `--single-step` is equivalent to 1. Old numeric limits
-remain intact in saved invocations. All modes still save progress after each step.
-Both hosts need the updated plugin before resuming null caps or execution metadata. No YAML limit is added. The run UUID is the
-durable token. `begin` with the same UUID and same invocation inputs is
-idempotent, including after replacement succeeded but the reply was lost.
-A finished UUID never silently starts a new invocation: use a fresh UUID.
+Retain stable operation IDs and exact payloads, including the original expected
+item version, across uncertain replies. Exact committed retries do not consume
+another step. Reusing an ID with different content/domain refuses. A later run
+may reconcile an exact prior operation only for the same claimed item after the
+old run finishes. Begin, claims, resource reservations and collection consume no
+semantic steps; route, save and reconcile do. Save/reconcile preserve source
+identity, prior approvals/actions, fix history and item-specific execution grants.
+New/changed execution grants require readable immutable evidence as before.
 
-`save --owner-pid <pid> --run-id <uuid> --expected-revision <read-revision>
---decision <absolute-json-path>` takes exactly:
+The global revision orders events; it is not the precondition for independent
+item saves. `--summary` returns a bounded receipt with the current run, active
+item/run mapping, item versions and routing inventory version. Do not substitute
+global revision for item version. All invocations retain actual plugin version,
+package fingerprint, non-secret effective config and hash; config/package changes
+block further work by an existing run. Saved evidence never grants host access.
+
+## Shared intake
+
+Before authenticated channel reads acquire `intake-claim --key <key>
+--operation-id <id>`, using `channel:` plus compact JSON `[workspace,channel]`.
+`watch-plan` returns the exact key and current claim owner. Re-read watch-plan
+AFTER acquiring the claim, then fix read boundaries. Skip/report busy channels
+while continuing independent direct work. Collect retains its existing observation
+JSON; `collect --decision <json>` verifies channel ownership and cursor/start
+preconditions, not the global revision. Release it with `release-intake --key
+<key> --operation-id <id>` after the read/commit. Finish also releases intake claims.
+
+Before semantic routing acquire the key `receipt:<receipt-key>` where receipt-key
+is compact JSON `[source_id,version]`. Capture replay still deduplicates; altered
+content under the same source version refuses. Route with this JSON:
 
 ```json
-{"id":"stable-decision-id","reason":"Evidence for this agent decision","item":{}}
+{"id":"stable-operation-id","reason":"Evidence","receipt_id":"saved-key","routing":{},"items":[],"inventory_version":"observed-inspect-value"}
 ```
 
-Replace `{}` with the complete item copied from the latest snapshot and changed
-only as justified. Item fields: stable `id`, `synthetic`, `source_id`,
-`subitem_key`, `source_links`, `jira_keys`, `classification`, `stage`, `status`,
-`next_action`, nullable `required_role`, `artifact_paths`, `code`, `fix_rounds`,
-`approvals`, `pending_actions`, and optional `execution` with `mode`
-(`default`, `bedtime`, `restricted`) and an absolute `evidence` report path. New or
-changed execution metadata requires a readable, nonempty immutable authorization
-report; a changed mode needs a new report. Routing may set it only for a newly
-selected item, never unrelated pending items or an existing item. Use an ordinary
-owner-gated save for an explicit selected-item mode change. Status is `ready`, `blocked`, `waiting_for_human`
-or `done`; the helper does not choose stages or roles. Artifact/worktree paths
-are absolute. `code` can contain branch, worktree, pr_url, reviewed_commit and
-worker_reference when observed. Durable paths/links are the handoff; a host worker
-ID alone is insufficient. Approval scope is exactly action/target/revision with
-an ID and evidence; a pending action additionally carries status
-proposed/uncertain/confirmed, nullable returned_id/returned_url and evidence.
-Confirmed actions require observed returned ID and URL. Ordinary save preserves prior approvals/actions verbatim; the narrow
-external-action reconciliation command below handles evidenced status transitions. The helper validates structure;
-it cannot prove human permission, remote state, or artifact existence.
+Use the usual routing findings in `routing`; `items` contains only complete NEW
+item records with zero fix rounds and empty code/artifacts/ledgers, without an
+execution grant. Existing findings use existing_item_id and commit only the
+receipt association, never another item's lifecycle replacement. Read the full
+current inventory before choosing associations. Changed routing inventory refuses
+commit and requires reconsideration. Release the receipt claim after commit.
+Claim a newly routed item before saving its scoped execution grant or running roles.
 
-The helper enforces one active invocation, revision CAS, step bounds, stable
-identity, nondecreasing fix rounds (at most one increment per save), preserved source/Jira links and prior
-scoped approval/action entries. Legacy/restricted work cannot start a third fix;
-default/bedtime uses the mode-specific progress/recovery rule. Duplicate decision ID with identical content
-returns saved state without consuming another step, even with an old revision.
-Reusing an ID with different content fails. Use a stable ID for the logical
-transition across interruptions; read history before choosing a new decision.
+Related captures increment the associated item's version without changing its
+lifecycle. Its owner must reread the associated source receipts before its next
+save/reconcile and reassess affected decisions. Discover associations through
+`sources[*].item_ids`; item.source_links is not a complete source index. Never
+silently inherit another item's permission, erase execution progress, or assert
+new source evidence was considered before it arrived. Newly associated evidence
+for a finished item is retained for explicit subsequent handling.
 
-`finish --owner-pid <pid> --run-id <uuid> --outcome <reason>` releases ownership.
-Reasons: single_step, step_limit, blocked, waiting_for_human, no_available_work,
-stopped, completed. Retrying the same finish is idempotent. A crash before finish leaves the
-token active; a later `begin` may mark it interrupted only after verifying the
-owner is dead or its PID now has a different observed identity. An alive owner
-blocks even when it seems idle; unknown ownership blocks until inspection/repair.
-No elapsed-time takeover. Stop the original CLI before switching harnesses.
+## Worktree and branch reservations
 
-The only authority is `<runtime>/state/work.json`, containing items, selected active ID, saved source receipts,
-ordered decision history and all invocation records together. This is a small
-Phase 3 refinement of the plan's suggested record/event/run tree: no mirrors or
-multi-file transaction engine. The helper validates the full snapshot before
-any mutation, writes a temporary file, fsyncs it, atomically replaces the
-snapshot, then fsyncs its directory. A crash exposes the prior or next complete
-snapshot, never separately advanced records/events/run metadata. A failure after
-replace may have committed: inspect and retry the exact operation ID. Uncommitted
-temporary files are ignored, not interpreted as new state. A short `fcntl` mutex
-serializes helper mutations; the durable token keeps ownership between calls.
-Direct file writes can bypass these protections. The snapshot is intentionally
-small for this trial; history compaction/export is not implemented.
+Different items may use the same repository in distinct linked worktrees and
+branches. Before branch setup reserve the actual detached worktree; before code
+mutation reserve its actual branch too. `reserve --decision <json>` takes
+`{id, resources:[{item_id,worktree,git_dir,common_dir,branch}]}`. Paths are observed
+canonical absolute paths; branch is the full `refs/heads/...` ref or null for a
+detached checkout. Verify with Git rev-parse/show-toplevel, absolute git-dir/common-dir
+and symbolic-ref; the helper independently observes them under the transaction.
+Source checkout mutation is refused. All resources must belong to configured
+repositories. A multi-repository reservation is all-or-none.
 
-Every invocation saves loaded manifest version, a SHA256 over sorted package
-source paths/content (excluding Python/tool caches), effective non-secret config
-and its hash. Current source/config changes during an invocation block further
-mutations; stop the owning CLI and resume with a fresh invocation. Runtime
-identity is the resolved config path plus factory ID, never a global default.
-Saved config values are evidence, not authorization. No standalone reset/migrate, external write or worker-completion command exists.
-`watch-plan` and owner-gated `collect --decision <observation-json>` implement
-[bounded collection](../../factory-watch/references/collection.md). The first
-collection adds schema 3 and its collection field, migration event, immutable
-source receipts and cursor in one atomic replacement. Collection consumes no
-semantic step; route/save keep their configured bound. Inspect supports schemas
-1/2/3 read-only; other mutators support 2/3. Old plugin versions must be refreshed
-before resuming schema 3. Failed/incomplete reads change no canonical bytes. Add `--summary` to mutators to print a bounded receipt (path,
-revision, IDs, invocation metadata) instead of repeating the whole history.
-Inspect the saved source and relevant inventory in the canonical file when
-needed; never edit it directly.
+The same worktree/Git worktree directory or common-directory-plus-branch cannot
+belong to two items. Item reservations survive run completion and human waits;
+resume adopts the SAME resources after prior-writer and current-byte validation.
+Reservations are retained; there is no automatic release/reuse or deletion API.
+Unknown/missing resources require repair/restoration, not replacement. Reconcile
+uncertain native allocation before retrying. Keep native host creation rules.
+Shared ports, test databases, caches and Git refs still require appropriate
+isolation or narrow coordination; worktrees alone do not establish that isolation.
+Claims coordinate this factory, not unrelated processes/factories.
+
+## Storage and compatibility
+
+The authority remains `runtime/state/work.json`. Schema 4 contains items and
+item_versions, source receipts, collection bookkeeping, concurrent invocations,
+intake claims, resource reservations and interleaved events. Active item ownership
+is derived from unfinished invocations' item_id; there is no global active item.
+The immutable `legacy` snapshot retains original schemas 1/2/3 and their old
+invocations/events/config hashes. New history replays from that legacy inventory;
+validation rejects materialized state inconsistent with replay. Read legacy
+history when reconciling old decisions; do not invent historical run-item bindings.
+
+A short file mutex protects the entire read/validate/modify/write transaction.
+A temporary file is fsynced and atomically replaces the snapshot; then its
+directory is fsynced. Lost replies may mean a commit succeeded: inspect and retry
+exactly. Direct writes bypass these protections and are forbidden. No compaction,
+database migration or remote exactly-once guarantee is introduced.
 
 ## Investigation artifacts and handoff
 
@@ -389,7 +395,7 @@ replace unresolved uncertainty with a new action. Reserve at least two semantic
 steps for uncertainty and confirmation AFTER proposal; otherwise stop before
 execution. A later save may record additional observed references.
 
-`reconcile --decision <absolute-json> --expected-revision <revision>` uses normal
+`reconcile --decision <absolute-json> --expected-item-version <item-version>` uses normal
 verified owner/run/config/harness flags and exactly this shape:
 
 ```json

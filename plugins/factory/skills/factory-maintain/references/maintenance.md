@@ -10,7 +10,13 @@ Resolve symlinks and stop if identity/scope differs; do not follow an archive or
 cleanup target into unrelated content. Imported fixtures are declared scenarios,
 not proof of real factory allocation or real Git/process inspection.
 
-Read canonical revision/active_run and relevant item status/actions first. Check
+Read canonical revision and ALL unfinished invocations, intake claims, item resource
+reservations and relevant item status/actions first. Schema 4 has no active_run;
+read legacy selection only for schemas 1/2/3. A finished run does not free its
+item's worktree or branch. Retain reserved resources; this release has no automatic
+reservation-release/reuse operation. Independent items may share a common Git
+directory while using distinct worktrees/branches. Never clean up the shared repo
+because one item completed. Check
 current owner PID/start/executable/liveness with available permitted inspection;
 denied/unknown is not dead. Verify actual worktree HEAD, branch, common Git
 directory, staged/unstaged/untracked status and merge ancestry against the intended

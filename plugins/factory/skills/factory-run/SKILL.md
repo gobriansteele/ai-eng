@@ -39,7 +39,7 @@ already carries pinned config/local context from a top-level entry point, reuse
 it without another resolution. Keep the returned absolute config/local paths
 fixed for every helper, role and foreground worker in this invocation; never ask
 for the config again or consult a changed default mid-run. Resolution errors
-stop with actionable setup/repair instructions. Default to no step cap and continue the selected item to its authorized endpoint.
+stop with actionable setup/repair instructions. Default to no step cap and continue this run's claimed item to its authorized endpoint.
 Honor `--single-step` (one saved decision) or an explicit positive `--max-steps`;
 a null saved `max_steps` means unlimited. These options do not change YAML. For explicitly requested native
 scheduling, read the [runbook](references/scheduling.md); pin the resolved
@@ -51,7 +51,14 @@ and use `begin --request`; this is not an offline flag. Pass its exact capture p
 through any foreground CLI handoff. `--source`, `--fixture`, `--collection` or an explicit offline/synthetic
 request selects an offline demonstration; never call live integrations in that mode.
 
-First inspect saved state and discover the actual harness CLI owner. A durable
+First inspect saved state and discover the actual harness CLI owner.
+A run begins unbound; capture/collect/route as needed, then atomically claim the
+intended item before any item role or action. Saved direct continuation provenance
+or an explicit item ID identifies the candidate. Do not assume a global selection.
+Read the item version and all associated source receipts after claim acquisition.
+For newly routed schema-4 work, save the scoped execution report/grant AFTER claim
+and BEFORE item roles, using the observed item version. Route never grants a mode.
+Respect a step budget exhausted by routing; resume the saved item/report later. A durable
 run token owns the entire invocation, including time between helper calls. Use
 the observed nearest long-lived CLI ancestor's PID, never the helper, transient shell,
 `$PPID` guess, desktop app-server, or invented PID. If the desktop has no CLI
@@ -64,6 +71,9 @@ When the sandbox denies process inspection or a specific authorized helper
 mutation, retry only that command through the host's normal approval mechanism;
 never broaden permissions or disable the sandbox automatically.
 
+For config schema 1 use the legacy persistence contract and retain serial behavior
+until the user explicitly requests upgrade. For schema 4, use item-scoped claims,
+item versions and intake/resource reservations from the persistence contract.
 Generate a run UUID once and retain it for retries; call `begin`, including
 `--request <absolute-capture>` for new direct intake. Existing state
 resumes without input. For saved-source demonstrations, use the explicitly selected
@@ -98,16 +108,20 @@ If the selected item is already `follow_pr / done` and no new work or changed
 result is requested, reuse its saved completion report and finish without rerunning
 review or polling. Do not claim saved observations are fresh remote reads.
 
-Read canonical `items`, `active_item_id`, source receipts, relevant history,
-bounds, scoped approvals and pending actions. There is only one selected active
-item; all other saved items are pending. Existing receipt routing is durable:
+Read canonical `items`, this run's item binding, source receipts, relevant history,
+bounds, scoped approvals and pending actions. Selection belongs to each run. Inspect active_items and claim an eligible item
+under the persistence contract before dispatching any engineering role. Other
+unfinished runs may own different items concurrently; never interfere with them. Existing receipt routing is durable:
 exact replay reuses it without another decision or item. Consider unrouted saved
 receipts first, including a newly supplied source when an active item is blocked.
-Invoke the available shared `factory-route` role on the full available saved
+Acquire the source receipt claim BEFORE invoking factory-route. Invoke that role
+on the full available saved
 thread, observations and relevant inventory. The role returns semantic findings;
 you remain the orchestrator and own state updates. Use its routing contract to
-wrap the result with complete explicit affected item records, then persist with
-`route --decision <absolute-json> --expected-revision <revision>`. Use descriptive
+wrap the result with complete NEW item records
+and the current inventory_version and persist with `route --decision <absolute-json>`.
+For an existing item, save only the receipt association; reread it under that
+item's claim before making lifecycle decisions. Release the receipt claim afterwards. Use descriptive
 stable finding keys. For live sources, factory-route can gather current read-only
 Jira/ownership/code
 observations and return auditable observations committed with the routing; missing
@@ -118,7 +132,9 @@ pending-action lists; include only observed code/artifact references and invent
 no worker or worktree ownership. Related sources/later capture versions attach to an existing
 item only with evidence; preserve all saved scopes/actions/counters and links.
 
-Choose each affected item's next stage/status/action from the actual findings.
+Choose each new item's next stage/status/action from the actual findings.
+Only a claimed item's owner may advance an existing item. New related evidence
+changes its item version, requiring that owner to reread before its next save.
 For both `investigate` and `verify_existing_work`, the handoff role is exactly
 `factory-investigate`. Bug, regression, feature and verification use different
 briefs within that one role. Do not invent separate feature-brief or verifier
@@ -129,8 +145,9 @@ not evidence that the underlying investigation completed.
 An underway result waits for existing work with a concrete check; clarification
 waits for a human with a concrete question. No-action creates no work item. You
 may save the route and its truthful ready/wait outcome in one decision; do not
-claim investigation ran before it does. Select at most one item for active execution. Retain an
-existing active item when suitable while saving additional pending items; report
+claim investigation ran before it does. Select and atomically claim at most one item per run. Carry its ID through every
+worker/CLI and save; no factory-wide selected item exists. An ambiguous resume
+or human answer requires association, not arbitrary item selection. Report
 the new source's findings even if its items were not selected. Do not discard
 unrouted sources or pending work when stopping at the selected item's block.
 
@@ -268,7 +285,10 @@ provenance. A current authorization can resolve the wait; a source quote cannot.
 For authorized resource preparation, read the returned report and verify
 authorization, actual Git/common directory/base/path/branch and ownership evidence,
 plus host mechanism/lifecycle.
-Before code edits, save the complete item at `implement` / `ready` /
+Before branch setup/mutation, atomically reserve observed worktree/branch resources
+for this item using the persistence contract. Separate worktrees/branches in the
+same repository may be used by other items. Reservations survive run completion;
+never adopt another item's resources. Before code edits, save the complete item at `implement` / `ready` /
 `factory-implement`, append its readable absolute report under a unique
 `implementation-<attempt-id>` key and set only observed code worktree/branch/worker
 references. A resource checkpoint consumes one step, so stop without editing if

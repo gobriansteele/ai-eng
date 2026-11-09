@@ -1,5 +1,16 @@
 # Saved source and routing artifact
 
+For config 2/work schema 4, acquire `receipt:<receipt-key>` before semantic routing
+and follow the concurrent route JSON in the [persistence contract](../../factory-run/references/persistence.md).
+Findings below are unchanged. The wrapper contains id, reason, receipt_id,
+routing, items (NEW items only), and inventory_version; no active_item_id.
+Existing-item findings commit receipt associations without replacing lifecycle
+fields. Associated items get a new version so their owners reconsider new input.
+Only an item owner may later change its workflow or grant execution scope.
+The wrapper/update behavior described below applies to legacy schemas 1/2/3;
+do not use it to overwrite another concurrent run's item.
+
+
 The `factory_work.py begin --source <absolute-json>` helper validates and saves
 a saved source. Explicit --source demonstrations remain synthetic; live
 collection writes sources with `synthetic: false` and intake provenance. Common

@@ -49,6 +49,12 @@ selection are stored separately from the installed plugin. If you are upgrading
 from a version that required a configuration path, run setup once with that path
 and ask it to make this your default factory.
 
+For an existing factory from 0.17.x or earlier, plugin installation alone does
+not enable concurrency. Ask factory-setup to upgrade that factory in place and
+recheck connections. The explicit upgrade backs up config.yaml and work.json,
+preserves existing work, and changes their schemas. No new factory home is needed.
+Update both hosts before resuming an upgraded factory; older versions reject it.
+
 ## Replace a development installation
 
 Run `/plugin marketplace list` and inspect the source for `ai-eng-local`. If it

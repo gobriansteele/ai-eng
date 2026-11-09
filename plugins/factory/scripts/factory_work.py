@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import tempfile
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -454,7 +455,7 @@ def owner(value: object) -> Owner:
 
 def saved_config(value: object) -> Config:
     data = mapping(value, set(Config.__annotations__), "saved effective config")
-    if type(data["schema_version"]) is not int or data["schema_version"] != 1:
+    if type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2):
         raise WorkError("Unsupported saved config schema")
     slack = mapping(data["slack"], {"workspace_id", "channels"}, "saved slack")
     repositories = mapping(
@@ -462,12 +463,11 @@ def saved_config(value: object) -> Config:
     )
     jira = mapping(data["jira"], {"project_key"}, "saved jira")
     intake = mapping(data["intake"], {"start_at"}, "saved intake")
-    limits = mapping(
-        data["limits"], {"active_work_items", "fix_rounds"}, "saved limits"
-    )
-    if limits != {"active_work_items": 1, "fix_rounds": 2} or any(
-        type(v) is not int for v in limits.values()
-    ):
+    expected_limits = {"fix_rounds": 2}
+    if data["schema_version"] == 1:
+        expected_limits["active_work_items"] = 1
+    limits = mapping(data["limits"], set(expected_limits), "saved limits")
+    if limits != expected_limits or any(type(v) is not int for v in limits.values()):
         raise WorkError("Unsupported saved limits")
     channels = []
     for entry in sequence(slack["channels"], "saved channels"):
@@ -499,7 +499,7 @@ def saved_config(value: object) -> Config:
     }:
         raise WorkError("Unsupported saved action policy")
     return {
-        "schema_version": 1,
+        "schema_version": data["schema_version"],
         "factory_id": string(data["factory_id"], "saved factory_id"),
         "runtime_path": runtime,
         "slack": {
@@ -509,7 +509,7 @@ def saved_config(value: object) -> Config:
         "jira": {"project_key": string(jira["project_key"], "saved project_key")},
         "repositories": {"roots": roots, "paths": paths},
         "intake": {"start_at": start},
-        "limits": {"active_work_items": 1, "fix_rounds": 2},
+        "limits": expected_limits,
         "actions": actions,
     }
 
@@ -1761,6 +1761,31 @@ def parse_arguments() -> Arguments:
 
 def main() -> int:
     try:
+        probe = argparse.ArgumentParser(add_help=False)
+        probe.add_argument("--config", type=Path)
+        probe.add_argument("--local", type=Path)
+        context, _ = probe.parse_known_args()
+        concurrent_commands = {
+            "upgrade",
+            "claim",
+            "intake-claim",
+            "release-intake",
+            "reserve",
+            "recover",
+        }
+        use_concurrent = len(sys.argv) > 1 and sys.argv[1] in concurrent_commands
+        if context.config is not None:
+            effective = load_config(context.config, context.local)
+            saved_path = Path(effective["runtime_path"]) / "state" / "work.json"
+            use_concurrent = use_concurrent or effective["schema_version"] == 2
+            if not use_concurrent and saved_path.exists():
+                use_concurrent = (
+                    obj(read_json(saved_path), "snapshot").get("schema_version") == 4
+                )
+        if use_concurrent:
+            from factory_concurrent import cli
+
+            return cli()
         args = parse_arguments()
         harness = args.harness
         store = Store(args.config, args.local)

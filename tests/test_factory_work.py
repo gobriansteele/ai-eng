@@ -29,6 +29,8 @@ class WorkTests(unittest.TestCase):
         self.root = Path(self.temp.name).resolve()
         self.config = self.root / "config.yaml"
         data = yaml.safe_load((ROOT / "config/example.yaml").read_text())
+        data["schema_version"] = 1
+        data["limits"]["active_work_items"] = 1
         data["repositories"] = {"roots": [], "paths": []}
         self.config.write_text(yaml.safe_dump(data))
         self.store = fw.Store(self.config)

@@ -15,7 +15,7 @@ changing an existing schedule's factory requires an explicit schedule update.
 Use the installed shared skill with that explicit absolute config and scope:
 
 ```text
-Use factory-run with configuration /absolute/factory-home/config.yaml. Resume the selected item with its saved execution mode and scope; finish at its endpoint or a genuine blocker.
+Use factory-run with configuration /absolute/factory-home/config.yaml. Process one eligible unowned item using its saved execution mode and scope; atomically claim it and finish at its endpoint or a genuine blocker. Do not choose an unanswered human-wait item.
 ```
 
 When resolution returned a local override, add `Use local override
@@ -61,10 +61,12 @@ blocks; never broaden them automatically. Accepted CLI overlap/interruption and
 cross-host tests support persistence, not scheduler execution.
 
 After explicit activation/cadence approval, use the native tool/UI to review the
-exact home/prompt/timezone/permissions and existing tasks; enable only one host
-against a home. Observe the first requested read-only scheduled run and its real
+exact home/prompt/timezone/permissions and existing tasks; avoid duplicate schedules for the same intake purpose. Concurrent runs against
+one schema-4 factory are supported with item/intake claims; legacy factories
+remain serial until explicit upgrade. Observe the first requested read-only scheduled run and its real
 saved state/owner/tool results. Schedules do not imply bedtime delegation or authorize unrelated new items.
-Reuse only the selected item’s saved execution mode and scope.
+Reuse only the claimed item’s saved execution mode and scope. Pin an item ID
+when the schedule is intended to resume that particular item.
 
 Pause through the native tool/UI and verify no new invocation starts. Pausing a
 schedule does not kill an already running CLI: wait for its finish or an explicit

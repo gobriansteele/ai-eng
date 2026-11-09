@@ -5,6 +5,12 @@ description: Report saved results in the harness and draft applicable Slack/Jira
 
 # Factory report
 
+For config 2/work schema 4, selected item means this run's explicitly claimed
+item. Require that claim before role execution and use expected-item-version
+for save/reconcile. Other runs may work on other items concurrently. Keep all
+permissions, artifacts and external actions scoped to this item. Read new receipt
+associations after a version conflict; never overwrite newer related evidence.
+
 Report on the selected saved item through `factory-run`. A direct report-only
 request enters that orchestrator with any user-supplied config/local override;
 it resolves the remembered default once. An existing invocation passes its pinned

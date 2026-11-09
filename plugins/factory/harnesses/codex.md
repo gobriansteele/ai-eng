@@ -1,5 +1,14 @@
 # Codex harness reference
 
+For config 2/work schema 4, each foreground CLI owns its own run and claims one
+item through the shared persistence contract. Carry the explicit item ID and run
+context through every handoff; independent orchestrators may run simultaneously
+in either host. Never begin a nested invocation for a role worker. Before code
+mutation reserve this item’s actual dedicated worktree and branch. Other items
+may use distinct worktrees/branches in the same repository. Handoff restrictions
+apply to this item and its resources, not every run in the factory.
+
+
 This document contains host-specific instructions for agents running Factory.
 For installation, updates and troubleshooting, see the
 [Codex user guide](https://github.com/gobriansteele/ai-eng/blob/main/docs/codex.md).
@@ -34,7 +43,7 @@ For desktop, first resolve and pin config/local in the parent as above, then
 dispatch one foreground CLI worker and wait for completion:
 
 ```sh
-codex exec --skip-git-repo-check --approve-for-me --sandbox workspace-write -C '<factory-home>' 'Use $factory-run. Pinned factory context: config <factory-home>/config.yaml; local override none. Resume the selected item with its saved execution mode and scope through its endpoint; finish and report the result.'
+codex exec --skip-git-repo-check --approve-for-me --sandbox workspace-write -C '<factory-home>' 'Use $factory-run. Pinned factory context: config <factory-home>/config.yaml; local override none. Resume the explicitly supplied item ID with its saved execution mode and scope through its endpoint; finish and report the result.'
 ```
 
 Substitute the pinned absolute config path and use its existing factory home.

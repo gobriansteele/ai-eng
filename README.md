@@ -118,7 +118,11 @@ check-ins. The host may still show progress, and must remain running to continue
 | Updates | `factory-report` | Report in the harness and prepare applicable Slack/Jira update drafts. |
 | Supporting tools | `factory-status`, `factory-retro`, `factory-maintain` | Inspect progress, propose improvements and preview maintenance. |
 
-Factory works on one selected item at a time. An end-to-end request in default or
+A factory can run several orchestrators concurrently. Each run claims one work
+item exclusively; other runs can advance different items. Items in the same
+repository use separate worktrees and branches, reserved for each item across
+runs. Factory serializes brief state saves while the engineering work proceeds
+concurrently. An end-to-end request in default or
 going-to-bed mode authorizes its scoped implementation, checks, commits, pushes,
 PR publication and necessary fixes. Restricted mode uses checkpoints instead.
 Completion means the non-draft PR has passing required checks and resolved
@@ -230,6 +234,20 @@ Set up recurring execution separately using the
 [Factory scheduling guide](plugins/factory/skills/factory-run/references/scheduling.md).
 Installing Factory does not create a schedule. Tests with sample work items have
 passed; publishing a real PR and running on a schedule still need validation.
+
+## Upgrade an existing factory for concurrency
+
+Version 0.18.0 changes configuration and saved-state formats. Update the plugin in
+both hosts and start fresh sessions. Then ask factory-setup to upgrade your
+existing factory for concurrent runs and recheck its connections. Stop old runs
+first; Factory refuses takeover of a live or unknown owner.
+
+The upgrade preserves your factory home, items, history, source captures, channel
+cursors, approvals and artifact paths. It saves original config/state backups
+before updating config.yaml to schema 2 and work.json to schema 4. A new factory
+setup is unnecessary. Older plugin versions cannot resume the upgraded factory.
+If interrupted during upgrade, retry the upgrade; do not reset or restore old state
+over newer work. Resume a particular item by its item ID when several exist.
 
 ## Troubleshooting
 

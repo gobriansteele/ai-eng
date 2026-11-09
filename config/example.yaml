@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 factory_id: example
 runtime_path: ./runtime
 slack:
@@ -12,7 +12,6 @@ repositories:
 intake:
   start_at: null
 limits:
-  active_work_items: 1
   fix_rounds: 2
 actions:
   tickets: approval_required

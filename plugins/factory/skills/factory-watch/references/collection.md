@@ -1,5 +1,17 @@
 # Observed collection and persistence
 
+For config 2/work schema 4, first acquire the channel intake claim from watch-plan,
+then reread its cursor/starts AFTER claim acquisition and fix read bounds. Use
+`intake-claim --key <watch-plan-claim-key> --operation-id <stable-id>` with normal
+owner/run/config flags. A busy channel is a reported skip, not a factory-wide
+block. `collect --decision <observation-json>` uses that claim and its exact cursor
+preconditions; do not pass the global revision as an item version. Release the
+channel claim after commit using release-intake. Sources/cursors/history retain
+the normalized collection rules below. Schema 4 is already current; collection
+never downgrades it to schema 3. Legacy schema-2-to-3 instructions below apply
+only to serial legacy factories. See the [concurrent persistence contract](../../factory-run/references/persistence.md).
+
+
 The agent performs authenticated host reads. The helper validates and stores
 observations; it does not query Slack, route meaning or assert connector truth.
 Use the same `uv run --isolated --frozen --no-dev --project <loaded-package>
@@ -18,7 +30,8 @@ history. Removed channels stop collection without deleting records. Re-added
 channels preserve their old setup start and watcher cursor.
 
 `collect --owner-pid <observed-cli-pid> --run-id <uuid> --decision <absolute-json>
---expected-revision <read-revision> --summary` accepts exactly these fields:
+--summary` accepts exactly these fields. Only legacy schemas require
+`--expected-revision <read-revision>`:
 
 ```json
 {
@@ -109,7 +122,8 @@ intake; prior import captures dedupe repeated import, independently of live seen
 still match the saved live boundary; use watch-plan. No automatic historical
 backfill or setup-start change occurs.
 
-A successful collect adds schema 3 to canonical `state/work.json`, atomically
+In a legacy schema-2 factory, successful collect adds schema 3. In schema 4 it
+preserves schema 4. Both atomically commit canonical `state/work.json`, including
 committing collection state (cursor, seen IDs, tracked capture references), immutable
 source receipts and the collection event. Each channel fixes its synthetic/live
 mode on its first successful collection, even an empty one; never mix fixture

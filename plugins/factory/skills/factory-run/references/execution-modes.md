@@ -20,7 +20,14 @@ or an unattended host. Preserve narrower instructions such as “investigate onl
 Record the selected item's mode and the actual direct user request, its provenance,
 repository/task scope, endpoint and exclusions in an immutable execution report.
 Save `execution: {"mode": "default", "evidence": "/absolute/execution-report.md"}`
-on that item through normal route/save. These are item fields, not new CLI flags.
+on that item through ordinary save AFTER atomically claiming it in schema 4.
+Fresh schema-4 routing creates items without an execution grant. Preserve the
+actual direct delegation in a readable report, claim the intended item, then save
+that grant with its observed item version before dispatching roles. If the route
+used the explicit step budget, finish and retain the report for the next run;
+do not dispatch or invent permission to evade the bound. Legacy serial routing
+may save the selected new item's grant as before. These are item fields, not
+new CLI flags.
 Pass the policy and report to each role. They persist across hosts and resumes.
 Pending unrelated items receive no delegation; a mode change requires a new direct
 user instruction and evidence report. Legacy items without `execution` retain

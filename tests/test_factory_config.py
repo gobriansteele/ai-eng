@@ -38,6 +38,8 @@ class ConfigTests(unittest.TestCase):
         self.repo = self.root / "repos" / "project"
         (self.repo / ".git").mkdir(parents=True)
         self.data = yaml.safe_load((ROOT / "config/example.yaml").read_text())
+        self.data["schema_version"] = 1
+        self.data["limits"]["active_work_items"] = 1
         self.data.update(
             runtime_path="runtime",
             repositories={"roots": ["repos"], "paths": ["repos/project"]},

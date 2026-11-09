@@ -5,6 +5,12 @@ description: Implement an explicitly authorized saved factory item in one dedica
 
 # Factory implement
 
+For config 2/work schema 4, selected item means this run's explicitly claimed
+item. Require that claim before role execution and use expected-item-version
+for save/reconcile. Other runs may work on other items concurrently. Keep all
+permissions, artifacts and external actions scoped to this item. Read new receipt
+associations after a version conflict; never overwrite newer related evidence.
+
 Read the shared [execution-mode policy](../factory-run/references/execution-modes.md)
 and the selected item's saved execution report. Apply its decisions, authorization
 and stopping rules; mode-specific rules govern the checkpoints below.
@@ -58,7 +64,11 @@ zero steps only with a readable referenced report. Repair an older missing-repor
 wait with one additive report/reference save, preserving original decisions,
 history and artifacts and distinguishing current from unavailable past provenance.
 
-Use one dedicated code worktree and one branch owner for the item. Read the
+Use one dedicated code worktree and one branch owner for the item. Atomically
+reserve the observed worktree before branch setup, then its actual branch before
+code mutation, using the shared persistence contract. A run ending does not
+release those item reservations. Separate worktrees/branches within the same
+repository can serve different items concurrently. Read the
 current host's harness guide to resolve an actually available creation/adoption
 mechanism and its lifecycle. Do not silently substitute shell worktree creation,
 create another factory invocation, or edit the source checkout. An explicitly
