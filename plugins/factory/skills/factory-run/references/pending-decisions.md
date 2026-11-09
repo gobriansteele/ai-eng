@@ -1,8 +1,9 @@
 # Required human decisions
 
-Apply the shared [execution-mode policy](execution-modes.md). Use a human wait
-only when the decision needs knowledge, judgment or authority the model cannot
-supply within its delegation.
+Apply the shared [execution-mode policy](execution-modes.md). A required decision
+must affect the requested outcome within the agreed scope. Use a human wait only
+when it needs knowledge, judgment or authority the model cannot supply within its
+delegation.
 
 ## Record
 
