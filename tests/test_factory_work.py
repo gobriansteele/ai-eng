@@ -456,10 +456,10 @@ class WorkTests(unittest.TestCase):
             self.reconciliation(state, status, name),
         )
 
-    def post_fixture(self, target):
+    def post_fixture(self, target, action="posts"):
         raw = json.loads(self.fixture.read_text())
         post_scope = {
-            "action": "posts",
+            "action": action,
             "target": target,
             "revision": "payload-sha256=synthetic-content status-sha256=synthetic-observation",
         }
@@ -525,17 +525,101 @@ class WorkTests(unittest.TestCase):
         )
         self.assertEqual(self.store.read(), confirmed)
 
-    def test_ticket_work_is_not_enabled_by_post_reconciliation(self):
-        initial = self.begin()
+    def test_ticket_reconciliation_survives_cross_host_resume_without_replay(self):
+        initial = self.post_fixture(
+            "jira:https://example.invalid/jira/SYN-12:transition:31", "tickets"
+        )
+        before = deepcopy(current(initial))
+        uncertain = self.reconcile(initial)
+        self.assertEqual(
+            self.store.reconcile(
+                "run-one", "codex", 12345, 0, self.reconciliation(initial)
+            ),
+            uncertain,
+        )
+        self.store.finish("run-one", "codex", 12345, "stopped")
+        resumed = self.begin("run-two", "claude-code", fixture=False)
+        confirmed = self.reconcile(
+            resumed, "confirmed", "confirm-ticket", "run-two", "claude-code"
+        )
+        after = deepcopy(current(confirmed))
+        after["pending_actions"] = before["pending_actions"]
+        self.assertEqual(after, before)
+        self.assertEqual(
+            current(confirmed)["pending_actions"][0]["scope"],
+            before["pending_actions"][0]["scope"],
+        )
+        with self.assertRaisesRegex(fw.WorkError, "transition"):
+            self.reconcile(
+                confirmed, "proposed", "replay-ticket", "run-two", "claude-code"
+            )
+        self.assertEqual(self.store.read(), confirmed)
+
+    def test_ticket_reconciliation_requires_unchanged_scope_and_matching_approval(self):
+        initial = self.post_fixture(
+            "jira:https://example.invalid/jira/SYN-12:fields", "tickets"
+        )
+        for changes in (
+            {"action": "posts"},
+            {"target": "jira:https://other.invalid/jira/SYN-12:fields"},
+            {"target": "jira:https://example.invalid/jira/SYN-13:fields"},
+            {"target": "jira:https://example.invalid/jira/SYN-12:transition:31"},
+            {"revision": "different-payload"},
+        ):
+            with self.subTest(changes=changes):
+                op = self.reconciliation(initial)
+                op["action"]["scope"].update(changes)
+                with self.assertRaisesRegex(fw.WorkError, "scope"):
+                    self.store.reconcile(
+                        "run-one", "codex", 12345, initial["revision"], op
+                    )
+                self.assertEqual(self.store.read(), initial)
         items = deepcopy(initial["items"])
-        saved = items[current(initial)["id"]]
-        for entry in (saved["approvals"][0], saved["pending_actions"][0]):
-            entry["scope"]["action"] = "tickets"
-        op = self.reconciliation(initial)
-        op["action"]["scope"]["action"] = "tickets"
-        with self.assertRaisesRegex(fw.WorkError, "scope"):
-            fw.apply_reconciliation(items, initial["active_item_id"], op)
+        items[current(initial)["id"]]["approvals"] = []
+        with self.assertRaisesRegex(fw.WorkError, "matching saved approval"):
+            fw.apply_reconciliation(
+                items, initial["active_item_id"], self.reconciliation(initial)
+            )
         self.assertEqual(self.store.read(), initial)
+        uncertain = self.reconcile(initial)
+        confirmed = self.reconcile(uncertain, "confirmed", "confirm-fields")
+        self.assertEqual(
+            current(confirmed)["pending_actions"][0]["scope"]["action"], "tickets"
+        )
+
+    def test_confirmed_ticket_fields_do_not_confirm_a_separate_transition(self):
+        initial = self.post_fixture(
+            "jira:https://example.invalid/jira/SYN-12:fields", "tickets"
+        )
+        updated = deepcopy(current(initial))
+        report = self.root / "transition-request.md"
+        report.write_text("Synthetic scoped transition request and authorization")
+        transition = deepcopy(updated["pending_actions"][0])
+        transition.update(id="ticket-transition", evidence=str(report))
+        transition["scope"]["target"] = (
+            "jira:https://example.invalid/jira/SYN-12:transition:31"
+        )
+        updated["approvals"].append(
+            {
+                "id": "transition-approval",
+                "scope": transition["scope"],
+                "evidence": str(report),
+            }
+        )
+        updated["pending_actions"].append(transition)
+        saved = self.store.save(
+            "run-one",
+            "codex",
+            12345,
+            initial["revision"],
+            {"id": "add-transition", "reason": "Separate operation", "item": updated},
+        )
+        uncertain = self.reconcile(saved)
+        confirmed = self.reconcile(uncertain, "confirmed", "confirm-fields")
+        actions = current(confirmed)["pending_actions"]
+        self.assertEqual(actions[0]["status"], "confirmed")
+        self.assertEqual(actions[1], transition)
+        self.assertEqual(self.store.read(), confirmed)
 
     def test_reconciliation_retry_handoff_and_immutable_history(self):
         initial = self.begin()

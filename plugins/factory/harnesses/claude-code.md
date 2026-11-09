@@ -203,6 +203,19 @@ contexts. The probe establishes actual dispatch/file reads, not review quality.
 
 ## PR follow-up capabilities
 
+The foreground CLI owns follow-up until the shared endpoint; keep it active for
+permitted bounded observations. In Desktop, discover the actual current monitor
+API and permissions instead of assuming Auto-fix is available or active. Verify
+the returned activation and event coverage: failure/comment wakeups alone do not
+reconcile all-green completion. Use a supported success-capable notification or
+permitted bounded reads while the owner is active. If the host forbids both,
+record the exact interruption/coverage gap; no synthetic background sleep,
+permission bypass or claim that a future user message is the completion engine.
+Do not introduce a branch/session chooser merely to continue an already-authorized
+run when absolute working directories or a verified native worktree/foreground
+CLI can do it. An actual host-required card or incoming message still takes
+precedence; obey its cancellation/handoff instructions.
+
 Use the shared [follow-up contract](../skills/factory-follow-pr/references/follow-pr.md)
 for required capabilities, current permissions, coverage and external-action rules.
 

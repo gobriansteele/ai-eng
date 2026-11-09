@@ -1,6 +1,6 @@
 ---
 name: factory-plan
-description: Turn a saved factory investigation into expected behavior, bounded scope and acceptance checks. Resolve consequential product choices with the user and return durable plan artifacts to factory-run without implementing changes or granting external-action approval.
+description: Turn a saved factory investigation into expected behavior, bounded scope and acceptance checks. Make defensible scoped decisions, ask for genuinely missing human expertise, and return durable plan artifacts to factory-run without implementing changes or granting external-action approval.
 ---
 
 # Factory plan
@@ -30,18 +30,11 @@ choices. Missing necessary evidence produces a precise evidence wait/block; do
 not fabricate it or silently redo completed investigation. Return the concrete
 missing input to the orchestrator.
 
-Before handing off the plan, follow each changed user action through its immediate
-outcomes using the investigated behavior. Consider the ordinary path, boundary
-states the action makes reachable and failure/recovery where relevant. For example,
-removing an item can affect the selected item and leave an empty list. State what
-the user should see and be able to do afterward; a foreseeable usability gap is
-part of the requested behavior even when the request omitted it. Check that
-promises across affected boundaries agree, such as an input control offering the
-formats the next step actually supports. Turn material outcomes into concrete
-acceptance checks before implementation. Keep this proportional to the change,
-respect explicit exclusions, distinguish decisions/assumptions from established
-facts and expose missing necessary evidence. Do not expand into a redesign or
-attach a generic edge-case checklist.
+Plan the requested behavior through to the user's resulting experience. Identify
+foreseeable outcomes, boundary conditions, and failure recovery, and express the
+material ones as concrete acceptance checks. Keep the reasoning proportionate to
+the change, respect explicit exclusions, and distinguish established facts from
+assumptions.
 
 Produce enough product intent for an engineer to act: expected user-visible
 behavior, bounded scope (and non-goals when useful), concrete acceptance checks
@@ -52,10 +45,11 @@ than claiming investigation proved more than it did. Routine engineering choices
 belong to the engineer; speculative options in an investigation do not all need
 human decisions. Do not design later roles or prescribe line-by-line fixes.
 
-When evidence supports two materially different plausible user-visible behaviors and does not settle
-which is intended, apply the execution mode: in bedtime mode choose a defensible
-behavior within scope and record the assumption, rationale and checks. Otherwise
-ask the decisive product question. Explain the options and
+When plausible user-visible behaviors differ, apply the shared execution-mode
+policy. Choose a defensible behavior within delegated scope and record the
+assumption, rationale and checks; ask only when the remaining choice genuinely
+requires human knowledge, judgment or authority. Restricted checkpoints still
+apply. When a human answer is needed, explain the options and
 relevant context concisely without inventing a human answer. When asking, save the question, a
 stable question identifier within this item, options/context, input evidence and
 what remains unresolved in a plan artifact. For that human wait, return `stage: plan`,

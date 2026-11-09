@@ -1,6 +1,6 @@
 ---
 name: factory-report
-description: Report saved results in the harness and draft applicable Slack/Jira updates. Reuse unchanged drafts, preserve engineering state, and send externally only with exact authorization and uncertain-send reconciliation. No automatic Jira transitions, merge, deployment or schedules.
+description: Report saved results and maintain the originating Jira issue under the saved execution grant. Reuse unchanged updates, preserve engineering state, and reconcile exact authorized writes. Slack and unrelated issues require separate permission; no merge, deployment or schedules.
 ---
 
 # Factory report
@@ -34,9 +34,15 @@ is not a reporting blocker or a reason to ask for one. Draft external updates on
 for an actual linked destination or an explicit user request. Replying in the
 current harness is not an external post and needs no send-approval ledger entry.
 
-For applicable external updates, default to LOCAL DRAFTS for the actual originating
-Slack thread and resolved Jira issue comments. Include the useful result, evidence/PR link when available,
-and any decision needed; omit worker identities, debate, prompts and internal
+Read the selected item's saved execution grant and shared
+[execution-mode policy](../factory-run/references/execution-modes.md).
+For an authorized default/bedtime end-to-end run, keep its resolved originating Jira
+issue current under the [reporting contract](references/reporting.md#originating-jira-issue-maintenance),
+without routine permission prompts. A report-only invocation reuses only applicable
+saved authority; it does not grant new writes. Slack and Jira updates outside that
+grant remain LOCAL DRAFTS until separately authorized. Include the useful result,
+evidence/PR link when available and any decision needed; omit worker identities,
+debate, prompts and internal
 process chatter. A blocked investigation needs the concrete missing input; a
 ready PR is ready for review, not shipped; merge alone proves neither deployment
 nor verification. For a blocked investigation, state the blocker, the unperformed
@@ -44,19 +50,22 @@ check and the needed input. Do not add PR/merge/deployment absence claims from
 empty records: use “deployment status is unknown” when that is all the evidence
 establishes. Before saving, read the actual outgoing text and remove unsupported
 existence, absence or success claims. Missing/ambiguous destination stays an unaddressed local draft
-with its precise gap. No new channel root, invented permalink or issue transition.
+with its precise gap. No new channel root, invented permalink or inferred issue status.
 
 Reuse the same saved draft/request for unchanged meaningful status and destination.
 Ignore query timestamps and wording drift when detecting repeats. Save exact
-immutable payload bytes and semantic observation identity before asking approval;
+immutable payload bytes and semantic observation identity before deriving a scoped
+approval or asking for separate permission;
 no unchanged duplicate artifact/action or repeated semantic save. Separate each
 destination's disposition, so one successful update does not claim another sent.
 
-Only applicable direct user permission for the exact draft/destination permits
-sending. Recheck actual host access, current truth and scope; save proposed then
+Derive exact originating-issue requests from the applicable saved run grant, or
+reuse separate direct permission for the exact request/destination. Recheck actual
+host access, current truth and scope; save proposed then
 uncertain BEFORE calling the write. Confirm only actual returned/refetched ID,
 permalink, exact destination/content and attributable request evidence. Same text
 alone, another author/thread or incomplete history is not proof. Unresolved
 uncertainty blocks resend; authoritative non-application requires its own durable
 evidence before retry. The local ledger does not guarantee exactly-once delivery.
-No external action is authorized merely by drafting or by invoking this skill.
+No external action is authorized merely by drafting or by invoking this skill;
+retain the actual user delegation and each request's scope derivation.

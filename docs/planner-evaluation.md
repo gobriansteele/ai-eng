@@ -43,7 +43,11 @@ Use no new `--source` on these resumes. Verify explicit offline mode stays offli
   Do not demand a specific patch, ask an unnecessary product question, claim
   deployment/regression history, or fix the code. Save a design handoff naming `factory-design` and the readable plan.
   A missing-role block is valid only when design is actually unavailable.
-- **Feature:** preserve CSV export and requested ID/title/status fields. The
+- **Feature human-wait case:** use an explicit restricted-mode request or direct
+  requirement for product sign-off, preserving its provenance in the execution
+  report. An unresolved option alone does not require a human gate in default
+  mode; separately test a defensible recorded default decision under the shared
+  execution-mode evaluation. Preserve CSV export and requested ID/title/status fields. The
   supplied request explicitly leaves default scope unresolved: current/filtered
   list versus every task including completed ones. Ask that decisive question,
   persist its identifier, options/context, source/investigation references and

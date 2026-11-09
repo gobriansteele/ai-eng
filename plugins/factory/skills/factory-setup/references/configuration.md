@@ -136,6 +136,12 @@ actions:
   cleanup: preview_only
 ```
 
+`approval_required` requires saved scoped authority for the exact action; it does
+not require another prompt when an applicable end-to-end grant already covers it.
+Such grants include maintaining the originating Jira issue, with actual issue,
+assignee and workflow mappings recorded in the execution/report evidence. Slack,
+new issues and unrelated destinations still require separate authority.
+
 For an explicitly requested new factory home, create this YAML at its
 `config.yaml` before validating or invoking setup with that explicit path. A
 missing new config in this creation flow is not an invalid existing selection.

@@ -636,14 +636,22 @@ class ConcurrentTests(unittest.TestCase):
                     saved["collection"], projected.get("collection", fc.empty())
                 )
 
-    def test_action_reconciliation_is_scoped_and_survives_cross_host_resume(self):
+    def test_post_reconciliation_is_scoped_and_survives_cross_host_resume(self):
+        self.check_reconciliation_resume("posts", "slack:T/C/123:thread_reply")
+
+    def test_ticket_reconciliation_is_scoped_and_survives_cross_host_resume(self):
+        self.check_reconciliation_resume(
+            "tickets", "jira:https://example.invalid/SYN-12:transition:31"
+        )
+
+    def check_reconciliation_resume(self, action_type, target):
         state = self.start("a")
         operation = self.decision(state, "a", "proposal")
         report = self.root / "authorization.md"
         report.write_text("Synthetic authorization and outgoing payload evidence only")
         scope = {
-            "action": "posts",
-            "target": "slack:T/C/123:thread_reply",
+            "action": action_type,
+            "target": target,
             "revision": "synthetic-payload-sha",
         }
         action = {
