@@ -30,18 +30,11 @@ choices. Missing necessary evidence produces a precise evidence wait/block; do
 not fabricate it or silently redo completed investigation. Return the concrete
 missing input to the orchestrator.
 
-Before handing off the plan, follow each changed user action through its immediate
-outcomes using the investigated behavior. Consider the ordinary path, boundary
-states the action makes reachable and failure/recovery where relevant. For example,
-removing an item can affect the selected item and leave an empty list. State what
-the user should see and be able to do afterward; a foreseeable usability gap is
-part of the requested behavior even when the request omitted it. Check that
-promises across affected boundaries agree, such as an input control offering the
-formats the next step actually supports. Turn material outcomes into concrete
-acceptance checks before implementation. Keep this proportional to the change,
-respect explicit exclusions, distinguish decisions/assumptions from established
-facts and expose missing necessary evidence. Do not expand into a redesign or
-attach a generic edge-case checklist.
+Plan the requested behavior through to the user's resulting experience. Identify
+foreseeable outcomes, boundary conditions, and failure recovery, and express the
+material ones as concrete acceptance checks. Keep the reasoning proportionate to
+the change, respect explicit exclusions, and distinguish established facts from
+assumptions.
 
 Produce enough product intent for an engineer to act: expected user-visible
 behavior, bounded scope (and non-goals when useful), concrete acceptance checks
