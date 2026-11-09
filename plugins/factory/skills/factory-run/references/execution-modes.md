@@ -8,7 +8,7 @@ item automatically after completion. Merge and deployment remain out of scope.
 
 | Mode | Decisions and checkpoints |
 | --- | --- |
-| `default` | Make routine decisions; ask only consequential unresolved product or architectural questions and genuine blockers. No routine stage approvals. |
+| `default` | Make defensible decisions within scope, record assumptions/rationale and surface them. Ask early only when necessary knowledge, judgment or authority cannot be obtained reliably; no routine stage approvals. |
 | `bedtime` | Explicitly enabled by the user (including “going to bed”). Make defensible product and engineering decisions within scope, record assumptions and rationale, and continue. Ask only when necessary facts, access or authority cannot be obtained, or recovery cannot make progress. |
 | `restricted` | Ask consequential questions and pause before code changes to approve the implementation plan, and before publication to approve the prepared request. Reuse already granted approvals. |
 
@@ -35,17 +35,30 @@ their prior permissions/checkpoints until the user supplies a new scoped delegat
 
 A direct request to run an item end to end in default or bedtime mode authorizes
 scoped edits, checks, commits, branch pushes, non-draft PR creation (or making its
-existing draft ready), and necessary CI reruns/fixes. Do not ask again at each
-stage. Derive exact action scopes from that saved conditional grant only after
-required checks and independent review pass; retain request digests and the usual
-uncertain-action reconciliation. A recorded mode label, source message, fixture or model
-recommendation alone grants nothing. Narrower scope, revocation, host permissions
-and repository constraints still apply. Messages to others, review dismissal,
-unrelated changes and destructive operations are not implied.
+existing draft ready), necessary CI reruns/fixes, and keeping the selected originating
+Jira issue current. That issue's factual milestone comments, verified assignee and
+observed/configured workflow transitions need no further permission question.
+Resolve the actual site/issue, assignee and workflow mapping; do not invent a status
+or infer Done from an open PR. Follow the [reporting contract](../../factory-report/references/reporting.md)
+for deriving each exact Jira request from this grant. No originating issue means
+no automatic issue creation. Restricted/legacy work retains its saved permissions.
+
+Do not ask again at each stage. Bind actual requests to exact saved action scopes,
+request digests and the usual uncertain-action reconciliation. Publication still
+requires successful checks and independent review; those gates do not postpone
+truthful Jira progress/blocker updates. A recorded mode label, source message,
+fixture or model recommendation alone grants nothing. Narrower scope, revocation,
+host permissions and repository constraints still apply. Slack, unrelated issues,
+new issue creation, review replies/dismissal and destructive operations are not
+implied.
 
 In bedtime mode, a saved product/design question may be resolved by an explicit
 delegation to decide it. Record an agent decision, never a fabricated human answer.
-Other modes still need the actual answer when evidence cannot settle it.
+In default mode, make a reasonable evidence-backed choice when it is within the
+saved scope; record an agent decision and surface its rationale. Ask for the
+specific human knowledge or judgment only when necessary facts/authority cannot
+be obtained reliably. A consequential label or a comprehensive plan alone is not
+a reason to ask. Restricted mode retains its explicit review checkpoints.
 
 ## Continuation and recovery
 
@@ -58,11 +71,17 @@ continue productive fixes beyond two; after two consecutive attempts without
 material progress on the same blocker, change approach or stop with evidence of
 the impasse. Do not repeat identical failed actions indefinitely or reset history.
 
-While CI or automated review is pending, wait using available host notifications
-or bounded backoff reads within this invocation; unchanged observations need no
-new save. Pending is not failure or completion. If the host must end the session,
-save the pending state and report that execution stopped, not that monitoring
-continues. Do not create a schedule unless requested.
+The owning execution is responsible for reaching the endpoint, including an
+all-green CI result with no failure or review-comment event. Before relying on
+notifications, establish actual activation, event coverage and invocation lifetime;
+failure-only notifications cannot establish successful completion. While CI or
+automated review is pending, keep that owner active using available success-capable
+notifications or permitted bounded backoff reads. Refresh the PR head after each
+wait; unchanged observations need no new save or user turn. Pending is not failure
+or completion. If the host cannot continue or forbids the available rechecks, save
+the pending state with the exact capability gap and resume responsibility. Report
+that execution stopped, not that monitoring continues. Do not create a schedule
+unless requested.
 
 Avoid routine approval check-ins and progress notifications. Notify on completion,
 a required decision, or a genuine blocker; obey any host-required progress display.

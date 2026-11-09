@@ -81,7 +81,8 @@ A **run** is one invocation of `factory-run`: it reads new input, continues save
 work, saves its progress and stops. A work item can take several runs to finish.
 
 By default, a run continues the selected item through the workflow, saving progress
-at each step. It stops for an important unresolved product/architecture decision,
+at each step. It makes reasonable decisions and explains them, asking early when
+it needs knowledge or judgment it cannot obtain reliably. It stops for that input,
 a genuine blocker, or completion. `--single-step` and an explicit `--max-steps`
 remain available when you want a bounded run.
 
@@ -89,7 +90,7 @@ Choose how much decision-making to delegate:
 
 | Mode | Behavior |
 | --- | --- |
-| **Default** | Go end to end; ask important product/architecture questions. |
+| **Default** | Go end to end; make reasonable decisions and ask only when necessary knowledge or judgment is missing. |
 | **Going to bed** | Explicitly delegate those decisions too; choose a defensible approach and stop only when genuinely blocked. |
 | **Restricted** | Pause to approve the implementation plan before edits and the prepared PR before publication. |
 
@@ -112,10 +113,10 @@ check-ins. The host may still show progress, and must remain running to continue
 | --- | --- | --- |
 | Intake and routing | `factory-watch`, `factory-route` | Read configured Slack threads and identify actionable work. |
 | Investigation | `factory-investigate` | Examine relevant code, reproduce problems and save findings. |
-| Planning and design | `factory-plan`, `factory-design` | Define expected behavior, checks and technical approach; ask about consequential choices. |
+| Planning and design | `factory-plan`, `factory-design` | Define behavior, checks and technical approach; make reasonable decisions and ask for missing human expertise. |
 | Implementation and review | `factory-implement`, `factory-review` | Make authorized changes in a dedicated worktree, run checks and obtain independent review. |
 | PR follow-up | `factory-follow-pr` | Publish a non-draft PR and resolve required CI and automated review findings. |
-| Updates | `factory-report` | Report in the harness and prepare applicable Slack/Jira update drafts. |
+| Updates | `factory-report` | Report in the harness, maintain the originating Jira ticket, and draft other updates. |
 | Supporting tools | `factory-status`, `factory-retro`, `factory-maintain` | Inspect progress, propose improvements and preview maintenance. |
 
 A factory can run several orchestrators concurrently. Each run claims one work
@@ -127,7 +128,10 @@ going-to-bed mode authorizes its scoped implementation, checks, commits, pushes,
 PR publication and necessary fixes. Restricted mode uses checkpoints instead.
 Completion means the non-draft PR has passing required checks and resolved
 automated review findings on the current head. Factory does not merge or deploy,
-and sending Slack/Jira updates still requires specific permission.
+and it keeps the originating Jira ticket current with factual progress and PR
+updates under that same delegation. Slack, new tickets and unrelated issues still
+need separate permission. Jira statuses and assignment use verified workflow
+mappings rather than guesses.
 
 ### Start in your chat
 

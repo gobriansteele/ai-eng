@@ -202,12 +202,8 @@ def apply_reconciliation(
     if len(matches) != 1:
         raise WorkError("Reconciliation requires one existing pending action")
     previous = saved["pending_actions"][matches[0]]
-    if previous["scope"] != updated["scope"] or updated["scope"]["action"] not in (
-        "pushes",
-        "pull_requests",
-        "posts",
-    ):
-        raise WorkError("Reconciliation must preserve a push, PR or post action scope")
+    if previous["scope"] != updated["scope"]:
+        raise WorkError("Reconciliation must preserve the action scope")
     if not any(a["scope"] == updated["scope"] for a in saved["approvals"]):
         raise WorkError("Reconciliation requires a matching saved approval scope")
     if (previous["status"], updated["status"]) not in {

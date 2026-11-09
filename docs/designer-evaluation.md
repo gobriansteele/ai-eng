@@ -96,6 +96,10 @@ steps, leaving `design` / `ready` / `factory-design`. Do not prewrite those
 artifacts or patch canonical state if a role fails; retain the failure and report
 it. Correct source instructions only for demonstrated issues, then retest fresh.
 
+For this human-wait case, supply an explicit restricted-mode request or an actual
+requirement for human contract approval, saving its provenance. A materially
+unresolved option alone is not a default-mode human gate; separately exercise a
+defensible scoped agent decision under the shared execution-mode evaluation.
 Resume with the same generic saved-work prompt as the bug above, using the new
 home, no new source and no answer. The designer must actually read both components
 and prior artifacts. The important consequential question is how a separately

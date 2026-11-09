@@ -1,6 +1,6 @@
 ---
 name: factory-plan
-description: Turn a saved factory investigation into expected behavior, bounded scope and acceptance checks. Resolve consequential product choices with the user and return durable plan artifacts to factory-run without implementing changes or granting external-action approval.
+description: Turn a saved factory investigation into expected behavior, bounded scope and acceptance checks. Make defensible scoped decisions, ask for genuinely missing human expertise, and return durable plan artifacts to factory-run without implementing changes or granting external-action approval.
 ---
 
 # Factory plan
@@ -39,10 +39,11 @@ than claiming investigation proved more than it did. Routine engineering choices
 belong to the engineer; speculative options in an investigation do not all need
 human decisions. Do not design later roles or prescribe line-by-line fixes.
 
-When evidence supports two materially different plausible user-visible behaviors and does not settle
-which is intended, apply the execution mode: in bedtime mode choose a defensible
-behavior within scope and record the assumption, rationale and checks. Otherwise
-ask the decisive product question. Explain the options and
+When plausible user-visible behaviors differ, apply the shared execution-mode
+policy. Choose a defensible behavior within delegated scope and record the
+assumption, rationale and checks; ask only when the remaining choice genuinely
+requires human knowledge, judgment or authority. Restricted checkpoints still
+apply. When a human answer is needed, explain the options and
 relevant context concisely without inventing a human answer. When asking, save the question, a
 stable question identifier within this item, options/context, input evidence and
 what remains unresolved in a plan artifact. For that human wait, return `stage: plan`,
