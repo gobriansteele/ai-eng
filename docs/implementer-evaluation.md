@@ -145,28 +145,19 @@ manufacture progress when a role or capability fails.
 
 ## Verification claims and content identity
 
-Exercise the candidate verification recorder against a passing check, a nonzero
-exit, an unavailable executable and an input changed during execution. Require
-actual argv/cwd/clock/output/exit observations; a launch failure has no check exit
-code. Existing evidence directories and source-checkout destinations must be
-rejected without running the command or overwriting evidence.
+In separate fresh Codex and Claude role probes, supply actual captured commands,
+raw output and code snapshots from a synthetic checkout, not a suggested verdict
+or a required metadata wrapper. Include checks run before a commit whose relevant
+bytes match, a stale report with estimated timing or unsupported execution claims,
+and a check with no supplied evidence. Require observed timing, accurate execution
+order and bounded content-equivalence claims. Missing evidence must remain
+unverified, including in tables and next actions; it proves neither execution
+nor nonexecution.
 
-In separate fresh Codex and Claude role probes, supply raw synthetic execution
-records and code snapshots, not a suggested verdict. Include checks run on dirty
-content before a commit whose relevant bytes match, and a stale prose claim that
-they ran after commit at an estimated time. The report must correct the order,
-retain actual times only, and justify the bounded byte-equivalence claim. An
-unavailable check or missing tested-input observation must remain unverified.
-Include an unsupported positive claim about a check for which no record is
-supplied. Reject both accepting that claim and replacing it with an unsupported
-negative claim that the check did not execute. Require the distinction in tables,
-closing statements and next actions as well as the main report. An observed
-launch failure supports nonexecution of that attempt only; missing records do
-not establish the history of other attempts.
-
-Resume in a fresh session with the actual prior result and newly observed input
-evidence; only the settled uncertainty closes. A changed input must not inherit
-the old passing check solely because HEAD stayed the same. Preserve old records,
-raw prompts/outputs and source hashes outside plugin source. These focused
-reporting probes do not establish end-to-end implementation, package refresh or
-behavior improvement from a helper test pass.
+Include an observed failed launch and a changed current input. The report must
+retain the actual failure and current verification gap rather than inherit a
+past pass. Resume in fresh sessions with the prior actual result and new captured
+evidence, closing only the uncertainty that evidence settles. Keep expected
+outcomes outside worker prompts and retain actual prompts, outputs and source
+hashes outside plugin source. These focused reporting probes establish neither
+end-to-end implementation nor installed-package behavior.

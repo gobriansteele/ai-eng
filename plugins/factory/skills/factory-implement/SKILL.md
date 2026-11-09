@@ -140,8 +140,11 @@ recommended item update and require independent review of affected new content.
 
 ## Implementation and evidence
 
-Apply the [verification facts contract](references/verification.md) to command,
-clock and tested-content claims; preserve observed records instead of estimates.
+Choose verification proportionate to the change and repository requirements.
+Support every positive or negative claim about execution, timing and tested
+content with actual observations; missing evidence remains unverified. Compare
+tested inputs with delivered content before carrying results forward, and
+describe justified reuse accurately.
 
 After the saved preparation checkpoint, implement only the approved behavior and
 scope in the recorded checkout. Report material plan flaws rather than forcing a
