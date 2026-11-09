@@ -38,6 +38,39 @@ Distinguish observed wall time, invocation lifetime and explicit human-wait
 intervals; unavailable compute/token/cost remains unavailable. Compare both hosts'
 actual output/evidence, not matching prose. Preserve old failures alongside retries.
 
+## Learning candidate lifecycle
+
+Use a separate synthetic factory home in each host. Supply original scoped
+outputs containing one actual failure and a second occurrence of the same
+trigger, plus a distinct legitimate stop. Keep later evaluator conclusions out
+of worker input. Ask factory-retro to retain and assess the observations through
+the candidate helper. Both occurrences must accumulate under one meaningful
+candidate key with distinct evidence and source versions; the legitimate stop
+must not be reported as model disobedience. Repeat the same request after a
+fresh-session interruption: stable event retries must leave history unchanged.
+
+Resume for adjudication with current code/instructions and counterevidence.
+Require a concrete acceptance scenario and supported accepted/rejected/already
+fixed disposition. Rejected candidates and their rationale survive new evidence
+until an explicit reasoned adjudication changes them. Missing evidence, corrupt
+records and conflicting retry content are stop cases; no history is overwritten
+or fabricated. A simulated lost helper response must inspect/retry the same
+event, not create a duplicate observation.
+
+Provide a separately implemented candidate change and actual fresh worker
+outputs for evaluation. A pass requires observed behavior on the relevant
+failure, a stop case and resume, with actual limits; a commit or static suite is
+insufficient. A later pre-fix transcript must become unreviewed evidence without
+claiming regression. A demonstrated post-fix recurrence must retain the prior
+verification and add an evidenced failed evaluation. Unrelated canonical
+state/claims/counters/config remain byte-identical. No task, external issue,
+schedule or automatic instruction edit follows from candidate recording.
+
+For runtime candidates, compare equivalent scenarios with observed phase,
+explicit human-wait, tool-failure and verification measures where available.
+Missing timing/cost stays unavailable. Faster/unchanged/slower results must retain
+the same defect detection and independent review/completion requirements.
+
 ## Maintenance preview and repeat
 
 Use fixtures/operations/maintenance.json as raw declared inventory. Prepare a

@@ -451,6 +451,16 @@ saved source, without claiming a routing judgment. An unchanged existing wait
 or block needs no repeated decision. Never infer a legacy fixture's body from
 its source URL, classification or illustrative pending action.
 
+At completion or a genuine stop, retain any meaningful failure, user correction
+or costly detour through the [retro learning contract](../factory-retro/references/learning.md).
+Reuse an existing matching candidate and record actual evidence, not a routine
+progress event. This local observation does not advance engineering or authorize
+a fix; preserve the item's outcome and release obligations even if recording is
+unavailable. Report a failed learning write rather than claiming it was saved.
+When this run explicitly implements an accepted candidate, return its identity,
+linked change and relevant behavior evidence to factory-retro for evaluation.
+Missing coverage is inconclusive; passing CI alone does not verify the candidate.
+
 Save a decision with a stable operation ID (reuse the exact ID/content after an
 uncertain response), reason, and complete updated item, using the read revision.
 After a revision conflict reread and reconsider; never overwrite newer state.
