@@ -1,6 +1,6 @@
 ---
 name: factory-design
-description: Decide whether a saved factory plan needs separate technical design, record justified skips, and produce an implementation handoff for cross-system, interface, storage or consequential tradeoffs. Persist unresolved architectural choices for a direct human answer without implementing changes.
+description: Decide whether a saved factory plan needs separate technical design, record justified skips, and produce an implementation handoff for cross-system, interface, storage or consequential tradeoffs. Make defensible scoped decisions and persist choices that need human knowledge or authority, without implementing changes.
 ---
 
 # Factory design
@@ -44,17 +44,22 @@ and migration/rollout concerns, verification across boundaries and remaining ris
 Use alternatives only where they clarify a real tradeoff; avoid line-by-line
 coding instructions or speculative infrastructure.
 
-When an unresolved consequential architecture/API choice affects compatibility,
-ownership, security, persistence or a similarly material constraint, surface the
-actual decision and its tradeoffs to the user in default/restricted modes.
-In explicitly delegated bedtime mode, choose within the authorized scope, record
-rationale/assumptions and continue; unavailable necessary facts or authority still block. Save a stable question identifier within the item, options/context,
+Apply the shared execution-mode policy to architecture/API choices affecting
+compatibility, ownership, security, persistence or other material constraints.
+Make defensible decisions within delegated scope, record rationale/assumptions
+and surface them. Ask when necessary knowledge, judgment or authority is missing;
+consequence alone does not require a question. Restricted checkpoints still apply.
+Save a stable question identifier within the item, options/context,
 input evidence and unresolved state in a design artifact when a human decision
 is required; return `design` / `waiting_for_human` / `factory-design` with a next action naming that question
 and artifact. Use an appropriate host user-input capability when available;
 noninteractive default/restricted runs save the wait and return the concise question.
-Without the needed answer or applicable bedtime delegation, release ownership
+Without the needed answer or applicable decision delegation, release ownership
 at that wait.
+
+Apply the [unanswered-decision contract](../factory-run/references/pending-decisions.md)
+to questions from any phase. A reply about another choice does not resolve the
+architectural question or remove its effect on readiness.
 
 On resume, read the saved question and prior design evidence first. The
 orchestrator supplies the current direct natural-language user response verbatim

@@ -12,6 +12,10 @@ and scoped delegation, and pass them to every role. Apply agent selection to eve
 assignment, including foreground coordinators,
 direct role requests, retries and resumes. Pass it to workers that delegate further.
 
+Read the [unanswered-decision contract](references/pending-decisions.md) when a
+role needs human input. Preserve each unresolved question through unrelated replies,
+handoffs and completion checks; a disclosed limitation is not a resolved decision.
+
 Act as the orchestrator: read durable evidence, choose the next step, and save
 that decision. For startup files, use already exposed and permitted native file
 reading/discovery tools when available. A denied command has its observed scope:
@@ -105,8 +109,10 @@ after reporting; subsequent engineering-role instructions do not apply to this
 report-only invocation.
 
 If the selected item is already `follow_pr / done` and no new work or changed
-result is requested, reuse its saved completion report and finish without rerunning
-review or polling. Do not claim saved observations are fresh remote reads.
+result is requested, reuse its saved engineering completion without rerunning
+review or CI polling. Apply the reporting contract below to any still-applicable
+originating-issue update before finish; reuse unchanged confirmed updates. Do not
+claim saved observations are fresh remote reads.
 
 Read canonical `items`, this run's item binding, source receipts, relevant history,
 bounds, scoped approvals and pending actions. Selection belongs to each run. Inspect active_items and claim an eligible item
@@ -398,7 +404,7 @@ Unknown coverage prevents completion. Then report once and finish `completed`;
 never merge, deploy or automatically select another item.
 
 When the selected work completes or reaches a genuine block/required human
-question, invoke available factory-report for local drafts if a semantic step
+question, invoke available factory-report for the applicable updates if a semantic step
 remains. Also honor explicit report requests without forcing another engineering
 step. Compare stable meaningful observation/destination identity with saved report
 manifests first: unchanged status with an existing corresponding report returns
@@ -413,12 +419,16 @@ reporting target/refresh/permission stays in the reporting report and invocation
 summary, not a replacement engineering wait/role. If the bound is exhausted,
 reporting can wait for the next invocation; never exceed it to draft.
 
-Default reporting is local-only, even during a live engineering run. Future sending
-needs actual exact-draft/destination authorization, current facts/host access and
-the shared uncertainty checkpoints; invoking a run or approving code does not
-permit messages. At a report-only outcome, save new reporting evidence within the
-bound and finish/release truthfully without advancing engineering. Do not create
-a report stage, poll destinations or invent workflow transitions.
+For an end-to-end default/bedtime grant, reporting maintains the selected
+originating Jira issue without another permission question, using exact derived
+authorization, verified workflow/identity, duplicate detection and shared
+uncertainty checkpoints. Slack, new/unrelated issues and out-of-grant messages
+remain local drafts until separately authorized. Restricted/legacy work retains
+its saved permissions. At a report-only outcome, reuse only applicable saved
+authority, save new reporting evidence within the bound and finish/release
+truthfully without advancing engineering. Do not create a report stage or invent
+workflow transitions. A reporting gap does not erase the engineering outcome;
+report any required Jira operation still pending or uncertain explicitly.
 
 A focused report evaluation may explicitly import synthetic:report-evaluation:
 via begin --fixture with readable raw status/destination observations and declared

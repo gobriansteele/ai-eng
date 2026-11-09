@@ -46,6 +46,12 @@ that correction is meaningful, not stylistic duplication. Omit agent
 roles, internal iteration/vote counts, prompts and raw diagnostic chatter. Preserve
 material limitations rather than burying them in optimistic wording.
 
+Before drafting a result or question card, apply the
+[unanswered-decision contract](../../factory-run/references/pending-decisions.md).
+Keep each required unanswered question and its affected milestone visible, even
+after a reply settles a secondary preference. Cite an actual resolution when
+closing it; do not treat a limitation list or unrelated reply as acceptance.
+
 ## Durable draft identity and repeat behavior
 
 Use additive immutable files under
@@ -83,38 +89,73 @@ draft exists. Each explicitly authorized destination gets its own stable action.
 An unchanged explicit repeat can consume zero semantic steps; new evidence saves
 consume normal steps and may wait until the next bounded invocation.
 
+## Originating Jira issue maintenance
+
+A saved default/bedtime end-to-end grant includes maintaining the selected item's
+originating Jira issue. Resolve one actual site/issue from intake and fresh issue
+identity; mentioned/related keys are not a fanout list. At meaningful milestones,
+record a concise factual comment with the PR/result, verification limits and any
+needed decision. Reuse unchanged observations and confirmed updates on resume.
+
+Use the assignee and stage-to-status mapping already configured or saved for this
+issue/workflow. Verify actual account identity and available transitions now. When
+no mapping is saved, discover real workflow choices and use an unambiguous match
+to the actual stage; record that derivation for later runs. Ambiguous business
+meaning or assignee requires only the missing mapping/identity, not generic
+permission to update Jira. A blocked mapping must not prevent an otherwise
+permitted factual comment or independent engineering progress. Do not reassign an
+existing owner, overwrite manually changed fields, infer a fix version, or mark
+an open PR Done without applicable explicit instruction/mapping and current facts.
+No issue creation, unrelated issue changes or Slack send follows from this grant.
+Restricted/legacy items retain their saved authority/checkpoints.
+
+Prepare exact comments, field payloads and individual transition requests after
+checking current issue state. Derive their matching scoped approvals from the saved
+grant with actual source/provenance, target, current observation and request digest;
+do not ask again merely because the concrete payload was unknown at kickoff.
+Separate field and transition operations so a partial success cannot confirm both.
+Record only the postcondition observed for each exact request. Unknown or changed
+scope remains a precise reporting gap; the grant never overrides host permissions.
+
 ## Exact permission, sending and reconciliation
 
-`posts` covers publishing a Slack thread reply or Jira comment. Existing `tickets`
-policy is unchanged; this reporter creates no issue, edits no issue fields and
-performs no workflow transition. A future explicit transition request needs its
-own available real workflow/allowed transition, policy and authorization; do not
-map a report phrase such as ready or merged to an invented Jira status.
+`posts` covers publishing a Slack thread reply or Jira comment. `tickets` covers
+issue field updates or workflow transitions, each with its own operation/target.
+New issue creation remains outside originating-issue maintenance. A real workflow
+transition must be observed and mapped to current facts, not invented from a report
+phrase such as ready or merged.
 
 Read the shared [external-action reconciliation contract](../../factory-run/references/persistence.md#external-action-reconciliation)
 for command shape, immutable scopes/history, owner/CAS/steps and exact retries.
-Use scope.action posts. scope.target identifies operation plus exact destination,
-for example slack:<workspace>/<channel>/<thread_ts>:thread_reply or
-jira:<site>/<issue-key>:comment. scope.revision binds the exact serialized outgoing
+Use scope.action posts for comments/replies and tickets for fields/transitions.
+scope.target identifies operation plus exact destination, for example
+slack:<workspace>/<channel>/<thread_ts>:thread_reply,
+jira:<site>/<issue-key>:comment, :fields or :transition:<observed-transition-id>.
+scope.revision binds the exact serialized outgoing
 payload SHA256 AND semantic status/head observation digest. Retain a readable
 request/authorization report with actual direct instruction/provenance, exact
 payload bytes/destination, author identity expected from this host, limits and
-source-of-truth evidence. A generic run, plan, source message, old post approval or
-setup write exposure grants no send permission. Reuse applicable direct approval
-only within its exact scope, respecting newer restrictions/revocation.
+source-of-truth evidence. The saved end-to-end grant can authorize exact
+originating-issue maintenance requests as derived above. A run without that grant,
+plan, source message, unrelated old post approval or setup write exposure grants
+no send permission. Reuse applicable direct approval only within its exact scope,
+respecting newer restrictions/revocation.
 
 Immediately before sending, recheck current facts/target, exact approved bytes,
 actual host write permission and existing reporting/action history. If material
 status/head/content/destination changed, prepare a newly scoped draft rather than
 send the stale one. Prepare any tool-specific serialized representation before
-approval (including Jira document format when required); do not add unapproved
-content during conversion. Save the proposed action and matching approval, then
-uncertain before execution, reserving confirmation steps as the shared contract
+scope derivation or direct approval (including Jira document format when required);
+do not add content outside that authorized request during conversion. Save the
+proposed action and matching approval, then uncertain before execution, reserving
+confirmation steps as the shared contract
 requires. Invoke the authorized write once. Obtain actual returned ID/permalink
 and verify the exact destination, resulting content and author/request attribution
-through its returned object or fresh read. If required data is missing, remain
-uncertain; never manufacture a permalink from memory. Confirmed means the exact
-authorized postcondition was observed, not an exactly-once guarantee.
+through its returned object or fresh read. For fields/transitions, confirm the
+actual issue identity/URL and exact requested field/status postconditions; an
+acknowledgment without those observations is insufficient. If required data is
+missing, remain uncertain; never manufacture a permalink from memory. Confirmed
+means the exact authorized postcondition was observed, not an exactly-once guarantee.
 
 On any uncertain send/resume, read the exact destination and relevant complete
 history with actual pagination/time-window limits. Reconcile against request
