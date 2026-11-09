@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "source_id": "synthetic:plan:saved-search-removal",
+  "version": "capture-1",
+  "link": "https://example.invalid/synthetic/plan/saved-search-removal",
+  "available_thread": [
+    {
+      "id": "m1",
+      "author": "Rowan",
+      "text": "Add a Remove action to saved searches in the dashboard sidebar. Ask for confirmation before removing one, then update the sidebar immediately after the server confirms removal. Keep the existing search and save controls; no sidebar redesign."
+    }
+  ],
+  "availability": "Complete synthetic request. The accompanying saved-searches.md supplies the bounded upstream investigation evidence for a focused planning evaluation. No live services, customer data or implementation work is available.",
+  "evidence": [
+    {
+      "id": "e1",
+      "kind": "supplied-investigation-reference",
+      "text": "The accompanying saved-searches.md contains the supplied synthetic investigation evidence. The evaluator copies it to the isolated runtime and supplies its actual path."
+    }
+  ]
+}

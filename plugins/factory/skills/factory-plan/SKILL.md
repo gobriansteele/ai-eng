@@ -30,6 +30,12 @@ choices. Missing necessary evidence produces a precise evidence wait/block; do
 not fabricate it or silently redo completed investigation. Return the concrete
 missing input to the orchestrator.
 
+Plan the requested behavior through to the user's resulting experience. Identify
+foreseeable outcomes, boundary conditions, and failure recovery, and express the
+material ones as concrete acceptance checks. Keep the reasoning proportionate to
+the change, respect explicit exclusions, and distinguish established facts from
+assumptions.
+
 Produce enough product intent for an engineer to act: expected user-visible
 behavior, bounded scope (and non-goals when useful), concrete acceptance checks
 and any unresolved consequential decisions. A clear small bug can take a few
