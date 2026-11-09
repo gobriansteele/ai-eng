@@ -12,6 +12,11 @@ the actual dedicated worktree/ownership and explicit local authorization. Produc
 
 ## Freeze and evidence
 
+Apply the [verification facts contract](../../factory-implement/references/verification.md).
+Check claims against raw executions and tested inputs, including honest reuse of
+pre-commit checks on identical content; estimated dates and unchanged HEAD alone
+do not establish execution or content identity.
+
 Each attempt lives under `<runtime>/work/<item-id>/review-<unique-attempt-id>/`.
 Preserve earlier report bytes and append absolute paths under unique `review-`
 artifact keys. Write reports after supporting evidence; keep stable save operation

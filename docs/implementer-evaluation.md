@@ -142,3 +142,25 @@ quoted-approval, missing-checkout restoration and native-lifecycle probes are
 valuable but distinct from the happy path. Report any not executed as untested;
 never claim native creation based on adoption alone. No helper/state patch may
 manufacture progress when a role or capability fails.
+
+## Verification claims and content identity
+
+Exercise the candidate verification recorder against a passing check, a nonzero
+exit, an unavailable executable and an input changed during execution. Require
+actual argv/cwd/clock/output/exit observations; a launch failure has no check exit
+code. Existing evidence directories and source-checkout destinations must be
+rejected without running the command or overwriting evidence.
+
+In separate fresh Codex and Claude role probes, supply raw synthetic execution
+records and code snapshots, not a suggested verdict. Include checks run on dirty
+content before a commit whose relevant bytes match, and a stale prose claim that
+they ran after commit at an estimated time. The report must correct the order,
+retain actual times only, and justify the bounded byte-equivalence claim. An
+unavailable check or missing tested-input observation must remain unverified.
+
+Resume in a fresh session with the actual prior result and newly observed input
+evidence; only the settled uncertainty closes. A changed input must not inherit
+the old passing check solely because HEAD stayed the same. Preserve old records,
+raw prompts/outputs and source hashes outside plugin source. These focused
+reporting probes do not establish end-to-end implementation, package refresh or
+behavior improvement from a helper test pass.
