@@ -1,6 +1,6 @@
 [project]
 name = "factory-local-helpers"
-version = "0.19.0"
+version = "0.19.1"
 requires-python = ">=3.11"
 dependencies = ["PyYAML>=6.0.2,<7"]
 

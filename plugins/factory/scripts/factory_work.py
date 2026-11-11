@@ -1111,6 +1111,9 @@ def plugin_identity(package: Path = PACKAGE) -> tuple[str, str]:
     source = hashlib.sha256()
     for path in sorted(package.rglob("*")):
         relative = path.relative_to(package)
+        # Claude Code keeps session/cleanup metadata beside installed source.
+        if relative.parts[0] == ".in_use" or relative == Path(".orphaned_at"):
+            continue
         if (
             any(
                 part in ("__pycache__", ".venv", ".mypy_cache", ".ruff_cache")

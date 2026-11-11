@@ -80,6 +80,62 @@ class ConcurrentTests(unittest.TestCase):
         with self.assertRaisesRegex(fw.WorkError, "version"):
             self.store.mutate("a", "codex", 12345, "save", {**op_a, "id": "stale-a"})
 
+    def test_host_metadata_changes_allow_saves_but_source_changes_block_writes(self):
+        self.fingerprint.stop()
+        package = self.root / "package"
+        for folder in (".codex-plugin", ".claude-plugin"):
+            (package / folder).mkdir(parents=True)
+            (package / folder / "plugin.json").write_text('{"version":"0.19.1"}')
+        source = package / "skill.md"
+        source.write_text("original instructions")
+        real_identity = fw.plugin_identity
+        with patch.object(
+            fw, "plugin_identity", side_effect=lambda: real_identity(package)
+        ):
+            self.start("a")
+            state = self.start("b")
+            baseline = real_identity(package)
+            markers = package / ".in_use"
+            markers.mkdir()
+            marker = markers / "67890"
+            orphaned = package / ".orphaned_at"
+            for phase in ("create", "rewrite", "remove"):
+                if phase == "remove":
+                    marker.unlink()
+                    orphaned.unlink()
+                else:
+                    marker.write_text(phase)
+                    orphaned.write_text(phase)
+                self.assertEqual(real_identity(package), baseline)
+                for token in ("a", "b"):
+                    state = self.store.mutate(
+                        token,
+                        "codex",
+                        12345,
+                        "save",
+                        self.decision(state, token, token + ":" + phase),
+                    )
+            source.write_text("changed instructions")
+            before = self.store.path.read_bytes()
+            for token in ("a", "b"):
+                with self.assertRaisesRegex(fw.WorkError, "Config or plugin changed"):
+                    self.store.mutate(
+                        token,
+                        "codex",
+                        12345,
+                        "save",
+                        self.decision(state, token, "edit"),
+                    )
+                with self.assertRaisesRegex(fw.WorkError, "Config or plugin changed"):
+                    self.change(token, "finish", {"outcome": "stopped"})
+            self.assertEqual(self.store.path.read_bytes(), before)
+            source.write_text("original instructions")
+            marker.write_text("another session")
+            orphaned.write_text("updated timestamp")
+            for token in ("a", "b"):
+                state = self.change(token, "finish", {"outcome": "stopped"})
+            self.assertEqual(state["claims"], {})
+
     def test_claim_and_cross_item_mutation_rejected(self):
         state = self.start("a")
         selected = fc.current_run(state, "a")["item_id"]
